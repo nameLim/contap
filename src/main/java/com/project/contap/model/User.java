@@ -1,5 +1,6 @@
 package com.project.contap.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.contap.dto.SignUpRequestDto;
 
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -32,6 +34,12 @@ public class User {
     @Column(unique = true)
     private Long kakaoId;
 
+    @Column(unique = true) // profile img path
+    private Long profile;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Card> cards;
 
     public User(String email, String pw, String userName, Long kakaoId) {
         this.email = email;
