@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -28,4 +29,7 @@ public class Card {
 
     @Column
     private String filePath;
+
+    @ManyToMany
+    private List<HashTag> hashTags;
 }
