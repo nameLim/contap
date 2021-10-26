@@ -2,12 +2,16 @@ package com.project.contap.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
 @NoArgsConstructor
+@Getter
+@Setter
 public class Card {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
@@ -15,6 +19,7 @@ public class Card {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
+    @JoinColumn(name = "User_id")
     private User user;
 
     @Column

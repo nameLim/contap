@@ -53,23 +53,29 @@ public class SetData implements ApplicationRunner{
         HashTag ht3= hashTagRepositoty.findById(303L).orElse(null);
         HashTag ht4= hashTagRepositoty.findById(304L).orElse(null);
         HashTag ht5= hashTagRepositoty.findById(305L).orElse(null);
-        for(long i = 1 ; i< 301 ;i++)// 1~300
+        for(long i = 1 ; i< 6 ;i++)// 1~300
         {
             User user = userRepository.findById(i).orElse(null);
             HashUser hu1 = new HashUser(user,ht1);
             HashUser hu2 = new HashUser(user,ht2);
             HashUser hu3 = new HashUser(user,ht3);
-            HashUser hu4 = new HashUser(user,ht4);
-            HashUser hu5 = new HashUser(user,ht5);
+
             hashUserRepository.save(hu1);
             hashUserRepository.save(hu2);
             hashUserRepository.save(hu3);
-            hashUserRepository.save(hu4);
-            hashUserRepository.save(hu5);
+            if(i <= 3) {
+                HashUser hu4 = new HashUser(user, ht4);
+                HashUser hu5 = new HashUser(user, ht5);
+                hashUserRepository.save(hu4);
+                hashUserRepository.save(hu5);
+            }
 
         }
+        User user1 = userRepository.findById(1L).orElse(null);
+        User user2 = userRepository.findById(1L).orElse(null);
+        User user3 = userRepository.findById(1L).orElse(null);
 
-        for(long i = 1 ; i< 301 ;i++)// 1~300
+        for(long i = 1 ; i< 301 ;i++)// 801~
         {
             User user = userRepository.findById(i).orElse(null);
             Card ca1 = new Card(user,1,String.format("title%d", i),String.format("content%d", i),String.format("filePath%d", i));

@@ -1,3 +1,9 @@
+buildscript {
+    ext {
+        queryDslVersion = "4.4.0"
+    }
+}
+
 plugins {
     id 'org.springframework.boot' version '2.5.6'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
@@ -35,10 +41,25 @@ dependencies {
 
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
+
     // https://mvnrepository.com/artifact/org.apache.commons/commons-text
     implementation group: 'org.apache.commons', name: 'commons-text', version: '1.9'
-}
 
+    // QueryDSL
+    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    annotationProcessor(
+            "javax.persistence:javax.persistence-api",
+            "javax.annotation:javax.annotation-api",
+            "com.querydsl:querydsl-apt:${queryDslVersion}:jpa")
+}
+// QueryDSL
+sourceSets {
+    main {
+        java {
+            srcDirs = ["$projectDir/src/main/java", "$projectDir/build/generated"]
+        }
+    }
+}
 test {
     useJUnitPlatform()
 }

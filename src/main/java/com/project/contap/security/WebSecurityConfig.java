@@ -55,7 +55,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/kakao/callback").permitAll()
                 .antMatchers("/**").permitAll()
                 // 그 외 어떤 요청이든 '인증'
-                .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 

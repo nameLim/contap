@@ -38,7 +38,6 @@ public class User {
     private Long profile;
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnore
     private List<Card> cards;
 
     public User(String email, String pw, String userName, Long kakaoId) {
