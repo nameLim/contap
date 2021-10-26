@@ -36,7 +36,7 @@ public class Card {
     private String filePath;
 
     @ManyToMany
-    private List<HashTag> hashTags;
+    private List<HashTag> Tags;
 
     public Card(User user, Integer cardOrder, String title, String content, String filePath)
     {

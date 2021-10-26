@@ -2,11 +2,9 @@ package com.project.contap.dummydata;
 
 import com.project.contap.model.Card;
 import com.project.contap.model.HashTag;
-import com.project.contap.model.HashUser;
 import com.project.contap.model.User;
 import com.project.contap.repository.CardRepository;
 import com.project.contap.repository.HashTagRepositoty;
-import com.project.contap.repository.HashUserRepository;
 import com.project.contap.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -14,15 +12,14 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class SetData implements ApplicationRunner{
 
     @Autowired
     UserRepository userRepository;
-
-    @Autowired
-    HashUserRepository hashUserRepository;
     @Autowired
     HashTagRepositoty hashTagRepositoty;
     @Autowired
@@ -48,29 +45,7 @@ public class SetData implements ApplicationRunner{
                     ,i%2);
             hashTagRepositoty.save(ht);
         }
-        HashTag ht1 = hashTagRepositoty.findById(301L).orElse(null);
-        HashTag ht2= hashTagRepositoty.findById(302L).orElse(null);
-        HashTag ht3= hashTagRepositoty.findById(303L).orElse(null);
-        HashTag ht4= hashTagRepositoty.findById(304L).orElse(null);
-        HashTag ht5= hashTagRepositoty.findById(305L).orElse(null);
-        for(long i = 1 ; i< 6 ;i++)// 1~300
-        {
-            User user = userRepository.findById(i).orElse(null);
-            HashUser hu1 = new HashUser(user,ht1);
-            HashUser hu2 = new HashUser(user,ht2);
-            HashUser hu3 = new HashUser(user,ht3);
 
-            hashUserRepository.save(hu1);
-            hashUserRepository.save(hu2);
-            hashUserRepository.save(hu3);
-            if(i <= 3) {
-                HashUser hu4 = new HashUser(user, ht4);
-                HashUser hu5 = new HashUser(user, ht5);
-                hashUserRepository.save(hu4);
-                hashUserRepository.save(hu5);
-            }
-
-        }
         User user1 = userRepository.findById(1L).orElse(null);
         User user2 = userRepository.findById(1L).orElse(null);
         User user3 = userRepository.findById(1L).orElse(null);
@@ -84,12 +59,6 @@ public class SetData implements ApplicationRunner{
             cardRepository.save(ca1);
             cardRepository.save(ca2);
             cardRepository.save(ca3);
-//            if(user != null) {
-//                user.getCards().add(ca1);
-//                user.getCards().add(ca2);
-//                user.getCards().add(ca3);
-//                userRepository.save(user);
-//            }
         }
     }
 
