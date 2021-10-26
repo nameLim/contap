@@ -11,7 +11,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 @AllArgsConstructor
 public enum ErrorCode {
 
-    POST_NOT_FOUND(BAD_REQUEST, "해당 게시글을 찾을 수 없습니다."),
+    CARD_NOT_FOUND(BAD_REQUEST, "해당 카드를 찾을 수 없습니다."),
 
     EMAIL_DUPLICATE(BAD_REQUEST, "중복된 email이 존재합니다."),
     USER_NOT_FOUND(BAD_REQUEST, "회원 정보를 찾을 수 없습니다."),

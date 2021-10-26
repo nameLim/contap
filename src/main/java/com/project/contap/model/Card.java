@@ -1,31 +1,43 @@
 package com.project.contap.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
+@Setter
+@Getter
 @Entity
 @NoArgsConstructor
-public class Card {
+public class Card extends TimeStamped{
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
-    private User user;
-
-    @Column
-    private Integer cardOrder; // (1~10)
-
-    @Column
-    private String title;
-
-    @Column
+    @Column(nullable = false)
     private String content;
 
-    @Column
-    private String filePath;
+    @Column(nullable = false)
+    private String profile;
+
+    @Column(nullable = false)
+    private String userName;
+
+    @Column(nullable = false)
+    private String interest;
+
+    @Column(nullable = false)
+    private String stack;
+
+    @Column(nullable = false)
+    private Number userId;
+
+    @Column(nullable = false)
+    private String imageUrl;
+
+    @Column(nullable = false)
+    private Number cardId;
+
+
 }

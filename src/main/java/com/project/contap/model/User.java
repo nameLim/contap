@@ -37,7 +37,7 @@ public class User {
     @Column(unique = true) // profile img path
     private Long profile;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "userId")
     @JsonIgnore
     private List<Card> cards;
 
