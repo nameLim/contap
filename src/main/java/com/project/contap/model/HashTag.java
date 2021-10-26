@@ -14,6 +14,12 @@ public class HashTag {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(unique = true)
+    @Column()
     private Integer type;
+
+    public HashTag(String name, Integer type)
+    {
+        this.name=  name;
+        this.type = type;
+    }
 }

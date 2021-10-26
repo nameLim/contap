@@ -1,6 +1,7 @@
 package com.project.contap.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.contap.repository.HashUserRepository;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -19,4 +20,10 @@ public class HashUser {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private HashTag hashTag;
+
+    public HashUser(User user,HashTag hashTag)
+    {
+        this.user= user;
+        this.hashTag = hashTag;
+    }
 }

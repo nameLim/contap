@@ -28,4 +28,13 @@ public class Card {
 
     @Column
     private String filePath;
+
+    public Card(User user, Integer cardOrder, String title, String content, String filePath)
+    {
+        this.user = user;
+        this.cardOrder = cardOrder;
+        this.title = title;
+        this.content = content;
+        this.filePath = filePath;
+    }
 }
