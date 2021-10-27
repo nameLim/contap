@@ -10,6 +10,7 @@ import com.project.contap.repository.HashTagRepositoty;
 import com.project.contap.repository.UserRepository;
 import com.project.contap.security.jwt.JwtTokenProvider;
 import com.project.contap.service.UserService;
+import com.querydsl.core.QueryResults;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,9 @@ public class TestController {
     private final UserRepository userRepository;
     private final HashTagRepositoty hashTagRepositoty;
     private final CardRepository cardRepository;
+    private Long test1RunTime = 0L;
+    private Long test2RunTime = 0L;
+
     @Autowired
     public TestController(UserRepository userRepository,HashTagRepositoty hashTagRepositoty,CardRepository cardRepository) {
         this.userRepository = userRepository;
@@ -80,8 +84,7 @@ public class TestController {
     Page<User> test1() throws ContapException {
         long startTime = System.currentTimeMillis();
 
-        Random random = new Random();
-        int page = random.nextInt(50);
+        int page = new Random.nextInt(50);
         Page<User> ad = userRepository.findAll(PageRequest.of(page, 9));
 
         long endTime = System.currentTimeMillis();
