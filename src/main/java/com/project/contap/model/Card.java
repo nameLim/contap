@@ -32,4 +32,14 @@ public class Card {
 
     @ManyToMany
     private List<HashTag> hashTags;
+
+    public Card(User user, Integer cardOrder, String title, String content, String filePath)
+    {
+        this.user = user;
+        this.cardOrder = cardOrder;
+        this.title = title;
+        this.content = content;
+        this.filePath = filePath;
+    }
+
 }
