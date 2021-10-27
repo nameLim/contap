@@ -38,6 +38,7 @@ public class Card {
     @ManyToMany
     private List<HashTag> Tags;
 
+
     public Card(User user, Integer cardOrder, String title, String content, String filePath)
     {
         this.user = user;
@@ -46,4 +47,5 @@ public class Card {
         this.content = content;
         this.filePath = filePath;
     }
+
 }

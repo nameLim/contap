@@ -16,6 +16,7 @@ import java.util.List;
 public class MainController {
     private final HashTagService hashTagService;
     private final UserService userService;
+
     @Autowired
     public MainController(HashTagService hashTagService,UserService userService)
     {

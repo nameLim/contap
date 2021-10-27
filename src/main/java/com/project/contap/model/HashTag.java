@@ -1,5 +1,6 @@
 package com.project.contap.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,6 +24,7 @@ public class HashTag {
     private Integer type;
 
     @ManyToMany(mappedBy = "tags")
+    @JsonIgnore
     private List<User> users;
 
     public HashTag(String name, Integer type)

@@ -1,6 +1,5 @@
 package com.project.contap.controller;
 
-import com.project.contap.dto.SignUpRequestDto;
 import com.project.contap.exception.ContapException;
 import com.project.contap.model.Card;
 import com.project.contap.model.HashTag;
@@ -8,20 +7,12 @@ import com.project.contap.model.User;
 import com.project.contap.repository.CardRepository;
 import com.project.contap.repository.HashTagRepositoty;
 import com.project.contap.repository.UserRepository;
-import com.project.contap.security.jwt.JwtTokenProvider;
-import com.project.contap.service.UserService;
-import com.querydsl.core.QueryResults;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
@@ -68,7 +59,7 @@ public class TestController {
             userRepository.save(user);
         }
 
-        for(long i = 5501 ; i< 55501 ;i++)// 1~300
+        for(long i = 801 ; i< 1701 ;i++)// 1~300
         {
             Card user = cardRepository.findById(i).orElse(null);
             user.getTags().add(ht1);
@@ -84,7 +75,8 @@ public class TestController {
     Page<User> test1() throws ContapException {
         long startTime = System.currentTimeMillis();
 
-        int page = new Random.nextInt(50);
+        Random random = new Random();
+        int page = random.nextInt(50);
         Page<User> ad = userRepository.findAll(PageRequest.of(page, 9));
 
         long endTime = System.currentTimeMillis();

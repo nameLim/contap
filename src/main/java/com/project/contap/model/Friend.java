@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Freind {
+public class Friend {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     private Long id;
@@ -21,3 +21,4 @@ public class Freind {
     @ManyToOne
     private User you;
 }
+

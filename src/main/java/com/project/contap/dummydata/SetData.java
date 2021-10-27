@@ -29,7 +29,7 @@ public class SetData implements ApplicationRunner{
     @Override
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
-        for(int i = 0 ; i< 300 ;i++)// 1~300
+        for(int i = 0 ; i< 5000 ;i++)// 1~300
         {
             User user = new User(
                     String.format("userid%d", i)
@@ -45,20 +45,30 @@ public class SetData implements ApplicationRunner{
                     ,i%2);
             hashTagRepositoty.save(ht);
         }
-
-        User user1 = userRepository.findById(1L).orElse(null);
-        User user2 = userRepository.findById(1L).orElse(null);
-        User user3 = userRepository.findById(1L).orElse(null);
-
-        for(long i = 1 ; i< 301 ;i++)// 801~
+        for(long i = 1 ; i< 5001 ;i++)// 801~
         {
             User user = userRepository.findById(i).orElse(null);
             Card ca1 = new Card(user,1,String.format("title%d", i),String.format("content%d", i),String.format("filePath%d", i));
             Card ca2 = new Card(user,2,String.format("title%d", i),String.format("content%d", i),String.format("filePath%d", i));
             Card ca3 = new Card(user,3,String.format("title%d", i),String.format("content%d", i),String.format("filePath%d", i));
+            Card ca4 = new Card(user,1,String.format("title%d", i),String.format("content%d", i),String.format("filePath%d", i));
+            Card ca5 = new Card(user,2,String.format("title%d", i),String.format("content%d", i),String.format("filePath%d", i));
+            Card ca6 = new Card(user,3,String.format("title%d", i),String.format("content%d", i),String.format("filePath%d", i));
+            Card ca7 = new Card(user,1,String.format("title%d", i),String.format("content%d", i),String.format("filePath%d", i));
+            Card ca8 = new Card(user,2,String.format("title%d", i),String.format("content%d", i),String.format("filePath%d", i));
+            Card ca9 = new Card(user,3,String.format("title%d", i),String.format("content%d", i),String.format("filePath%d", i));
+            Card ca0 = new Card(user,3,String.format("title%d", i),String.format("content%d", i),String.format("filePath%d", i));
             cardRepository.save(ca1);
             cardRepository.save(ca2);
             cardRepository.save(ca3);
+            cardRepository.save(ca4);
+            cardRepository.save(ca5);
+            cardRepository.save(ca6);
+            cardRepository.save(ca7);
+            cardRepository.save(ca8);
+            cardRepository.save(ca9);
+            cardRepository.save(ca0);
+
         }
     }
 
