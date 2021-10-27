@@ -58,7 +58,7 @@ public class TestController {
         HashTag ht4= hashTagRepositoty.findById(304L).orElse(null);
         HashTag ht5= hashTagRepositoty.findById(305L).orElse(null);
 
-        for(long i = 1 ; i< 6 ;i++)// 1~300
+        for(long i = 1 ; i< 5001 ;i++)// 1~300
         {
             User user = userRepository.findById(i).orElse(null);
             user.getTags().add(ht1);
@@ -69,7 +69,7 @@ public class TestController {
             userRepository.save(user);
         }
 
-        for(long i = 801 ; i< 1701 ;i++)// 1~300
+        for(long i = 5501 ; i< 55501 ;i++)// 1~300
         {
             Card user = cardRepository.findById(i).orElse(null);
             user.getTags().add(ht1);
