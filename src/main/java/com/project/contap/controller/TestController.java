@@ -28,6 +28,7 @@ public class TestController {
     private final UserRepository userRepository;
     private final HashTagRepositoty hashTagRepositoty;
     private final CardRepository cardRepository;
+
     @Autowired
     public TestController(UserRepository userRepository,HashTagRepositoty hashTagRepositoty,CardRepository cardRepository) {
         this.userRepository = userRepository;
