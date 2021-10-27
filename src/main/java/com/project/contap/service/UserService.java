@@ -132,13 +132,7 @@ public class UserService {
 
     @Transactional
     public List<User> getuser(List<HashTag> hashTags) {
-//        QHashUser hu = QHashUser.hashUser;
-//        QueryResults<User> abc =  jpaQueryFactory
-//                .select(hu.user).distinct()
-//                .from(hu)
-//                .where(hu.hashTag.in(hashTags))
-//                .fetchResults();
-//        List<User> ret = abc.getResults();
+        List<User> abc = userRepository.findDistinctByTagsIn(hashTags);
         return null;
     }
 }
