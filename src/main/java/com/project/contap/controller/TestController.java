@@ -24,6 +24,8 @@ public class TestController {
     private final CardRepository cardRepository;
     private Long test1RunTime = 0L;
     private Long test2RunTime = 0L;
+    private Long test1cnt = 0L;
+    private Long test2cnt = 0L;
 
     @Autowired
     public TestController(UserRepository userRepository,HashTagRepositoty hashTagRepositoty,CardRepository cardRepository) {
@@ -38,16 +40,18 @@ public class TestController {
         User user2 = userRepository.lsjfind(1L);
         System.out.println(user);
         System.out.println(user2);
+        Logger log = LogManager.getLogger("test3");
+        log.error("sadasgfsams");
     }
     @GetMapping("/lsj/test")
-    public void test() throws ContapException {
+    public String test() throws ContapException {
 
-        HashTag ht1 = hashTagRepositoty.findById(301L).orElse(null);
-        HashTag ht2= hashTagRepositoty.findById(302L).orElse(null);
-        HashTag ht3= hashTagRepositoty.findById(303L).orElse(null);
-        HashTag ht4= hashTagRepositoty.findById(304L).orElse(null);
-        HashTag ht5= hashTagRepositoty.findById(305L).orElse(null);
-
+        HashTag ht1 = hashTagRepositoty.findById(5001L).orElse(null);
+        HashTag ht2= hashTagRepositoty.findById(5002L).orElse(null);
+        HashTag ht3= hashTagRepositoty.findById(5003L).orElse(null);
+        HashTag ht4= hashTagRepositoty.findById(5004L).orElse(null);
+        HashTag ht5= hashTagRepositoty.findById(5005L).orElse(null);
+        //for(long i = 1 ; i< 5001 ;i++)// 1~300
         for(long i = 1 ; i< 5001 ;i++)// 1~300
         {
             User user = userRepository.findById(i).orElse(null);
@@ -59,7 +63,7 @@ public class TestController {
             userRepository.save(user);
         }
 
-        for(long i = 801 ; i< 1701 ;i++)// 1~300
+        for(long i = 5501 ; i< 55001 ;i++)// 1~300
         {
             Card user = cardRepository.findById(i).orElse(null);
             user.getTags().add(ht1);
@@ -69,46 +73,62 @@ public class TestController {
             user.getTags().add(ht5);
             cardRepository.save(user);
         }
+        return "DBSet 완료염~";
     }
 
     @GetMapping("/test1")
     Page<User> test1() throws ContapException {
         long startTime = System.currentTimeMillis();
-
+        test1cnt = test1cnt +1;
         Random random = new Random();
-        int page = random.nextInt(50);
+        int page = random.nextInt(100);
         Page<User> ad = userRepository.findAll(PageRequest.of(page, 9));
 
         long endTime = System.currentTimeMillis();
         long runTime = endTime - startTime;
-        Logger log = LogManager.getLogger("APITime");
-        log.error("test1user-----" + runTime+"ms");
+        test1RunTime = runTime + test1RunTime;
+        Logger log = LogManager.getLogger("test1");
+        log.error(runTime+"ms");
         return ad;
     }
+
     @GetMapping("/test2")
     public List<Card> test2() throws ContapException {
         long startTime = System.currentTimeMillis();
-
+        test2cnt = test2cnt +1;
         Random random = new Random();
         Long userId = Long.valueOf(random.nextInt(5000));
-        User user = userRepository.findById(1L).orElse(null);
+        if(userId == 0L)
+            userId = 1L;
+        User user = userRepository.findById(userId).orElse(null);
         List<Card> abc = cardRepository.findAllByUser(user);
-
-
         long endTime = System.currentTimeMillis();
         long runTime = endTime - startTime;
-        Logger log = LogManager.getLogger("APITime");
-        log.error("test2card" + runTime+"ms");
+        test2RunTime = runTime + test2RunTime;
+        Logger log = LogManager.getLogger("test2");
+        log.error(runTime+"ms");
         return abc;
     }
 
     @GetMapping("/test1/getRuntime")
-    Long getTest1RunTime() throws ContapException {
-        return test1RunTime;
+    List<Long> getTest1RunTime() throws ContapException {
+        List<Long> a = new ArrayList<>();
+        a.add(test1RunTime);
+        a.add(test1cnt);
+        return a;
     }
 
     @GetMapping("/test2/getRuntime")
-    Long getTest2RunTime() throws ContapException {
-        return test2RunTime;
+    List<Long> getTest2RunTime() throws ContapException {
+        List<Long> a = new ArrayList<>();
+        a.add(test2RunTime);
+        a.add(test2cnt);
+        return a;
+    }
+
+    @GetMapping("/test3")
+    void getTest1123RunTime() throws ContapException {
+        Logger log = LogManager.getLogger("test2");
+        log.error("for test!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     }
 }
