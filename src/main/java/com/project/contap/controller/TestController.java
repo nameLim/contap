@@ -10,10 +10,15 @@ import com.project.contap.repository.HashTagRepositoty;
 import com.project.contap.repository.UserRepository;
 import com.project.contap.security.jwt.JwtTokenProvider;
 import com.project.contap.service.UserService;
+import com.querydsl.core.QueryResults;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -73,5 +79,27 @@ public class TestController {
             user.getTags().add(ht5);
             cardRepository.save(user);
         }
+    }
+
+    @GetMapping("/test1")
+    Page<User> test1() throws ContapException {
+        long startTime = System.currentTimeMillis();
+        Page<User> ad = userRepository.findAll(PageRequest.of(0, 9));
+        long endTime = System.currentTimeMillis();
+        long runTime = endTime - startTime;
+        Logger log = LogManager.getLogger("APITime");
+        log.error("test1user-----" + runTime+"ms");
+        return ad;
+    }
+    @GetMapping("/test2")
+    public List<Card> test2() throws ContapException {
+        long startTime = System.currentTimeMillis();
+        User user = userRepository.findById(1L).orElse(null);
+        List<Card> abc = cardRepository.findAllByUser(user);
+        long endTime = System.currentTimeMillis();
+        long runTime = endTime - startTime;
+        Logger log = LogManager.getLogger("APITime");
+        log.error("test2card" + runTime+"ms");
+        return abc;
     }
 }
