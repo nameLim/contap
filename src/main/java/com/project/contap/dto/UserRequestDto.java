@@ -20,5 +20,14 @@ public class UserRequestDto {
     private Long kakaoId;
     private Long profile;
     private List<HashTag> tags; // 1:스프링,2리엑트
+
+    public UserRequestDto(Long id,String email,Long profile, Long kakaoId, String userName, String pw) {
+        this.id = id;
+        this.email = email;
+        this.pw = pw;
+        this.userName = userName;
+        this.kakaoId = kakaoId;
+        this.profile = profile;
+    }
 }
 

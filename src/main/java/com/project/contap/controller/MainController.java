@@ -1,8 +1,11 @@
 package com.project.contap.controller;
 
+import com.project.contap.dto.UserRequestDto;
 import com.project.contap.exception.ContapException;
+import com.project.contap.model.Card;
 import com.project.contap.model.HashTag;
 import com.project.contap.model.User;
+import com.project.contap.service.CardService;
 import com.project.contap.service.HashTagService;
 import com.project.contap.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,26 +19,28 @@ import java.util.List;
 public class MainController {
     private final HashTagService hashTagService;
     private final UserService userService;
+    private final CardService cardService;
 
     @Autowired
-    public MainController(HashTagService hashTagService,UserService userService)
+    public MainController(HashTagService hashTagService,UserService userService,CardService cardService)
     {
         this.hashTagService = hashTagService;
         this.userService= userService;
+        this.cardService = cardService;
     }
     @GetMapping("/main/hashtag")
     public List<HashTag> getHashag() throws ContapException {
         return hashTagService.getHashTag();
     }
 
-    @PostMapping("/main/search")
-    public List<User> search(
-            @RequestBody List<HashTag> hashTags
+    @GetMapping("/main/search") //@RequestBody List<HashTag> hashTags
+    public List<UserRequestDto> search(
     ) throws ContapException {
-        return userService.getuser(hashTags);
+        return userService.getuser(null);
     }
 
-
-
-
+    @GetMapping("/main/{userId}")
+    public List<Card> getCards(@PathVariable Long userId) throws ContapException {
+        return cardService.getCards(userId);
+    }
 }

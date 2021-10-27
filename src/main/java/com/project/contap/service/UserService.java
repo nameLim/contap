@@ -8,8 +8,10 @@ import com.project.contap.model.*;
 import com.project.contap.repository.CardRepository;
 import com.project.contap.repository.HashTagRepositoty;
 import com.project.contap.repository.UserRepository;
+import com.project.contap.util.GetRandom;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -67,18 +69,18 @@ public class UserService {
         String password = requestDto.getPw();
         String passwordCheck = requestDto.getPwCheck();
 
-        if (!password.isEmpty() && !passwordCheck.isEmpty()) {
-            if (password.length() >= 6 && password.length() <= 20) {
-                if (!password.equals(passwordCheck)) {
-                    throw new ContapException(ErrorCode.USER_NOT_FOUND);
-                }
-            } else {
-                throw new ContapException(ErrorCode.PASSWORD_PATTERN_LENGTH);
-
-            }
-        } else {
-            throw new ContapException(ErrorCode.PASSWORD_ENTER);
-        }
+//        if (!password.isEmpty() && !passwordCheck.isEmpty()) {
+//            if (password.length() >= 6 && password.length() <= 20) {
+//                if (!password.equals(passwordCheck)) {
+//                    throw new ContapException(ErrorCode.USER_NOT_FOUND);
+//                }
+//            } else {
+//                throw new ContapException(ErrorCode.PASSWORD_PATTERN_LENGTH);
+//
+//            }
+//        } else {
+//            throw new ContapException(ErrorCode.PASSWORD_ENTER);
+//        }
 
 
 
@@ -131,9 +133,24 @@ public class UserService {
 
 
     @Transactional
-    public List<User> getuser(List<HashTag> hashTags) {
-        List<User> abc = userRepository.findDistinctByTagsIn(hashTags);
-        return null;
+    public List<UserRequestDto> getuser(List<HashTag> hashTags) {
+        QUser hu = QUser.user;
+        List<Long> ids2 = Arrays.asList(new Long(GetRandom.randomRange(5001,5500)),new Long(GetRandom.randomRange(5001,5500)),new Long(GetRandom.randomRange(5001,5500)));
+        List<UserRequestDto> abc;
+        abc = jpaQueryFactory
+                .select(
+                        Projections.constructor(UserRequestDto.class,
+                                hu.id,
+                                hu.email,
+                                hu.profile,
+                                hu.kakaoId,
+                                hu.userName,
+                                hu.pw
+                        )).distinct()
+                .from(hu)
+                .where(hu.tags.any().id.in(ids2))
+                .offset(9).limit(9)
+                .fetch();
+        return abc;
     }
 }
-

@@ -6,12 +6,12 @@ import com.project.contap.model.*;
 import com.project.contap.repository.CardRepository;
 import com.project.contap.repository.HashTagRepositoty;
 import com.project.contap.repository.UserRepository;
+import com.project.contap.util.GetRandom;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,28 +45,26 @@ public class TestController {
         for(long i = 1 ; i< 5001 ;i++)// 1~300 // 5001
         {
             User user = userRepository.findById(i).orElse(null);
-            user.getTags().add(new HashTag(new Long(randomRange(5001,5500))));
-            user.getTags().add(new HashTag(new Long(randomRange(5001,5500))));
-            user.getTags().add(new HashTag(new Long(randomRange(5001,5500))));
-            user.getTags().add(new HashTag(new Long(randomRange(5001,5500))));
-            user.getTags().add(new HashTag(new Long(randomRange(5001,5500))));
+            user.getTags().add(new HashTag(new Long(GetRandom.randomRange(5001,5500))));
+            user.getTags().add(new HashTag(new Long(GetRandom.randomRange(5001,5500))));
+            user.getTags().add(new HashTag(new Long(GetRandom.randomRange(5001,5500))));
+            user.getTags().add(new HashTag(new Long(GetRandom.randomRange(5001,5500))));
+            user.getTags().add(new HashTag(new Long(GetRandom.randomRange(5001,5500))));
             userRepository.save(user);
         }
 
-        for(long i = 5501 ; i< 7000 ;i++)// 1~300
+        for(long i = 5501 ; i< 50000 ;i++)// 1~300
         {
             Card user = cardRepository.findById(i).orElse(null);
-            user.getTags().add(new HashTag(new Long(randomRange(5001,5500))));
-            user.getTags().add(new HashTag(new Long(randomRange(5001,5500))));
-            user.getTags().add(new HashTag(new Long(randomRange(5001,5500))));
-            user.getTags().add(new HashTag(new Long(randomRange(5001,5500))));
-            user.getTags().add(new HashTag(new Long(randomRange(5001,5500))));
+            user.getTags().add(new HashTag(new Long(GetRandom.randomRange(5001,5500))));
+            user.getTags().add(new HashTag(new Long(GetRandom.randomRange(5001,5500))));
+            user.getTags().add(new HashTag(new Long(GetRandom.randomRange(5001,5500))));
+            user.getTags().add(new HashTag(new Long(GetRandom.randomRange(5001,5500))));
+            user.getTags().add(new HashTag(new Long(GetRandom.randomRange(5001,5500))));
             cardRepository.save(user);
         }
         return "DBSet 완료염~";
     }
 
-    public int randomRange(int n1, int n2) {
-        return (int) (Math.random() * (n2 - n1 + 1)) + n1;
-    }
+
 }
