@@ -13,15 +13,17 @@ import com.project.contap.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 public class TestController {
@@ -51,7 +53,7 @@ public class TestController {
         HashTag ht4= hashTagRepositoty.findById(304L).orElse(null);
         HashTag ht5= hashTagRepositoty.findById(305L).orElse(null);
 
-        for(long i = 1 ; i< 6 ;i++)// 1~300
+        for(long i = 1 ; i< 5001 ;i++)// 1~300
         {
             User user = userRepository.findById(i).orElse(null);
             user.getTags().add(ht1);
@@ -62,7 +64,7 @@ public class TestController {
             userRepository.save(user);
         }
 
-        for(long i = 801 ; i< 1701 ;i++)// 1~300
+        for(long i = 5501 ; i< 55501 ;i++)// 1~300
         {
             Card user = cardRepository.findById(i).orElse(null);
             user.getTags().add(ht1);
@@ -72,5 +74,46 @@ public class TestController {
             user.getTags().add(ht5);
             cardRepository.save(user);
         }
+    }
+
+    @GetMapping("/test1")
+    Page<User> test1() throws ContapException {
+        long startTime = System.currentTimeMillis();
+
+        Random random = new Random();
+        int page = random.nextInt(50);
+        Page<User> ad = userRepository.findAll(PageRequest.of(page, 9));
+
+        long endTime = System.currentTimeMillis();
+        long runTime = endTime - startTime;
+        Logger log = LogManager.getLogger("APITime");
+        log.error("test1user-----" + runTime+"ms");
+        return ad;
+    }
+    @GetMapping("/test2")
+    public List<Card> test2() throws ContapException {
+        long startTime = System.currentTimeMillis();
+
+        Random random = new Random();
+        Long userId = Long.valueOf(random.nextInt(5000));
+        User user = userRepository.findById(1L).orElse(null);
+        List<Card> abc = cardRepository.findAllByUser(user);
+
+
+        long endTime = System.currentTimeMillis();
+        long runTime = endTime - startTime;
+        Logger log = LogManager.getLogger("APITime");
+        log.error("test2card" + runTime+"ms");
+        return abc;
+    }
+
+    @GetMapping("/test1/getRuntime")
+    Long getTest1RunTime() throws ContapException {
+        return test1RunTime;
+    }
+
+    @GetMapping("/test2/getRuntime")
+    Long getTest2RunTime() throws ContapException {
+        return test2RunTime;
     }
 }
