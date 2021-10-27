@@ -21,12 +21,11 @@
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
             crossorigin="anonymous"></script>
     <title>Title</title>
+    <div id="test1RunTime"></div>
+    <div id="test2RunTime"></div>
     <script>
-        let te1 = 0
-        let te2 = 0
         function test1()
         {
-            te1 = te1 + 50;
             for (let i = 0;i<50;i++)
             {
                 $.ajax({
@@ -40,10 +39,10 @@
             }
             $.ajax({
                     type: "GET",
-                    url: "/test1/getRuntime",
+                    url: "/test1/getRunTime",
                     success: function (response) {
                         // console.log(response);
-                        $('#test1RunTime').text( response[0] +"/" + response[1]);
+                        $('#test1RunTime').text( response);
                     }
 
                 }
@@ -51,36 +50,31 @@
         }
         function test2()
         {
-            te2 = te2 + 50;
-            let start = new Date();  // 시작
             for (let i = 0;i<50;i++)
             {
                 $.ajax({
                         type: "GET",
-                        url: "/test2",
+                        url: "/test2/getRuntime",
                         success: function (response) {
-                            // console.log(response);
+                            console.log(response);
                         }
                     }
                 )
             }
-            let end = new Date();  // 종료
-            console.log((end - start)/50);
-
             $.ajax({
                     type: "GET",
-                    url: "/test2/getRuntime",
+                    url: "/test2/getRunTime",
                     success: function (response) {
-                        $('#test2RunTime').text( response[0] +"/" + response[1]);
+                        $('#test2RunTime').text( response);
                     }
                 }
             )
         }
+
+        }
     </script>
 </head>
 <body>
-<div id="test1RunTime"></div>
-<div id="test2RunTime"></div>
 <button onclick="test1()">
     test1getuser
 </button>
