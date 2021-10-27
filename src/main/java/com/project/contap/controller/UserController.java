@@ -63,8 +63,6 @@ public class UserController {
     public Map<String, String> duplicateNickname(@RequestBody SignUpRequestDto signUpRequestDto) {
         return userService.duplicateNickname(signUpRequestDto);
     }
-
-
 //    @GetMapping("/auth")
 //    public Map<String, String> loginCheck(@AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
 //        if (userDetails == null) {

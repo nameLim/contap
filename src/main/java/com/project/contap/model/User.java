@@ -41,7 +41,7 @@ public class User {
     private List<Card> cards;
 
     @ManyToMany
-    private List<HashTag> tags; // 1:스프링,2리엑트
+    private List<HashTag> tags;
 
     public User(String email, String pw, String userName, Long kakaoId) {
         this.email = email;

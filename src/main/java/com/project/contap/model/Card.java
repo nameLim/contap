@@ -32,20 +32,16 @@ public class Card {
     @Column
     private String content;
 
-    @Column
-    private String filePath;
-
     @ManyToMany
     private List<HashTag> Tags;
 
 
-    public Card(User user, Integer cardOrder, String title, String content, String filePath)
+    public Card(User user, Integer cardOrder, String title, String content)
     {
         this.user = user;
         this.cardOrder = cardOrder;
         this.title = title;
         this.content = content;
-        this.filePath = filePath;
     }
 
 }

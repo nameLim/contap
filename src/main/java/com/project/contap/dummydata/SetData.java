@@ -48,16 +48,16 @@ public class SetData implements ApplicationRunner{
         for(long i = 1 ; i< 5001 ;i++)// 801~
         {
             User user = userRepository.findById(i).orElse(null);
-            Card ca1 = new Card(user,1,String.format("title%d", i),String.format("content%d", i),String.format("filePath%d", i));
-            Card ca2 = new Card(user,2,String.format("title%d", i),String.format("content%d", i),String.format("filePath%d", i));
-            Card ca3 = new Card(user,3,String.format("title%d", i),String.format("content%d", i),String.format("filePath%d", i));
-            Card ca4 = new Card(user,1,String.format("title%d", i),String.format("content%d", i),String.format("filePath%d", i));
-            Card ca5 = new Card(user,2,String.format("title%d", i),String.format("content%d", i),String.format("filePath%d", i));
-            Card ca6 = new Card(user,3,String.format("title%d", i),String.format("content%d", i),String.format("filePath%d", i));
-            Card ca7 = new Card(user,1,String.format("title%d", i),String.format("content%d", i),String.format("filePath%d", i));
-            Card ca8 = new Card(user,2,String.format("title%d", i),String.format("content%d", i),String.format("filePath%d", i));
-            Card ca9 = new Card(user,3,String.format("title%d", i),String.format("content%d", i),String.format("filePath%d", i));
-            Card ca0 = new Card(user,3,String.format("title%d", i),String.format("content%d", i),String.format("filePath%d", i));
+            Card ca1 = new Card(user,1,String.format("title%d", i),String.format("content%d", i));
+            Card ca2 = new Card(user,2,String.format("title%d", i),String.format("content%d", i));
+            Card ca3 = new Card(user,3,String.format("title%d", i),String.format("content%d", i));
+            Card ca4 = new Card(user,1,String.format("title%d", i),String.format("content%d", i));
+            Card ca5 = new Card(user,2,String.format("title%d", i),String.format("content%d", i));
+            Card ca6 = new Card(user,3,String.format("title%d", i),String.format("content%d", i));
+            Card ca7 = new Card(user,1,String.format("title%d", i),String.format("content%d", i));
+            Card ca8 = new Card(user,2,String.format("title%d", i),String.format("content%d", i));
+            Card ca9 = new Card(user,3,String.format("title%d", i),String.format("content%d", i));
+            Card ca0 = new Card(user,3,String.format("title%d", i),String.format("content%d", i));
             cardRepository.save(ca1);
             cardRepository.save(ca2);
             cardRepository.save(ca3);
