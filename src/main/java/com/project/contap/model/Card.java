@@ -19,25 +19,13 @@ public class Card extends TimeStamped{
     private String content;
 
     @Column(nullable = false)
-    private String profile;
-
-    @Column(nullable = false)
     private String userName;
-
-    @Column(nullable = false)
-    private String interest;
-
-    @Column(nullable = false)
-    private String stack;
-
-    @Column(nullable = false)
-    private Number userId;
 
     @Column(nullable = false)
     private String imageUrl;
 
     @Column(nullable = false)
-    private Number cardId;
+    private Long cardId;
 
 
 }

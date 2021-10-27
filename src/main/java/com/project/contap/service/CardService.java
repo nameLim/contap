@@ -13,15 +13,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class CardService {
 
-    private final CardRepository cardRepository;
-
-    public Page<Card> main(Pageable pageable) {
-        return cardRepository.findAllByOrderByModifiedDtDesc(pageable);
-    }
-
-    public Card getCards(Long id) throws ContapException {
-        return cardRepository.findById(id).orElseThrow(
-                () -> new ContapException(ErrorCode.CARD_NOT_FOUND)
-        );
-    }
+//    private final CardRepository cardRepository;
+//
+//    public Page<Card> main(Pageable pageable) {
+//        return cardRepository.findAllByOrderByModifiedDtDesc(pageable);
+//    }
+//
+//    public Card getCards(Long id) throws ContapException {
+//        return cardRepository.findById(id).orElseThrow(
+//                () -> new ContapException(ErrorCode.CARD_NOT_FOUND)
+//        );
+//    }
 }
