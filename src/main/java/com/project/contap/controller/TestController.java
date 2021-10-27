@@ -24,16 +24,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 public class TestController {
     private final UserRepository userRepository;
     private final HashTagRepositoty hashTagRepositoty;
     private final CardRepository cardRepository;
+    private long test1RunTime = 0L;
+    private long test2RunTime = 0L;
 
     @Autowired
     public TestController(UserRepository userRepository,HashTagRepositoty hashTagRepositoty,CardRepository cardRepository) {
@@ -84,11 +83,19 @@ public class TestController {
     @GetMapping("/test1")
     Page<User> test1() throws ContapException {
         long startTime = System.currentTimeMillis();
-        Page<User> ad = userRepository.findAll(PageRequest.of(0, 9));
+
+        int page = new Random().nextInt(50);
+        Page<User> ad = userRepository.findAll(PageRequest.of(page, 9));
+
+
+
         long endTime = System.currentTimeMillis();
         long runTime = endTime - startTime;
+        test1RunTime += runTime;
+
         Logger log = LogManager.getLogger("APITime");
         log.error("test1user-----" + runTime+"ms");
+
         return ad;
     }
     @GetMapping("/test2")
@@ -98,6 +105,8 @@ public class TestController {
         List<Card> abc = cardRepository.findAllByUser(user);
         long endTime = System.currentTimeMillis();
         long runTime = endTime - startTime;
+        test2RunTime += runTime;
+
         Logger log = LogManager.getLogger("APITime");
         log.error("test2card" + runTime+"ms");
         return abc;
