@@ -38,14 +38,25 @@ public class User {
     private Long profile;
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnore
     private List<Card> cards;
+
+    @ManyToMany
+    private List<HashTag> tags;
 
     public User(String email, String pw, String userName, Long kakaoId) {
         this.email = email;
         this.pw = pw;
         this.userName = userName;
         this.kakaoId = kakaoId;
+    }
+
+    public User(Long id,String email, String pw, String userName, Long kakaoId,Long profile) {
+        this.id = id;
+        this.email = email;
+        this.pw = pw;
+        this.userName = userName;
+        this.kakaoId = kakaoId;
+        this.profile = profile;
     }
 
     public User(String email, String pw, String userName) {

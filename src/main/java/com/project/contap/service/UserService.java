@@ -4,28 +4,42 @@ import com.project.contap.dto.SignUpRequestDto;
 import com.project.contap.dto.UserRequestDto;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
-import com.project.contap.model.User;
+import com.project.contap.model.*;
+import com.project.contap.repository.CardRepository;
+import com.project.contap.repository.HashTagRepositoty;
 import com.project.contap.repository.UserRepository;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.QueryResults;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
+import java.util.*;
 
 @Service
 public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final JPAQueryFactory jpaQueryFactory;
+    private final CardRepository cardRepository;
+    private final HashTagRepositoty hashTagRepositoty;
 
 
     private static final String ADMIN_TOKEN = "AAABnv/xRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,JPAQueryFactory jpaQueryFactory,CardRepository cardRepository,HashTagRepositoty hashTagRepositoty) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jpaQueryFactory =jpaQueryFactory;
+        this.cardRepository = cardRepository;
+        this.hashTagRepositoty = hashTagRepositoty;
     }
 
 
@@ -113,6 +127,19 @@ public class UserService {
         result.put("result", "fail");
         result.put("message", "중복된 닉네임이 있습니다.");
         return result;
+    }
+
+
+    @Transactional
+    public List<User> getuser(List<HashTag> hashTags) {
+//        QHashUser hu = QHashUser.hashUser;
+//        QueryResults<User> abc =  jpaQueryFactory
+//                .select(hu.user).distinct()
+//                .from(hu)
+//                .where(hu.hashTag.in(hashTags))
+//                .fetchResults();
+//        List<User> ret = abc.getResults();
+        return null;
     }
 }
 
