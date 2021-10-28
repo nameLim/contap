@@ -1,19 +1,24 @@
 package com.project.contap.controller;
 
 import com.project.contap.dto.UserRequestDto;
+import com.project.contap.dto.UserResponseDto;
 import com.project.contap.exception.ContapException;
 import com.project.contap.model.Card;
 import com.project.contap.model.HashTag;
 import com.project.contap.model.User;
+import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.service.CardService;
 import com.project.contap.service.HashTagService;
 import com.project.contap.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class MainController {
