@@ -32,4 +32,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // 데이터 베이스 조회 속도 느릴때  이런식으로 쿼리문 작성해서 최적화를 해주세요.
     // 위의 함수는 Tag랑Card를 조회 하지 않는답니다~~
 
+
 }

@@ -1,12 +1,16 @@
 package com.project.contap.controller;
 
+import com.project.contap.dto.ProfileRequestDto;
 import com.project.contap.dto.SignUpRequestDto;
 import com.project.contap.dto.UserRequestDto;
 import com.project.contap.exception.ContapException;
 import com.project.contap.model.User;
+import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.security.jwt.JwtTokenProvider;
 import com.project.contap.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -63,6 +67,25 @@ public class UserController {
     public Map<String, String> duplicateNickname(@RequestBody SignUpRequestDto signUpRequestDto) {
         return userService.duplicateNickname(signUpRequestDto);
     }
+
+    @PostMapping("/user/image")
+    public Map<String, String> updateUserProfileImage(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody ProfileRequestDto requestDto) throws ContapException {
+        if (userDetails == null) {
+            throw new AuthenticationServiceException("로그인이 필요합니다.");
+        }
+        User user = userService.updateUserProfileImage(requestDto.getProfile(), userDetails.getUser().getEmail());
+        Map<String, String> result = new HashMap<>();
+
+        result.put("imageUrl", user.getProfile());
+        result.put("email", user.getEmail());
+        result.put("result", "success");
+
+        return result;
+    }
+
+
 //    @GetMapping("/auth")
 //    public Map<String, String> loginCheck(@AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
 //        if (userDetails == null) {

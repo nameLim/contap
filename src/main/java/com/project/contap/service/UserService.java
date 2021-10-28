@@ -2,12 +2,17 @@ package com.project.contap.service;
 
 import com.project.contap.dto.SignUpRequestDto;
 import com.project.contap.dto.UserRequestDto;
+import com.project.contap.dto.UserResponseDto;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
+import com.project.contap.model.Card;
+import com.project.contap.model.User;
+import com.project.contap.repository.CardRepository;
 import com.project.contap.model.*;
 import com.project.contap.repository.CardRepository;
 import com.project.contap.repository.HashTagRepositoty;
 import com.project.contap.repository.UserRepository;
+import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.util.GetRandom;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
@@ -16,9 +21,15 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
@@ -69,18 +80,18 @@ public class UserService {
         String password = requestDto.getPw();
         String passwordCheck = requestDto.getPwCheck();
 
-//        if (!password.isEmpty() && !passwordCheck.isEmpty()) {
-//            if (password.length() >= 6 && password.length() <= 20) {
-//                if (!password.equals(passwordCheck)) {
-//                    throw new ContapException(ErrorCode.USER_NOT_FOUND);
-//                }
-//            } else {
-//                throw new ContapException(ErrorCode.PASSWORD_PATTERN_LENGTH);
-//
-//            }
-//        } else {
-//            throw new ContapException(ErrorCode.PASSWORD_ENTER);
-//        }
+        if (!password.isEmpty() && !passwordCheck.isEmpty()) {
+            if (password.length() >= 6 && password.length() <= 20) {
+                if (!password.equals(passwordCheck)) {
+                    throw new ContapException(ErrorCode.USER_NOT_FOUND);
+                }
+            } else {
+                throw new ContapException(ErrorCode.PASSWORD_PATTERN_LENGTH);
+
+            }
+        } else {
+            throw new ContapException(ErrorCode.PASSWORD_ENTER);
+        }
 
 
 
@@ -130,8 +141,30 @@ public class UserService {
         result.put("message", "중복된 닉네임이 있습니다.");
         return result;
     }
+    // 유저 정보 뿌리기
+    public Page<User> main(Pageable pageable) {
+//        return userRepository.findAllByOrderByModifiedDtDesc(pageable);
+        return null;
+    }
 
+    public User getUsers(Long id) throws ContapException {
+        return userRepository.findById(id).orElseThrow(
+                () -> new ContapException(ErrorCode.CARD_NOT_FOUND)
+        );
+    }
 
+    public List<UserResponseDto> getUserDtoList(UserDetailsImpl userDetails) {
+        List<User> users = userRepository.findAll();
+        return UserResponseDto.listOf(users, userDetails);
+    }
+
+    public User updateUserProfileImage(String profile, String userId) throws ContapException {
+        User user = userRepository.findByEmail(userId).orElseThrow(
+                () -> new ContapException(ErrorCode.USER_NOT_FOUND)
+        );
+        user.setProfile(profile);
+        return userRepository.save(user);
+    }
     @Transactional
     public List<UserRequestDto> getuser(List<HashTag> hashTags) {
         QUser hu = QUser.user;
@@ -154,3 +187,4 @@ public class UserService {
         return abc;
     }
 }
+

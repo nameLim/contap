@@ -13,18 +13,17 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Card {
+public class Card extends TimeStamped{
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    @JoinColumn(name = "User_id")
     private User user;
 
     @Column
-    private Integer cardOrder; // (1~10)
+    private Long cardOrder; // (1~10)
 
     @Column
     private String title;
@@ -36,7 +35,7 @@ public class Card {
     private List<HashTag> Tags;
 
 
-    public Card(User user, Integer cardOrder, String title, String content)
+    public Card(User user, Long cardOrder, String title, String content)
     {
         this.user = user;
         this.cardOrder = cardOrder;

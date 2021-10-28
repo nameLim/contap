@@ -23,7 +23,7 @@ public class UserKakaoController {
     }
 
     //카카오
-    @GetMapping("/kakao/callback")
+    @GetMapping("/user/kakao")
     public Map<String,String> kakaoLogin(@RequestParam String code) throws JsonProcessingException {
         User user = kakaoUserService.kakaoLogin(code);
 

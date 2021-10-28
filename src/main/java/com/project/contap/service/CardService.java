@@ -32,4 +32,9 @@ public class CardService {
         List<Card> ret = abc.getResults();
         return ret;
     }
+//    public Card getCards(Long id) throws ContapException {
+//        return cardRepository.findById(id).orElseThrow(
+//                () -> new ContapException(ErrorCode.CARD_NOT_FOUND)
+//        );
+//    }
 }
