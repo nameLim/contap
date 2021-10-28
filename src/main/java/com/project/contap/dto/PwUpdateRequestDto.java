@@ -11,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PwUpdateRequestDto {
 
+    private Long id;
     private String currentPw;
     private String newPw;
     private String newPwCheck;

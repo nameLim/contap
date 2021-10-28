@@ -159,15 +159,17 @@ public class UserService {
 
     }
 
-    private User getUsers(String email) throws ContapException {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new ContapException(ErrorCode.REGISTER_ERROR));
-    }
+//    private User getUsers(String email) throws ContapException {
+//        return userRepository.findByEmail(email)
+//                .orElseThrow(() -> new ContapException(ErrorCode.REGISTER_ERROR));
+//    }
 
     //비밀번호 변경
     @Transactional
-    public void updatePassword(PwUpdateRequestDto requestDto,String email) throws ContapException {
-        User user = getUsers(email);
+    public void updatePassword(PwUpdateRequestDto requestDto) throws ContapException {
+        User user = userRepository.findById(requestDto.getId()).orElseThrow(
+                ()->  new ContapException(ErrorCode.REGISTER_ERROR)
+        );
 
         if(!passwordEncoder.matches(requestDto.getCurrentPw(), user.getPw())){
             throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);

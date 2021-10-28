@@ -100,8 +100,8 @@ public class UserController {
     }
 
     @PostMapping("/setting/password")
-    public Map<String,String> updateMyPassword(@RequestBody PwUpdateRequestDto requestDto, UserDetailsImpl userDetails) throws ContapException {
-        userService.updatePassword(requestDto, userDetails.getUsername());
+    public Map<String,String> updateMyPageInfoPassword(@RequestBody PwUpdateRequestDto requestDto) throws ContapException {
+        userService.updatePassword(requestDto);
 
         Map<String,String> result = new HashMap<>();
         result.put("result", "success");
