@@ -3,6 +3,7 @@ package com.project.contap.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.contap.dto.SignUpRequestDto;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-
+@EqualsAndHashCode
 public class User {
 
     // ID가 자동으로 생성 및 증가합니다.
@@ -35,7 +36,7 @@ public class User {
     private Long kakaoId;
 
     @Column(unique = true) // profile img path
-    private Long profile;
+    private String profile;
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
@@ -53,6 +54,7 @@ public class User {
         this.pw = pw;
         this.userName = userName;
         this.kakaoId = null;
+
     }
 
     public User(SignUpRequestDto signUpRequestDto) {
@@ -60,5 +62,6 @@ public class User {
         this.pw = signUpRequestDto.getPw();
         this.userName = signUpRequestDto.getUserName();
         this.kakaoId = null;
+        this.profile = "https://district93.org/wp-content/uploads/2017/07/icon-user-default.png";
     }
 }

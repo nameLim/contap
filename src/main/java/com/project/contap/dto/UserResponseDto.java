@@ -5,6 +5,7 @@ import com.project.contap.security.UserDetailsImpl;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,11 +15,14 @@ public class UserResponseDto {
 
     private String email;
     private String userName;
+    private String profile;
+    private LocalDateTime InsertDt;
 
     public static UserResponseDto of(User user) {
         return UserResponseDto.builder()
                 .email(user.getEmail())
                 .userName(user.getUserName())
+                .profile(user.getProfile())
                 .build();
     }
 

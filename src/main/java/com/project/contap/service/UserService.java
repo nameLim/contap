@@ -140,5 +140,13 @@ public class UserService {
         List<User> users = userRepository.findAll();
         return UserResponseDto.listOf(users, userDetails);
     }
+
+    public User updateUserProfileImage(String profile, String userId) throws ContapException {
+        User user = userRepository.findByEmail(userId).orElseThrow(
+                () -> new ContapException(ErrorCode.USER_NOT_FOUND)
+        );
+        user.setProfile(profile);
+        return userRepository.save(user);
+    }
 }
 
