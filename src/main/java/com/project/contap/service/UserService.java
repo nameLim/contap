@@ -2,12 +2,14 @@ package com.project.contap.service;
 
 import com.project.contap.dto.SignUpRequestDto;
 import com.project.contap.dto.UserRequestDto;
+import com.project.contap.dto.UserResponseDto;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
 import com.project.contap.model.Card;
 import com.project.contap.model.User;
 import com.project.contap.repository.CardRepository;
 import com.project.contap.repository.UserRepository;
+import com.project.contap.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -131,6 +134,11 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(
                 () -> new ContapException(ErrorCode.CARD_NOT_FOUND)
         );
+    }
+
+    public List<UserResponseDto> getUserDtoList(UserDetailsImpl userDetails) {
+        List<User> users = userRepository.findAll();
+        return UserResponseDto.listOf(users, userDetails);
     }
 }
 
