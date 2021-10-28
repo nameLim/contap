@@ -13,6 +13,7 @@ import java.util.List;
 @Builder
 public class UserResponseDto {
 
+    private Long userId;
     private String email;
     private String userName;
     private String profile;
@@ -23,6 +24,7 @@ public class UserResponseDto {
                 .email(user.getEmail())
                 .userName(user.getUserName())
                 .profile(user.getProfile())
+                .userId(user.getId())
                 .build();
     }
 

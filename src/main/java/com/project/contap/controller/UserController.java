@@ -52,7 +52,7 @@ public class UserController {
         Map<String, String> result = new HashMap<>();
         result.put("token", jwtTokenProvider.createToken(user.getEmail(), user.getEmail(), user.getUserName())); // "username" : {username}
         result.put("email", user.getEmail());
-        result.put("nickname", user.getUserName());
+        result.put("userName", user.getUserName());
         result.put("result", "success");
 
         return result;
