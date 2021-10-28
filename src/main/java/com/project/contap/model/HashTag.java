@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @Getter
 public class HashTag {
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
 
@@ -21,13 +21,13 @@ public class HashTag {
     private String name;
 
     @Column
-    private Integer type;
+    private int type; //0:stack, 1:interest
 
     @ManyToMany(mappedBy = "tags")
     @JsonIgnore
     private List<User> users;
 
-    public HashTag(String name, Integer type)
+    public HashTag(String name, int type)
     {
         this.name=  name;
         this.type = type;

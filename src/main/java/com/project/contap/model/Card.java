@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Card {
+public class Card extends TimeStamped{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
