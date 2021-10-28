@@ -51,11 +51,6 @@ public class MypageService {
 
         //Card
         List<Card> userCards = user.getCards();
-        List<Card> requestUserCards = requestUser.getCards();
-
-        if(userCards.size() != requestUserCards.size())
-            throw new ContapException(ErrorCode.WRONG_USER); //잘못된 회원정보가 존재합니다.
-
         List<CardDto> cardDtoList = new ArrayList<>();
 
         for(Card card: userCards) {
