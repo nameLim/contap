@@ -5,9 +5,7 @@ import com.project.contap.dto.UserRequestDto;
 import com.project.contap.dto.UserResponseDto;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
-import com.project.contap.model.Card;
 import com.project.contap.model.User;
-import com.project.contap.repository.CardRepository;
 import com.project.contap.repository.UserRepository;
 import com.project.contap.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +36,18 @@ public class UserService {
 
 
     public User registerUser(SignUpRequestDto requestDto) throws ContapException {
-
+        if (requestDto.getEmail() == "") {
+            throw new ContapException(ErrorCode.REGISTER_ERROR);
+        }
+        if (requestDto.getPw() == "") {
+            throw new ContapException(ErrorCode.REGISTER_ERROR);
+        }
+        if (requestDto.getPwCheck() == "") {
+            throw new ContapException(ErrorCode.REGISTER_ERROR);
+        }
+        if (requestDto.getUserName() == "") {
+            throw new ContapException(ErrorCode.REGISTER_ERROR);
+        }
         // 패스워드 암호화
         String pw = passwordEncoder.encode(requestDto.getPw());
 
@@ -63,7 +73,7 @@ public class UserService {
         if (!password.isEmpty() && !passwordCheck.isEmpty()) {
             if (password.length() >= 6 && password.length() <= 20) {
                 if (!password.equals(passwordCheck)) {
-                    throw new ContapException(ErrorCode.USER_NOT_FOUND);
+                    throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
                 }
             } else {
                 throw new ContapException(ErrorCode.PASSWORD_PATTERN_LENGTH);
@@ -73,9 +83,7 @@ public class UserService {
             throw new ContapException(ErrorCode.PASSWORD_ENTER);
         }
 
-
-
-
+        //회원정보 저장
         User user = new User(email, pw, userName);
         return userRepository.save(user);
     }
@@ -85,7 +93,6 @@ public class UserService {
                 () -> new ContapException(ErrorCode.USER_NOT_FOUND)
         );
 
-        // 패스워드 암호화
         if (!passwordEncoder.matches(requestDto.getPw(), user.getPw())) {
             throw new ContapException(ErrorCode.USER_NOT_FOUND);
         }
@@ -93,7 +100,7 @@ public class UserService {
         return user;
     }
 
-    // 로그인 중복 email
+    // 가입 중복 email
     public Map<String, String> duplicateId(UserRequestDto userRequestDto) {
         User user = userRepository.findByEmail(userRequestDto.getEmail()).orElse(null);
 
@@ -108,8 +115,8 @@ public class UserService {
         return result;
     }
 
-    //로그인 중복 닉네임
-    public Map<String, String> duplicateNickname(SignUpRequestDto signUpRequestDto) {
+    //로그인 닉네임 중복체크
+    public Map<String, String> duplicateuserName(SignUpRequestDto signUpRequestDto) {
         User user = userRepository.findByUserName(signUpRequestDto.getUserName()).orElse(null);
         Map<String, String> result = new HashMap<>();
         if (user == null) {
@@ -123,24 +130,14 @@ public class UserService {
     }
 
 
-
     // 유저 정보 뿌리기
-    public Page<User> main(Pageable pageable) {
-//        return userRepository.findAllByOrderByModifiedDtDesc(pageable);
-        return null;
-    }
-
-    public User getUsers(Long id) throws ContapException {
-        return userRepository.findById(id).orElseThrow(
-                () -> new ContapException(ErrorCode.CARD_NOT_FOUND)
-        );
-    }
-
     public List<UserResponseDto> getUserDtoList(UserDetailsImpl userDetails) {
         List<User> users = userRepository.findAll();
         return UserResponseDto.listOf(users, userDetails);
     }
 
+
+    //유저 프로필 사진 수정
     public User updateUserProfileImage(String profile, String userId) throws ContapException {
         User user = userRepository.findByEmail(userId).orElseThrow(
                 () -> new ContapException(ErrorCode.USER_NOT_FOUND)
@@ -148,5 +145,10 @@ public class UserService {
         user.setProfile(profile);
         return userRepository.save(user);
     }
-}
 
+
+
+
+
+
+}

@@ -11,9 +11,7 @@ import com.project.contap.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,9 +61,9 @@ public class UserController {
         return userService.duplicateId(userRequestDto);
     }
 
-    @PostMapping("/signup/duplicate_nickname")
-    public Map<String, String> duplicateNickname(@RequestBody SignUpRequestDto signUpRequestDto) {
-        return userService.duplicateNickname(signUpRequestDto);
+    @PostMapping("/signup/namecheck")
+    public Map<String, String> duplicateuserName(@RequestBody SignUpRequestDto signUpRequestDto) {
+        return userService.duplicateuserName(signUpRequestDto);
     }
 
     @PostMapping("/user/image")
@@ -78,12 +76,14 @@ public class UserController {
         User user = userService.updateUserProfileImage(requestDto.getProfile(), userDetails.getUser().getEmail());
         Map<String, String> result = new HashMap<>();
 
-        result.put("imageUrl", user.getProfile());
+        result.put("profile", user.getProfile());
         result.put("email", user.getEmail());
         result.put("result", "success");
 
         return result;
     }
+
+
 
 
 //    @GetMapping("/auth")

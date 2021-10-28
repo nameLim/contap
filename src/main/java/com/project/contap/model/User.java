@@ -42,13 +42,13 @@ public class User {
     @JsonIgnore
     private List<Card> cards;
 
-    public User(String email, String pw, String userName, Long kakaoId) {
-        this.email = email;
-        this.pw = pw;
-        this.userName = userName;
-        this.kakaoId = kakaoId;
-    }
-
+//    public User(String email, String pw, String userName, Long kakaoId) {
+//        this.email = email;
+//        this.pw = pw;
+//        this.userName = userName;
+//        this.kakaoId = kakaoId;
+//    }
+//
     public User(String email, String pw, String userName) {
         this.email = email;
         this.pw = pw;
@@ -64,4 +64,6 @@ public class User {
         this.kakaoId = null;
         this.profile = "https://district93.org/wp-content/uploads/2017/07/icon-user-default.png";
     }
+
+
 }
