@@ -33,6 +33,9 @@ public class Card extends TimeStamped{
     @Column
     private String filePath;
 
+    @Column
+    private String hashTagsString;
+
     @ManyToMany
     private List<HashTag> Tags;
 
