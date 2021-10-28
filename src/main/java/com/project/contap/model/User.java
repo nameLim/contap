@@ -1,7 +1,7 @@
 package com.project.contap.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.contap.dto.SignUpRequestDto;
+
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,10 +16,9 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class User {
-
+public class User extends TimeStamped{
     // ID가 자동으로 생성 및 증가합니다.
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
 
@@ -35,13 +34,19 @@ public class User {
     @Column(unique = true)
     private Long kakaoId;
 
-    @Column(unique = true) // profile img path
+    @Column(unique = false) // profile img path
     private String profile;
 
-    @OneToMany(mappedBy = "user")
+    @Column
+    private String hashTagsString;
+
+    @Column(nullable = false)
+    private AuthorityEnum authorityEnum;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Card> cards;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<HashTag> tags;
 
     public User(String email, String pw, String userName, Long kakaoId) {
@@ -49,6 +54,7 @@ public class User {
         this.pw = pw;
         this.userName = userName;
         this.kakaoId = kakaoId;
+        this.authorityEnum = AuthorityEnum.CANT_OTHER_READ;
     }
 
     public User(Long id,String email, String pw, String userName, Long kakaoId,String profile) {
@@ -58,6 +64,7 @@ public class User {
         this.userName = userName;
         this.kakaoId = kakaoId;
         this.profile = profile;
+        this.authorityEnum = AuthorityEnum.CANT_OTHER_READ;
     }
 
     public User(String email, String pw, String userName) {
@@ -65,6 +72,7 @@ public class User {
         this.pw = pw;
         this.userName = userName;
         this.kakaoId = null;
+        this.authorityEnum = AuthorityEnum.CANT_OTHER_READ;
 
     }
 

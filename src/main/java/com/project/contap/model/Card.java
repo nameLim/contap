@@ -1,7 +1,6 @@
 package com.project.contap.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 public class Card extends TimeStamped{
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
 
@@ -31,16 +30,19 @@ public class Card extends TimeStamped{
     @Column
     private String content;
 
+    @Column
+    private String filePath;
+
+    @Column
+    private String hashTagsString;
+
     @ManyToMany
     private List<HashTag> Tags;
 
-
-    public Card(User user, Long cardOrder, String title, String content)
-    {
+    public Card(User user, Long cardOrder, String title, String content){
         this.user = user;
         this.cardOrder = cardOrder;
         this.title = title;
         this.content = content;
     }
-
 }

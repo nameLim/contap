@@ -20,7 +20,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 @RestController
 public class TestController {
@@ -66,5 +68,43 @@ public class TestController {
         return "DBSet 완료염~";
     }
 
+    @GetMapping("/test2")
+    public List<Card> test2() throws ContapException {
+        long startTime = System.currentTimeMillis();
+        test2cnt = test2cnt +1;
+        Random random = new Random();
+        Long userId = Long.valueOf(random.nextInt(5000));
+        if(userId == 0L)
+            userId = 1L;
+        User user = userRepository.findById(userId).orElse(null);
+        List<Card> abc = cardRepository.findAllByUser(userId);
+        long endTime = System.currentTimeMillis();
+        long runTime = endTime - startTime;
+        test2RunTime = runTime + test2RunTime;
+        Logger log = LogManager.getLogger("test2");
+        log.error(runTime+"ms");
+        return abc;
+    }
 
+    @GetMapping("/test1/getRuntime")
+    List<Long> getTest1RunTime() throws ContapException {
+        List<Long> a = new ArrayList<>();
+        a.add(test1RunTime);
+        a.add(test1cnt);
+        return a;
+    }
+
+    @GetMapping("/test2/getRuntime")
+    List<Long> getTest2RunTime() throws ContapException {
+        List<Long> a = new ArrayList<>();
+        a.add(test2RunTime);
+        a.add(test2cnt);
+        return a;
+    }
+
+    @GetMapping("/test3")
+    void getTest1123RunTime() throws ContapException {
+        Logger log = LogManager.getLogger("test2");
+        log.error("for test!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    }
 }

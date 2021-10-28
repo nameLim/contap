@@ -12,6 +12,7 @@ public class ContapException extends RuntimeException {
     public ContapException(ErrorCode errorCode) {
         this.errorCode = errorCode;
     }
+
     public ContapException(ErrorCode errorCode,Object data) {
         this.errorCode = errorCode;
         this.data = data;
