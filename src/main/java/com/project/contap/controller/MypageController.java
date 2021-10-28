@@ -21,7 +21,7 @@ public class MypageController {
     }
 
     @PostMapping("/frontCard")
-    public UserFrontCardDto modifyFrontCard(@RequestParam UserFrontCardDto userFrontCardDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public UserFrontCardDto modifyFrontCard(@RequestBody UserFrontCardDto userFrontCardDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return mypageService.modifyFrontCard(userFrontCardDto, userDetails.getUser());
     }
 }
