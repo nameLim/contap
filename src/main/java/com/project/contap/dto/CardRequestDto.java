@@ -10,11 +10,11 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 public class CardRequestDto {
-//    private Long id;
-//    private String userName;
-//    private Long cardId;
-//    private String content;
-//    private String imageUrl;
+
+    private Long id;
+    private String content;
+    private String title;
+    private Long cardId;
 
 
 

@@ -4,9 +4,13 @@ import com.project.contap.dto.SignUpRequestDto;
 import com.project.contap.dto.UserRequestDto;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
+import com.project.contap.model.Card;
 import com.project.contap.model.User;
+import com.project.contap.repository.CardRepository;
 import com.project.contap.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -113,6 +117,20 @@ public class UserService {
         result.put("result", "fail");
         result.put("message", "중복된 닉네임이 있습니다.");
         return result;
+    }
+
+
+
+    // 유저 정보 뿌리기
+    public Page<User> main(Pageable pageable) {
+//        return userRepository.findAllByOrderByModifiedDtDesc(pageable);
+        return null;
+    }
+
+    public User getUsers(Long id) throws ContapException {
+        return userRepository.findById(id).orElseThrow(
+                () -> new ContapException(ErrorCode.CARD_NOT_FOUND)
+        );
     }
 }
 

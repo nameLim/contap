@@ -15,14 +15,14 @@ public class Card extends TimeStamped{
     @Id
     private Long id;
 
+    @ManyToOne
+    private User user;
+
     @Column(nullable = false)
     private String content;
 
     @Column(nullable = false)
-    private String userName;
-
-    @Column(nullable = false)
-    private String imageUrl;
+    private String title;
 
     @Column(nullable = false)
     private Long cardId;
