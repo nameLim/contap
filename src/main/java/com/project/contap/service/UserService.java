@@ -1,16 +1,12 @@
 package com.project.contap.service;
 
-import com.project.contap.dto.SignUpRequestDto;
-import com.project.contap.dto.UserRequestDto;
-import com.project.contap.dto.UserResponseDto;
+import com.project.contap.dto.*;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
 import com.project.contap.model.User;
 import com.project.contap.repository.UserRepository;
 import com.project.contap.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -48,8 +44,6 @@ public class UserService {
         if (requestDto.getUserName() == "") {
             throw new ContapException(ErrorCode.REGISTER_ERROR);
         }
-        // 패스워드 암호화
-        String pw = passwordEncoder.encode(requestDto.getPw());
 
         //가입 email(id) 중복체크
         String email = requestDto.getEmail();
@@ -83,11 +77,15 @@ public class UserService {
             throw new ContapException(ErrorCode.PASSWORD_ENTER);
         }
 
+        // 패스워드 암호화
+        String pw = passwordEncoder.encode(requestDto.getPw());
+
         //회원정보 저장
         User user = new User(email, pw, userName);
         return userRepository.save(user);
     }
 
+    //로그인
     public User login(UserRequestDto requestDto) throws ContapException {
         User user = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(
                 () -> new ContapException(ErrorCode.USER_NOT_FOUND)
@@ -148,10 +146,38 @@ public class UserService {
 
     //회원탈퇴
     @Transactional
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+    public void deleteUser( PwRequestDto requestDto) throws ContapException {
+        if (!requestDto.getPw().equals(requestDto.getPwCheck())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+        User user = userRepository.findById(requestDto.getId()).orElseThrow(
+                ()-> new ContapException(ErrorCode.NOT_EQUAL_PASSWORD)
+        );
+        if (passwordEncoder.matches(requestDto.getPw(), user.getPw())) {
+            userRepository.delete(user);
+        }
+
     }
 
+    private User getUsers(String email) throws ContapException {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ContapException(ErrorCode.REGISTER_ERROR));
+    }
+
+    //비밀번호 변경
+    @Transactional
+    public void updatePassword(PwUpdateRequestDto requestDto,String email) throws ContapException {
+        User user = getUsers(email);
+
+        if(!passwordEncoder.matches(requestDto.getCurrentPw(), user.getPw())){
+            throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
+        }
+
+        String newPw = passwordEncoder.encode(requestDto.getNewPw());
+        requestDto.setNewPw(newPw);
+
+        user.updatePw(requestDto);
+    }
 
 
 

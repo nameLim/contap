@@ -1,16 +1,18 @@
 package com.project.contap.controller;
 
-import com.project.contap.dto.ProfileRequestDto;
-import com.project.contap.dto.SignUpRequestDto;
-import com.project.contap.dto.UserRequestDto;
+import com.project.contap.dto.*;
 import com.project.contap.exception.ContapException;
 import com.project.contap.model.User;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.security.jwt.JwtTokenProvider;
 import com.project.contap.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -85,8 +87,10 @@ public class UserController {
 
     //회원탈퇴
     @DeleteMapping("/setting/withdrawal")
-    public Map<String, String> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
+    public Map<String, String> deleteUser(@RequestBody PwRequestDto requestDto) throws ContapException {
+
+
+        userService.deleteUser(requestDto);
 
         Map<String, String> result = new HashMap<>();
         result.put("result", "success");
@@ -94,6 +98,18 @@ public class UserController {
         return result;
 
     }
+
+    @PostMapping("/setting/password")
+    public Map<String,String> updateMyPassword(@RequestBody PwUpdateRequestDto requestDto, UserDetailsImpl userDetails) throws ContapException {
+        userService.updatePassword(requestDto, userDetails.getUsername());
+
+        Map<String,String> result = new HashMap<>();
+        result.put("result", "success");
+
+        return result;
+    }
+
+
 
 
 //    @GetMapping("/auth")

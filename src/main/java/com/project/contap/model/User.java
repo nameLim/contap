@@ -1,6 +1,8 @@
 package com.project.contap.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.contap.dto.PwRequestDto;
+import com.project.contap.dto.PwUpdateRequestDto;
 import com.project.contap.dto.SignUpRequestDto;
 
 import lombok.EqualsAndHashCode;
@@ -63,6 +65,11 @@ public class User {
         this.userName = signUpRequestDto.getUserName();
         this.kakaoId = null;
         this.profile = "https://district93.org/wp-content/uploads/2017/07/icon-user-default.png";
+    }
+
+
+    public void updatePw(PwUpdateRequestDto requestDto) {
+        this.pw = requestDto.getNewPw();
     }
 
 
