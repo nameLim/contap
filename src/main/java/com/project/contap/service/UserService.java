@@ -146,7 +146,11 @@ public class UserService {
         return userRepository.save(user);
     }
 
-
+    //회원탈퇴
+    @Transactional
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
 
 
 

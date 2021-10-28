@@ -83,7 +83,17 @@ public class UserController {
         return result;
     }
 
+    //회원탈퇴
+    @DeleteMapping("/setting/withdrawal")
+    public Map<String, String> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
 
+        Map<String, String> result = new HashMap<>();
+        result.put("result", "success");
+
+        return result;
+
+    }
 
 
 //    @GetMapping("/auth")
