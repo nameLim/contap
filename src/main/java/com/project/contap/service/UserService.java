@@ -27,10 +27,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.*;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 @Service
 public class UserService {
@@ -69,6 +74,10 @@ public class UserService {
 
         //가입 email(id) 중복체크
         String email = requestDto.getEmail();
+        if (!isValidEmail(email)) {
+            throw new ContapException(ErrorCode.EMAIL_FORM_INVALID);
+        }
+
         Optional<User> found = userRepository.findByEmail(email);
         if (found.isPresent()) {
             throw new ContapException(ErrorCode.EMAIL_DUPLICATE);
@@ -107,6 +116,18 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    //이메일 검사
+    private boolean isValidEmail(String email) {
+        boolean err = false;
+        String regex = "^[_a-z0-9-]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(email);
+        if (m.matches()) {
+            err = true;
+        }
+        return err;
+    }
+
     //로그인
     public User login(UserRequestDto requestDto) throws ContapException {
         User user = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(
@@ -114,7 +135,7 @@ public class UserService {
         );
 
         if (!passwordEncoder.matches(requestDto.getPw(), user.getPw())) {
-            throw new ContapException(ErrorCode.USER_NOT_FOUND);
+            throw new ContapException(ErrorCode. NOT_EQUAL_PASSWORD);
         }
 
         return user;
@@ -222,11 +243,6 @@ public class UserService {
         }
 
     }
-
-//    private User getUsers(String email) throws ContapException {
-//        return userRepository.findByEmail(email)
-//                .orElseThrow(() -> new ContapException(ErrorCode.REGISTER_ERROR));
-//    }
 
     //비밀번호 변경
     @Transactional

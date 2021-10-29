@@ -11,18 +11,9 @@ public class RestApiExceptionHandler {
     @ExceptionHandler(value = { Exception.class })
     public ResponseEntity<Object> handleApiRequestException(Exception ex) throws Exception{
         RestApiException restApiException = new RestApiException();
-//        restApiException.setResult("fail");
-//        if(ex.getClass().equals("contaptex"))
-//        {
-//            ex = (ContapException) ex;
-//            restApiException.setHttpStatus(HttpStatus.OK);
-//            restApiException.setErrorMessage(ex.gete().getMessage());
-//        }
-//        else
-//        {
-//            restApiException.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-//            restApiException.setErrorMessage("서버에 문의해주세요");
-//        }
+        restApiException.setResult("fail");
+        restApiException.setHttpStatus(HttpStatus.BAD_REQUEST);
+        restApiException.setErrorMessage(ex.getMessage());
 
 
         return new ResponseEntity(
