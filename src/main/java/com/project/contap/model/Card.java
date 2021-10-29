@@ -1,6 +1,7 @@
 package com.project.contap.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.contap.dto.BackRequestCardDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -36,8 +37,8 @@ public class Card extends TimeStamped{
     @Column
     private String hashTagsString;
 
-    @ManyToMany
-    private List<HashTag> Tags;
+    @ManyToMany(cascade = CascadeType.ALL)
+    private List<HashTag> tags;
 
 
     public Card(User user, Long cardOrder, String title, String content, String filePath)
@@ -47,5 +48,19 @@ public class Card extends TimeStamped{
         this.title = title;
         this.content = content;
         this.filePath = filePath;
+    }
+
+    public boolean isWritedBy(User user) {
+        return this.user.getEmail().equals(user.getEmail());
+    }
+    public List<HashTag> addHashTag(HashTag tag) {
+        this.tags.add(tag);
+        return this.tags;
+    }
+    public void update(BackRequestCardDto backRequestCardDto, List<HashTag> tags, String tagString) {
+        this.title = backRequestCardDto.getTitle();
+        this.content = backRequestCardDto.getContent();
+        this.hashTagsString = tagString;
+        this.tags = tags;
     }
 }

@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserFrontCardDto {
+public class FrontRequestCardDto {
     private String profile;
     private String userName;
     private List<String> stackHashTags;

@@ -1,25 +1,26 @@
 package com.project.contap.service;
 
-import com.project.contap.dto.CardDto;
-import com.project.contap.dto.UserFrontCardDto;
-import com.project.contap.dto.UserInfoDto;
+import com.project.contap.dto.*;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
+import com.project.contap.model.AuthorityEnum;
 import com.project.contap.model.Card;
 import com.project.contap.model.HashTag;
 import com.project.contap.model.User;
+import com.project.contap.repository.CardRepository;
 import com.project.contap.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
 public class MypageService {
 
     private final UserRepository userRepository;
+    private final CardRepository cardRepository;
 
     // 회원 정보 가져오기
     // 가져오는 값 : 기본 회원정보(앞면카드), 모든 뒷면카드
@@ -30,93 +31,216 @@ public class MypageService {
         }
 
         User user = userRepository.findById(requestUser.getId()).orElse(null);
-        if(!user.getEmail().equals(requestUser.getEmail()))
-            throw new ContapException(ErrorCode.USER_NOT_FOUND); //회원 정보를 찾을 수 없습니다.
-
-        // Hash Tag
-        List<HashTag> userHashTags = user.getTags() != null ? user.getTags() : new ArrayList<>();
-        List<String> stackHashTags = new ArrayList<>();
-        List<String> interestHashTags = new ArrayList<>();
-
-        for (HashTag hashTag : userHashTags) {
-            int type = hashTag.getType();
-            if (type == 0) // stack
-                stackHashTags.add(hashTag.getName());
-            else if (type == 1) // interest
-                interestHashTags.add(hashTag.getName());
-            else {
-                throw new ContapException(ErrorCode.WRONG_HASHTAG_TYPE); //잘못된 해쉬태그타입이 존재합니다. 관리자에게 문의하세요.
-            }
-        }
+        if(user.getEmail()!=null && !user.isWritedBy(requestUser))
+            throw new ContapException(ErrorCode.ACCESS_DENIED); //권한이 없습니다.
 
         //Card
         List<Card> userCards = user.getCards();
-        List<CardDto> cardDtoList = new ArrayList<>();
+        List<BackResponseCardDto> cardDtoList = new ArrayList<>();
 
         for(Card card: userCards) {
-            CardDto cardDto = CardDto.builder()
-                            .cardId(card.getId())
-                            .title(card.getTitle())
-                            .content(card.getContent())
-                            .stackHashTags(stackHashTags)
-                            .interestHashTags(interestHashTags).build();
+            BackResponseCardDto cardDto = BackResponseCardDto.builder()
+                                .cardId(card.getId())
+                                .userId(card.getUser().getId())
+                                .title(card.getTitle())
+                                .hashTagsString(card.getHashTagsString())
+                                .content(card.getContent()).build();
             cardDtoList.add(cardDto);
         }
 
         UserInfoDto userInfoDto = UserInfoDto.builder()
                                                 .userId(user.getId())
+                                                .password(user.getPw())
                                                 .userName(user.getUserName())
                                                 .profile(user.getProfile())
-                                                .stackHashTags(stackHashTags)
-                                                .interestHashTags(interestHashTags)
+                                                .authorityEnum(user.getAuthorityEnum())
                                                 .cardDtoList(cardDtoList).build();
-
         return userInfoDto;
     }
 
     //앞면 카드 정보 수정
-    public UserFrontCardDto modifyFrontCard(UserFrontCardDto userFrontCardDto, User requestUser){
-            // 변경할 수 있는 값 : profile, userName, hashTags
+    // 변경할 수 있는 값 : profile, userName, hashTags
+    public FrontResponseCardDto modifyFrontCard(FrontRequestCardDto frontRequestCardDto, User requestUser){
 
         if (requestUser == null) {
             throw new ContapException(ErrorCode.USER_NOT_FOUND); //회원 정보를 찾을 수 없습니다.
         }
 
         User user = userRepository.findById(requestUser.getId()).orElse(null);
-        if (!user.getEmail().equals(requestUser.getEmail()))
+        if (user.getEmail()!=null && !user.isWritedBy(requestUser))
+            throw new ContapException(ErrorCode.ACCESS_DENIED); //권한이 없습니다.
+
+        //tags 만들기
+        List<String> stackTagStringList = frontRequestCardDto.getStackHashTags();
+        List<String> interestTagStringList = frontRequestCardDto.getInterestHashTags();
+
+        Map<List<HashTag>, String> userTagsList2String = makeTags(stackTagStringList, interestTagStringList);
+        List<HashTag> tagList = userTagsList2String.keySet().iterator().next();
+        String tagString = userTagsList2String.get(tagList);
+
+        //user 값 넣기
+        user.setProfile(frontRequestCardDto.getProfile());
+        user.setUserName(frontRequestCardDto.getUserName());
+        user.setTags(tagList);
+        user.setHashTagsString(tagString);
+        user = userRepository.save(user);
+
+        //response
+        FrontResponseCardDto frontResponseCardDto = FrontResponseCardDto.builder()
+                                                    .profile(user.getProfile())
+                                                    .userName(user.getUserName())
+                                                    .hashTagsString(tagString).build();
+        return frontResponseCardDto;
+    }
+
+    @Transactional
+    public BackResponseCardDto createBackCard(BackRequestCardDto backRequestCardDto, User requestUser) {
+
+        if(requestUser == null)
             throw new ContapException(ErrorCode.USER_NOT_FOUND); //회원 정보를 찾을 수 없습니다.
 
+        Card card = new Card();
+        User user = userRepository.findById(requestUser.getId()).orElse(null);
+        if (user.getEmail()==null && !user.isWritedBy(requestUser))
+            throw new ContapException(ErrorCode.ACCESS_DENIED); //권한이 없습니다.
 
-        List<HashTag> hashTagList = new ArrayList<>(); // user에  넣을 해쉬태그 리스트
-        List<String> tagStringList;
+        //tags 만들기
+        List<String> stackTagStringList = backRequestCardDto.getStackHashTags();
+        List<String> interestTagStringList = backRequestCardDto.getInterestHashTags();
+
+        Map<List<HashTag>, String> userTagsList2String = makeTags(stackTagStringList, interestTagStringList);
+
+        List<HashTag>  tagList = null;
+        String tagString = null;
+        Iterator iterator = userTagsList2String.keySet().iterator();
+        if(iterator.hasNext()) {
+            tagList = (List<HashTag>)iterator.next();
+            userTagsList2String.get(tagList);
+        }
+
+        // card 값 넣기
+        if(user.getCards().size() == 0) {
+            user.setAuthorityEnum(AuthorityEnum.CAN_OTHER_READ);
+            card.setCardOrder(1L);
+        }
+        else{
+            card.setCardOrder(Long.valueOf(user.getCards().size()));
+        }
+
+        card.setUser(user);
+        card.setTitle(backRequestCardDto.getTitle());
+        card.setContent(backRequestCardDto.getContent());
+        card.setHashTagsString(tagString);
+        for(HashTag hashTag: tagList) {
+            card.addHashTag(hashTag);
+        }
+//        card.setTags(tagList);
+        cardRepository.save(card);
+
+
+        //response
+        BackResponseCardDto reponseBackCardDto = BackResponseCardDto.builder()
+                                            .cardId(card.getId())
+                                            .userId(user.getId())
+                                            .title(card.getTitle())
+                                            .content(card.getContent())
+                                            .hashTagsString(card.getHashTagsString()).build();
+        return reponseBackCardDto;
+    }
+
+    public BackResponseCardDto modifyBackCard(Long cardId, BackRequestCardDto backRequestCardDto, User requestUser) {
+
+        if(requestUser == null)
+            throw new ContapException(ErrorCode.USER_NOT_FOUND); //회원 정보를 찾을 수 없습니다.
+
+        User user = userRepository.findById(requestUser.getId()).orElse(null);
+        if (user.getEmail()!=null && !user.isWritedBy(requestUser))
+            throw new ContapException(ErrorCode.ACCESS_DENIED); //권한이 없습니다.
+
+        Card card = cardRepository.findById(cardId).orElse(null);
+        if(card == null)
+            throw new ContapException(ErrorCode.NOT_FOUND_CARD); //해당 카드를 찾을 수 없습니다.
+        if(!card.isWritedBy(user))
+            throw new ContapException(ErrorCode.ACCESS_DENIED); //권한이 없습니다.
+
+        //tags 만들기
+        List<String> stackTagStringList = backRequestCardDto.getStackHashTags();
+        List<String> interestTagStringList = backRequestCardDto.getInterestHashTags();
+
+        Map<List<HashTag>, String> userTagsList2String = makeTags(stackTagStringList, interestTagStringList);
+        List<HashTag> tagList = userTagsList2String.keySet().iterator().next();
+        String tagString = userTagsList2String.get(tagList);
+
+        //card 값 넣기
+        card.update(backRequestCardDto, tagList, tagString);
+        cardRepository.save(card);
+
+        //response
+        return BackResponseCardDto.builder()
+                .cardId(card.getId())
+                .userId(card.getUser().getId())
+                .title(backRequestCardDto.getTitle())
+                .content(backRequestCardDto.getContent())
+                .hashTagsString(tagString)
+                .build();
+    }
+
+    public BackResponseCardDto deleteBackCard(Long cardId, User requestUser) {
+        if(requestUser == null)
+            throw new ContapException(ErrorCode.USER_NOT_FOUND); //회원 정보를 찾을 수 없습니다.
+
+        User user = userRepository.findById(requestUser.getId()).orElse(null);
+        if (user.getEmail()!=null && !user.isWritedBy(requestUser))
+            throw new ContapException(ErrorCode.USER_NOT_FOUND); //권한이 없습니다.
+
+        Card card = cardRepository.findById(cardId).orElse(null);
+        if(card == null)
+            throw new ContapException(ErrorCode.NOT_FOUND_CARD); //해당 카드를 찾을 수 없습니다.
+        if(!card.isWritedBy(user))
+            throw new ContapException(ErrorCode.ACCESS_DENIED); //권한이 없습니다.
+
+
+        cardRepository.delete(card);
+        if(user.getCards().size()<1)
+            user.setAuthorityEnum(AuthorityEnum.CANT_OTHER_READ);
+
+        userRepository.save(user);
+
+        //response
+        return BackResponseCardDto.builder()
+                .cardId(card.getId())
+                .userId(card.getUser().getId())
+                .title(card.getTitle())
+                .content(card.getContent())
+                .hashTagsString(card.getHashTagsString())
+                .build();
+    }
+
+    private Map<List<HashTag>, String> makeTags(List<String> stacks, List<String> interests) {
+
+        List<HashTag> hashTagList = new ArrayList<>();
         StringBuilder hashTagStr = new StringBuilder();
 
         //stackTags
-        tagStringList = userFrontCardDto.getStackHashTags();
-        if(tagStringList.size() > 0) {
-            for(String str: userFrontCardDto.getStackHashTags()) {
+        if(stacks.size()>0){
+            hashTagStr.append("@");
+            for(String str: stacks) {
                 hashTagList.add(new HashTag(str, 0));
-                hashTagStr.append("#"+str);
+                hashTagStr.append(str+"@");
             }
         }
 
         //interestTags
-        tagStringList = userFrontCardDto.getInterestHashTags();
-        if(tagStringList.size() > 0) {
-            hashTagStr.append("_");
-            for(String str: tagStringList) {
+        if(interests.size()>0){
+            hashTagStr.append("_@");
+            for(String str: interests) {
                 hashTagList.add(new HashTag(str, 1));
-                hashTagStr.append("#"+str);
+                hashTagStr.append(str+"@");
             }
         }
 
-        //user 값 넣기
-        user.setProfile(userFrontCardDto.getProfile());
-        user.setUserName(userFrontCardDto.getUserName());
-        user.setTags(hashTagList);
-        user.setHashTagsString(hashTagStr.toString());
-        userRepository.save(user);
-
-        return userFrontCardDto;
+        Map<List<HashTag>,String> tags = new HashMap<>();
+        tags.put(hashTagList, hashTagStr.toString());
+        return tags;
     }
 }

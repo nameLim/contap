@@ -1,7 +1,6 @@
 package com.project.contap.controller;
 
-import com.project.contap.dto.UserFrontCardDto;
-import com.project.contap.dto.UserInfoDto;
+import com.project.contap.dto.*;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.service.MypageService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,22 @@ public class MypageController {
     }
 
     @PostMapping("/frontCard")
-    public UserFrontCardDto modifyFrontCard(@RequestBody UserFrontCardDto userFrontCardDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return mypageService.modifyFrontCard(userFrontCardDto, userDetails.getUser());
+    public FrontResponseCardDto modifyFrontCard(@RequestBody FrontRequestCardDto frontRequestCardDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return mypageService.modifyFrontCard(frontRequestCardDto, userDetails.getUser());
+    }
+
+    @PostMapping("/backCard")
+    public BackResponseCardDto createBackCard(@RequestBody BackRequestCardDto backRequestCardDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return mypageService.createBackCard(backRequestCardDto, userDetails.getUser());
+    }
+
+    @PostMapping("/backCard/{cardId}")
+    public BackResponseCardDto modifyBackCard(@PathVariable Long cardId, @RequestBody BackRequestCardDto backRequestCardDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return mypageService.modifyBackCard(cardId, backRequestCardDto, userDetails.getUser());
+    }
+
+    @DeleteMapping("/backCard/{cardId}")
+    public BackResponseCardDto deleteBackCard(@PathVariable Long cardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return mypageService.deleteBackCard(cardId, userDetails.getUser());
     }
 }

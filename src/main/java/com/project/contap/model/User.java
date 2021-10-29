@@ -79,4 +79,8 @@ public class User extends TimeStamped{
         this.userName = signUpRequestDto.getUserName();
         this.kakaoId = null;
     }
+
+    public boolean isWritedBy(User user) {
+        return this.email.equals(user.getEmail());
+    }
 }

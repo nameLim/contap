@@ -1,15 +1,19 @@
 package com.project.contap.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Builder
-public class CardDto {
-    private Long cardId;
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+public class BackRequestCardDto {
     private String title;
     private String content;
     private List<String> stackHashTags;
     private List<String> interestHashTags;
-    private String hashTags;
 }
