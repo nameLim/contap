@@ -36,20 +36,16 @@ import java.util.*;
 public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final JPAQueryFactory jpaQueryFactory;
-    private final CardRepository cardRepository;
-    private final HashTagRepositoty hashTagRepositoty;
+    private final JPAQueryFactory jpaQueryFactory; // 이건차후에 쓸수도있을것같아서 남겨둠
 
 
     private static final String ADMIN_TOKEN = "AAABnv/xRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,JPAQueryFactory jpaQueryFactory,CardRepository cardRepository,HashTagRepositoty hashTagRepositoty) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,JPAQueryFactory jpaQueryFactory) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jpaQueryFactory =jpaQueryFactory;
-        this.cardRepository = cardRepository;
-        this.hashTagRepositoty = hashTagRepositoty;
     }
 
 
@@ -148,14 +144,6 @@ public class UserService {
         result.put("message", "중복된 닉네임이 있습니다.");
         return result;
     }
-
-    // 유저 정보 뿌리기
-    public List<UserResponseDto> getUserDtoList(UserDetailsImpl userDetails) {
-        List<User> users = userRepository.findAll();
-        return UserResponseDto.listOf(users, userDetails);
-    }
-
-
     //유저 프로필 사진 수정
     public User updateUserProfileImage(String profile, String userId) throws ContapException {
         User user = userRepository.findByEmail(userId).orElseThrow(
@@ -163,51 +151,6 @@ public class UserService {
         );
         user.setProfile(profile);
         return userRepository.save(user);
-    }
-    @Transactional
-    public List<UserRequestDto> getuser(List<HashTag> hashTags) {
-        QUser hu = QUser.user;
-        List<Long> ids2 = Arrays.asList(new Long(GetRandom.randomRange(1,10)),new Long(GetRandom.randomRange(1,10)),new Long(GetRandom.randomRange(1,10)));
-        List<UserRequestDto> abc;
-        abc = jpaQueryFactory
-                .select(
-                        Projections.constructor(UserRequestDto.class,
-                                hu.id,
-                                hu.email,
-                                hu.profile,
-                                hu.kakaoId,
-                                hu.userName,
-                                hu.pw,
-                                hu.hashTagsString
-                        )).distinct()
-                .from(hu)
-                .where(hu.tags.any().id.in(ids2))
-                .offset(9).limit(9)
-                .fetch();
-        return abc;
-    }
-
-    @Transactional
-    public List<UserRequestDto> getuser2(List<HashTag> hashTags) {
-        QUser hu = QUser.user;
-        List<Long> ids2 = Arrays.asList(new Long(GetRandom.randomRange(1,10)),new Long(GetRandom.randomRange(1,10)),new Long(GetRandom.randomRange(1,10)));
-        List<UserRequestDto> abc;
-        abc = jpaQueryFactory
-                .select(
-                        Projections.constructor(UserRequestDto.class,
-                                hu.id,
-                                hu.email,
-                                hu.profile,
-                                hu.kakaoId,
-                                hu.userName,
-                                hu.pw,
-                                hu.hashTagsString
-                        )).distinct()
-                .from(hu)
-                .where(hu.tags.any().id.in(ids2))
-                .offset(9).limit(9)
-                .fetch();
-        return abc;
     }
     @Transactional
     public void deleteUser( PwRequestDto requestDto) throws ContapException {
@@ -245,3 +188,64 @@ public class UserService {
         user.updatePw(requestDto);
     }
 }
+
+//    @Transactional //table join으로 검색.
+//    public List<UserRequestDto> getuser(List<HashTag> hashTags) {
+//        QUser hu = QUser.user;
+//        List<Long> ids2 = Arrays.asList(new Long(GetRandom.randomRange(1,10)),new Long(GetRandom.randomRange(1,10)),new Long(GetRandom.randomRange(1,10)));
+//        List<UserRequestDto> abc;
+//        abc = jpaQueryFactory
+//                .select(
+//                        Projections.constructor(UserRequestDto.class,
+//                                hu.id,
+//                                hu.email,
+//                                hu.profile,
+//                                hu.kakaoId,
+//                                hu.userName,
+//                                hu.pw,
+//                                hu.hashTagsString
+//                        )).distinct()
+//                .from(hu)
+//                .where(hu.tags.any().id.in(ids2))
+//                .offset(9).limit(9)
+//                .fetch();
+//        return abc;
+//    }
+//
+//    @Transactional // table join 없이 검색
+//    public List<UserRequestDto> getuser2(List<HashTag> hashTags,int type) {
+//        BooleanBuilder builder = new BooleanBuilder();
+//        QUser hu = QUser.user;
+//        int a = GetRandom.randomRange(0,19);
+//        int b = GetRandom.randomRange(0,19);
+//        int c = GetRandom.randomRange(0,19);
+//        List<String> ids2 = Arrays.asList(tagnames.get(a),tagnames.get(c),tagnames.get(b));
+//        if (type == 0) {
+//            for (String tagna : ids2) {
+//                builder.or(hu.hashTagsString.contains(tagna));
+//            }
+//        }
+//        else
+//        {
+//            for (String tagna : ids2) {
+//                builder.and(hu.hashTagsString.contains(tagna));
+//            }
+//        }
+//        List<UserRequestDto> abc;
+//        abc = jpaQueryFactory
+//                .select(
+//                        Projections.constructor(UserRequestDto.class,
+//                                hu.id,
+//                                hu.email,
+//                                hu.profile,
+//                                hu.kakaoId,
+//                                hu.userName,
+//                                hu.pw,
+//                                hu.hashTagsString
+//                        )).distinct()
+//                .from(hu)
+//                .where(builder)
+//                .offset(9).limit(9)
+//                .fetch();
+//        return abc;
+//    }

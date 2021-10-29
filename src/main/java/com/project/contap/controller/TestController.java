@@ -44,14 +44,14 @@ public class TestController {
     }
     @GetMapping("/lsj/test") // dbSet 이라서 그냥 냅둠..
     public String test() throws ContapException {
-        for(long i = 1 ; i< 301 ;i++)// 1~300 // 5001
+        for(long i = 1 ; i< 5001 ;i++)// 1~300 // 5001
         {
             User user = userRepository.findById(i).orElse(null);
-            HashTag has1 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
-            HashTag has2 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
-            HashTag has3 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
-            HashTag has4 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
-            HashTag has5 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
+            HashTag has1 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,20))).orElse(null);
+            HashTag has2 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,20))).orElse(null);
+            HashTag has3 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,20))).orElse(null);
+            HashTag has4 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,20))).orElse(null);
+            HashTag has5 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,20))).orElse(null);
             List<HashTag> ENSENS = new ArrayList<>();
             ENSENS.add(has1);
             ENSENS.add(has2);
