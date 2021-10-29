@@ -68,13 +68,13 @@ public class MainService {
         QUser hu = QUser.user;
         if (tagsandtype.getType() == 0) {
             for (String tagna : tagsandtype.getSearchTags()) {
-                builder.or(hu.hashTagsString.contains(tagna));
+                builder.or(hu.hashTagsString.contains("@"+tagna+"@"));
             }
         }
         else
         {
             for (String tagna : tagsandtype.getSearchTags()) {
-                builder.and(hu.hashTagsString.contains(tagna));
+                builder.and(hu.hashTagsString.contains("@"+tagna+"@"));
             }
         }
         List<UserRequestDto> abc;

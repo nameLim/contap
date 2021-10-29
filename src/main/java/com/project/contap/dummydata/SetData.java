@@ -54,7 +54,7 @@ public class SetData implements ApplicationRunner{
         HashTag ht16 = new HashTag("웬도우",0);
         HashTag ht17 = new HashTag("리눅스",0);
         HashTag ht18 = new HashTag("데이터베이스",0);
-        HashTag ht19 = new HashTag("노드",0);
+        HashTag ht19 = new HashTag("C#",0);
         HashTag ht20 = new HashTag("웹소켓",0);
         hashTagRepositoty.save(ht1);
         hashTagRepositoty.save(ht2);

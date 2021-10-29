@@ -77,7 +77,7 @@ public class TestController {
                     dlf = dlf +"@"+ha.getName();
                 }
             }
-            user.setHashTagsString(dud+"_"+dlf);
+            user.setHashTagsString(dud+"@_"+dlf+"@");
             userRepository.save(user);
         }
 
@@ -114,7 +114,7 @@ public class TestController {
                     dlf = dlf +"@"+ha.getName();
                 }
             }
-            user.setHashTagsString(dud+"_"+dlf);
+            user.setHashTagsString(dud+"@_"+dlf+"@");
             cardRepository.save(user);
         }
         return "DBSet 완료염~";
