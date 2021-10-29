@@ -18,16 +18,18 @@ public class UserRequestDto {
     private String pw;
     private String userName;
     private Long kakaoId;
-    private Long profile;
+    private String profile;
     private List<HashTag> tags; // 1:스프링,2리엑트
+    private String hashTagsString;
 
-    public UserRequestDto(Long id,String email,Long profile, Long kakaoId, String userName, String pw) {
+    public UserRequestDto(Long id,String email,String profile, Long kakaoId, String userName, String pw,String hashTagsString) {
         this.id = id;
         this.email = email;
         this.pw = pw;
         this.userName = userName;
         this.kakaoId = kakaoId;
         this.profile = profile;
+        this.hashTagsString=hashTagsString;
     }
 }
 

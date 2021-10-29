@@ -168,7 +168,7 @@ public class UserService {
     @Transactional
     public List<UserRequestDto> getuser(List<HashTag> hashTags) {
         QUser hu = QUser.user;
-        List<Long> ids2 = Arrays.asList(new Long(GetRandom.randomRange(5001,5500)),new Long(GetRandom.randomRange(5001,5500)),new Long(GetRandom.randomRange(5001,5500)));
+        List<Long> ids2 = Arrays.asList(new Long(GetRandom.randomRange(1,10)),new Long(GetRandom.randomRange(1,10)),new Long(GetRandom.randomRange(1,10)));
         List<UserRequestDto> abc;
         abc = jpaQueryFactory
                 .select(
@@ -178,7 +178,31 @@ public class UserService {
                                 hu.profile,
                                 hu.kakaoId,
                                 hu.userName,
-                                hu.pw
+                                hu.pw,
+                                hu.hashTagsString
+                        )).distinct()
+                .from(hu)
+                .where(hu.tags.any().id.in(ids2))
+                .offset(9).limit(9)
+                .fetch();
+        return abc;
+    }
+
+    @Transactional
+    public List<UserRequestDto> getuser2(List<HashTag> hashTags) {
+        QUser hu = QUser.user;
+        List<Long> ids2 = Arrays.asList(new Long(GetRandom.randomRange(1,10)),new Long(GetRandom.randomRange(1,10)),new Long(GetRandom.randomRange(1,10)));
+        List<UserRequestDto> abc;
+        abc = jpaQueryFactory
+                .select(
+                        Projections.constructor(UserRequestDto.class,
+                                hu.id,
+                                hu.email,
+                                hu.profile,
+                                hu.kakaoId,
+                                hu.userName,
+                                hu.pw,
+                                hu.hashTagsString
                         )).distinct()
                 .from(hu)
                 .where(hu.tags.any().id.in(ids2))

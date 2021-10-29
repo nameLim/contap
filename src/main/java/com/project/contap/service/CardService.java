@@ -23,7 +23,6 @@ public class CardService {
 
     public List<Card> getCards(Long userId) {
         QCard hu = QCard.card;
-        Random random = new Random();
         QueryResults<Card> abc =  jpaQueryFactory
                 .select(hu)
                 .from(hu)

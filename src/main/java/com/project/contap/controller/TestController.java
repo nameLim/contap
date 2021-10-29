@@ -44,25 +44,77 @@ public class TestController {
     }
     @GetMapping("/lsj/test") // dbSet 이라서 그냥 냅둠..
     public String test() throws ContapException {
-        for(long i = 1 ; i< 5001 ;i++)// 1~300 // 5001
+        for(long i = 1 ; i< 301 ;i++)// 1~300 // 5001
         {
             User user = userRepository.findById(i).orElse(null);
-            user.getTags().add(new HashTag(new Long(GetRandom.randomRange(5001,5500))));
-            user.getTags().add(new HashTag(new Long(GetRandom.randomRange(5001,5500))));
-            user.getTags().add(new HashTag(new Long(GetRandom.randomRange(5001,5500))));
-            user.getTags().add(new HashTag(new Long(GetRandom.randomRange(5001,5500))));
-            user.getTags().add(new HashTag(new Long(GetRandom.randomRange(5001,5500))));
+            HashTag has1 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
+            HashTag has2 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
+            HashTag has3 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
+            HashTag has4 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
+            HashTag has5 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
+            List<HashTag> ENSENS = new ArrayList<>();
+            ENSENS.add(has1);
+            ENSENS.add(has2);
+            ENSENS.add(has3);
+            ENSENS.add(has4);
+            ENSENS.add(has5);
+            user.getTags().add(has1);
+            user.getTags().add(has2);
+            user.getTags().add(has3);
+            user.getTags().add(has4);
+            user.getTags().add(has5);
+            String dud = "";
+            String dlf = "";
+            for(HashTag ha :ENSENS)
+            {
+
+                if(ha.getType() == 0)
+                {
+                    dud = dud +"@"+ha.getName();
+                }
+                else
+                {
+                    dlf = dlf +"@"+ha.getName();
+                }
+            }
+            user.setHashTagsString(dud+"_"+dlf);
             userRepository.save(user);
         }
 
-        for(long i = 5501 ; i< 50000 ;i++)// 1~300
+        for(long i = 1 ; i< 800 ;i++)// 1~300
         {
             Card user = cardRepository.findById(i).orElse(null);
-            user.getTags().add(new HashTag(new Long(GetRandom.randomRange(5001,5500))));
-            user.getTags().add(new HashTag(new Long(GetRandom.randomRange(5001,5500))));
-            user.getTags().add(new HashTag(new Long(GetRandom.randomRange(5001,5500))));
-            user.getTags().add(new HashTag(new Long(GetRandom.randomRange(5001,5500))));
-            user.getTags().add(new HashTag(new Long(GetRandom.randomRange(5001,5500))));
+            HashTag has1 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
+            HashTag has2 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
+            HashTag has3 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
+            HashTag has4 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
+            HashTag has5 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
+            List<HashTag> ENSENS = new ArrayList<>();
+            ENSENS.add(has1);
+            ENSENS.add(has2);
+            ENSENS.add(has3);
+            ENSENS.add(has4);
+            ENSENS.add(has5);
+            user.getTags().add(has1);
+            user.getTags().add(has2);
+            user.getTags().add(has3);
+            user.getTags().add(has4);
+            user.getTags().add(has5);
+            String dud = "";
+            String dlf = "";
+            for(HashTag ha :ENSENS)
+            {
+
+                if(ha.getType() == 0)
+                {
+                    dud = dud +"@"+ha.getName();
+                }
+                else
+                {
+                    dlf = dlf +"@"+ha.getName();
+                }
+            }
+            user.setHashTagsString(dud+"_"+dlf);
             cardRepository.save(user);
         }
         return "DBSet 완료염~";

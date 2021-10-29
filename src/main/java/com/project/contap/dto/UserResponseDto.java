@@ -18,6 +18,7 @@ public class UserResponseDto {
     private String userName;
     private String profile;
     private LocalDateTime InsertDt;
+    private String hashTags;
 
     public static UserResponseDto of(User user) {
         return UserResponseDto.builder()
@@ -25,6 +26,7 @@ public class UserResponseDto {
                 .userName(user.getUserName())
                 .profile(user.getProfile())
                 .userId(user.getId())
+                .hashTags(user.getHashTagsString())
                 .build();
     }
 

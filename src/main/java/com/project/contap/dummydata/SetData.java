@@ -27,7 +27,7 @@ public class SetData implements ApplicationRunner{
     @Override
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
-        for(int i = 0 ; i< 5000 ;i++)// 1~300
+        for(int i = 0 ; i< 300 ;i++)// 1~300
         {
             User user = new User(
                     String.format("userid%d", i)
@@ -36,36 +36,52 @@ public class SetData implements ApplicationRunner{
             userRepository.save(user);
         }
 
-        for(int i = 0 ; i< 500 ;i++) // 301~800
-        {
-            HashTag ht = new HashTag(
-                    String.format("%dabc", i)
-                    ,i%2);
-            hashTagRepositoty.save(ht);
-        }
+        HashTag ht1 = new HashTag("축구",1);
+        HashTag ht2 = new HashTag("농구",1);
+        HashTag ht3 = new HashTag("야구",1);
+        HashTag ht4 = new HashTag("배구",1);
+        HashTag ht5 = new HashTag("헬스",1);
+        HashTag ht6 = new HashTag("Spring",0);
+        HashTag ht7 = new HashTag("React",0);
+        HashTag ht8 = new HashTag("Java",0);
+        HashTag ht9 = new HashTag("Html",0);
+        HashTag ht0 = new HashTag("C",0);
+        hashTagRepositoty.save(ht1);
+        hashTagRepositoty.save(ht2);
+        hashTagRepositoty.save(ht3);
+        hashTagRepositoty.save(ht4);
+        hashTagRepositoty.save(ht5);
+        hashTagRepositoty.save(ht6);
+        hashTagRepositoty.save(ht7);
+        hashTagRepositoty.save(ht8);
+        hashTagRepositoty.save(ht9);
+        hashTagRepositoty.save(ht0);
+
+
+
         for(long i = 1 ; i< 5001 ;i++)// 801~
         {
             User user = userRepository.findById(i).orElse(null);
             Card ca1 = new Card(user,1L,String.format("title%d", i),String.format("content%d", i));
             Card ca2 = new Card(user,2L,String.format("title%d", i),String.format("content%d", i));
             Card ca3 = new Card(user,3L,String.format("title%d", i),String.format("content%d", i));
-            Card ca4 = new Card(user,1L,String.format("title%d", i),String.format("content%d", i));
-            Card ca5 = new Card(user,2L,String.format("title%d", i),String.format("content%d", i));
-            Card ca6 = new Card(user,3L,String.format("title%d", i),String.format("content%d", i));
-            Card ca7 = new Card(user,1L,String.format("title%d", i),String.format("content%d", i));
-            Card ca8 = new Card(user,2L,String.format("title%d", i),String.format("content%d", i));
-            Card ca9 = new Card(user,3L,String.format("title%d", i),String.format("content%d", i));
-            Card ca0 = new Card(user,3L,String.format("title%d", i),String.format("content%d", i));
+//            Card ca4 = new Card(user,1L,String.format("title%d", i),String.format("content%d", i));
+//            Card ca5 = new Card(user,2L,String.format("title%d", i),String.format("content%d", i));
+//            Card ca6 = new Card(user,3L,String.format("title%d", i),String.format("content%d", i));
+//            Card ca7 = new Card(user,1L,String.format("title%d", i),String.format("content%d", i));
+//            Card ca8 = new Card(user,2L,String.format("title%d", i),String.format("content%d", i));
+//            Card ca9 = new Card(user,3L,String.format("title%d", i),String.format("content%d", i));
+//            Card ca0 = new Card(user,3L,String.format("title%d", i),String.format("content%d", i));
             cardRepository.save(ca1);
             cardRepository.save(ca2);
             cardRepository.save(ca3);
-            cardRepository.save(ca4);
-            cardRepository.save(ca5);
-            cardRepository.save(ca6);
-            cardRepository.save(ca7);
-            cardRepository.save(ca8);
-            cardRepository.save(ca9);
-            cardRepository.save(ca0);
+//            cardRepository.save(ca4);
+//            cardRepository.save(ca5);
+//            cardRepository.save(ca6);
+//            cardRepository.save(ca7);
+//            cardRepository.save(ca8);
+//            cardRepository.save(ca9);
+//            cardRepository.save(ca0);
 
         }
     }

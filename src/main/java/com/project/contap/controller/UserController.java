@@ -58,7 +58,7 @@ public class UserController {
         return result;
     }
 
-    @PostMapping("/signup/emailcheck")
+    @PostMapping("/user/emailcheck")
     public Map<String, String> duplicateId(@RequestBody UserRequestDto userRequestDto) {
         return userService.duplicateId(userRequestDto);
     }
