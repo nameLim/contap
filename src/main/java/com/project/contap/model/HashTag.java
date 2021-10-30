@@ -32,4 +32,8 @@ public class HashTag {
         this.name=  name;
         this.type = type;
     }
+    public HashTag(Long id)
+    {
+        this.id = id;
+    }
 }

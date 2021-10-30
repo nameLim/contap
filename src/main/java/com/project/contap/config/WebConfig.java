@@ -20,7 +20,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000", "rewind-f8918.firebaseapp.com", "http://wooseokhan.shop")
+                .allowedOrigins("http://localhost:3000")
                 .allowedMethods("POST", "GET", "PUT", "DELETE", "HEAD", "OPTIONS")
                 .allowCredentials(true);
     }
@@ -42,6 +42,3 @@ public class WebConfig implements WebMvcConfigurer {
     }
 }
 
-//리덕스에 현재 로그인한 아이디를 체크하려고 받는거다.
-//토큰 당연히 받는거고
-//로그인할때 데이터 받는 이유 : result success만 받아도 솔직히 문제없ㅇ므.
