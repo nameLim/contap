@@ -37,7 +37,7 @@ public class Card extends TimeStamped{
     @Column
     private String hashTagsString;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private List<HashTag> tags;
 
 
@@ -51,16 +51,17 @@ public class Card extends TimeStamped{
     }
 
     public boolean isWritedBy(User user) {
-        return this.user.getEmail().equals(user.getEmail());
+        return this.user.equals(user);
     }
     public List<HashTag> addHashTag(HashTag tag) {
         this.tags.add(tag);
         return this.tags;
     }
-    public void update(BackRequestCardDto backRequestCardDto, List<HashTag> tags, String tagString) {
+
+    public void update(BackRequestCardDto backRequestCardDto, String tagString) {
         this.title = backRequestCardDto.getTitle();
         this.content = backRequestCardDto.getContent();
+        this.tags = backRequestCardDto.getHashTags();
         this.hashTagsString = tagString;
-        this.tags = tags;
     }
 }

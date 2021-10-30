@@ -1,5 +1,6 @@
 package com.project.contap.dto;
 
+import com.project.contap.model.HashTag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +15,5 @@ import java.util.List;
 public class BackRequestCardDto {
     private String title;
     private String content;
-    private List<String> stackHashTags;
-    private List<String> interestHashTags;
+    private List<HashTag> hashTags;
 }

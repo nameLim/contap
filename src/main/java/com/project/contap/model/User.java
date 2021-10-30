@@ -41,10 +41,10 @@ public class User extends TimeStamped{
     @Column(nullable = false)
     private AuthorityEnum authorityEnum;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user")
     private List<Card> cards;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private List<HashTag> tags;
 
     public User(String email, String pw, String userName, Long kakaoId) {

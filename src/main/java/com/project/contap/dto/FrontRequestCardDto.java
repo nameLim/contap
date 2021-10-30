@@ -1,5 +1,6 @@
 package com.project.contap.dto;
 
+import com.project.contap.model.HashTag;
 import lombok.*;
 
 import java.util.List;
@@ -12,6 +13,5 @@ import java.util.List;
 public class FrontRequestCardDto {
     private String profile;
     private String userName;
-    private List<String> stackHashTags;
-    private List<String> interestHashTags;
+    private List<HashTag> hashTags;
 }

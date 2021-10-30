@@ -22,7 +22,8 @@ public enum ErrorCode {
     WRONG_HASHTAG_TYPE(BAD_REQUEST, "잘못된 해쉬태그타입이 존재합니다. 관리자에게 문의하세요."),
     WRONG_USER(BAD_REQUEST, "잘못된 회원정보가 존재합니다."),
     NOT_FOUND_CARD(BAD_REQUEST, "해당 카드를 찾을 수 없습니다."),
-    ACCESS_DENIED(BAD_REQUEST, "권한이 없습니다.");
+    ACCESS_DENIED(BAD_REQUEST, "권한이 없습니다."),
+    EXCESS_CARD_MAX(BAD_REQUEST, "카드 최대 가능 수를 초과하였습니다.");
     private final HttpStatus httpStatus;
     private final String message;
 }
