@@ -3,10 +3,10 @@ package com.project.contap.service;
 import com.project.contap.dto.*;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
+import com.project.contap.model.HashTag;
+import com.project.contap.model.QUser;
 import com.project.contap.model.User;
-
 import com.project.contap.repository.CardRepository;
-import com.project.contap.model.*;
 import com.project.contap.repository.HashTagRepositoty;
 import com.project.contap.repository.UserRepository;
 import com.project.contap.security.UserDetailsImpl;
@@ -18,16 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 import java.util.*;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,21 +27,24 @@ import java.util.regex.Pattern;
 public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final JPAQueryFactory jpaQueryFactory;
-    private final CardRepository cardRepository;
-    private final HashTagRepositoty hashTagRepositoty;
-
+    private final JPAQueryFactory jpaQueryFactory; // 이건차후에 쓸수도있을것같아서 남겨둠
 
     private static final String ADMIN_TOKEN = "AAABnv/xRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,JPAQueryFactory jpaQueryFactory,CardRepository cardRepository,HashTagRepositoty hashTagRepositoty) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,JPAQueryFactory jpaQueryFactory) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.jpaQueryFactory =jpaQueryFactory;
-        this.cardRepository = cardRepository;
-        this.hashTagRepositoty = hashTagRepositoty;
+        this.jpaQueryFactory = jpaQueryFactory;
     }
+
+//    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JPAQueryFactory jpaQueryFactory, CardRepository cardRepository, HashTagRepositoty hashTagRepositoty) {
+//        this.userRepository = userRepository;
+//        this.passwordEncoder = passwordEncoder;
+//        this.jpaQueryFactory = jpaQueryFactory;
+//        this.cardRepository = cardRepository;
+//        this.hashTagRepositoty = hashTagRepositoty;
+//    }
 
 
     public User registerUser(SignUpRequestDto requestDto) throws ContapException {
@@ -130,7 +124,7 @@ public class UserService {
         );
 
         if (!passwordEncoder.matches(requestDto.getPw(), user.getPw())) {
-            throw new ContapException(ErrorCode. NOT_EQUAL_PASSWORD);
+            throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
         }
 
         return user;
@@ -164,14 +158,6 @@ public class UserService {
         result.put("message", "중복된 닉네임이 있습니다.");
         return result;
     }
-
-    // 유저 정보 뿌리기
-    public List<UserResponseDto> getUserDtoList(UserDetailsImpl userDetails) {
-        List<User> users = userRepository.findAll();
-        return UserResponseDto.listOf(users, userDetails);
-    }
-
-
     //유저 프로필 사진 수정
     public User updateUserProfileImage(String profile, String userId) throws ContapException {
         User user = userRepository.findByEmail(userId).orElseThrow(
@@ -181,66 +167,15 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    //검색
     @Transactional
-    public List<UserRequestDto> getuser(List<HashTag> hashTags) {
-        QUser hu = QUser.user;
-        List<Long> ids2 = Arrays.asList(new Long(GetRandom.randomRange(1,10)),new Long(GetRandom.randomRange(1,10)),new Long(GetRandom.randomRange(1,10)));
-        List<UserRequestDto> abc;
-        abc = jpaQueryFactory
-                .select(
-                        Projections.constructor(UserRequestDto.class,
-                                hu.id,
-                                hu.email,
-                                hu.profile,
-                                hu.kakaoId,
-                                hu.userName,
-                                hu.pw,
-                                hu.hashTagsString
-                        )).distinct()
-                .from(hu)
-                .where(hu.tags.any().id.in(ids2))
-                .offset(9).limit(9)
-                .fetch();
-        return abc;
-    }
-
-    @Transactional
-    public List<UserRequestDto> getuser2(List<HashTag> hashTags) {
-        QUser hu = QUser.user;
-        List<Long> ids2 = Arrays.asList(new Long(GetRandom.randomRange(1,10)),new Long(GetRandom.randomRange(1,10)),new Long(GetRandom.randomRange(1,10)));
-        List<UserRequestDto> abc;
-        abc = jpaQueryFactory
-                .select(
-                        Projections.constructor(UserRequestDto.class,
-                                hu.id,
-                                hu.email,
-                                hu.profile,
-                                hu.kakaoId,
-                                hu.userName,
-                                hu.pw,
-                                hu.hashTagsString
-                        )).distinct()
-                .from(hu)
-                .where(hu.tags.any().id.in(ids2))
-                .offset(9).limit(9)
-                .fetch();
-        return abc;
-    }
-
-    //회원탈퇴
-    @Transactional
-    public void deleteUser( PwRequestDto requestDto, User user) throws ContapException {
+    public void deleteUser(PwRequestDto requestDto, User user) throws ContapException {
         if (!requestDto.getPw().equals(requestDto.getPwCheck())) {
             throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
         }
         if (passwordEncoder.matches(requestDto.getPw(), user.getPw())) {
             userRepository.delete(user);
         }
-
     }
-
-
     private User getUsers(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new ContapException(ErrorCode.REGISTER_ERROR));
@@ -248,24 +183,24 @@ public class UserService {
 
     //비밀번호 변경
     @Transactional
-    public void updatePassword(PwUpdateRequestDto requestDto,String email) throws ContapException {
-        if(requestDto.getCurrentPw().isEmpty()){
+    public void updatePassword(PwUpdateRequestDto requestDto, String email) throws ContapException {
+        if (requestDto.getCurrentPw().isEmpty()) {
             throw new ContapException(ErrorCode.CURRNET_EMPTY_PASSWORD);
         }
 
-        if(requestDto.getNewPw().isEmpty() || requestDto.getNewPw().isEmpty()){
+        if (requestDto.getNewPw().isEmpty() || requestDto.getNewPw().isEmpty()) {
             throw new ContapException(ErrorCode.CHANGE_EMPTY_PASSWORD);
         }
 
-        if(requestDto.getCurrentPw().equals(requestDto.getNewPw())){
+        if (requestDto.getCurrentPw().equals(requestDto.getNewPw())) {
             throw new ContapException(ErrorCode.NEW_PASSWORD_NOT_EQUAL);
         }
 
-        if(requestDto.getNewPw().length() < 6 || requestDto.getNewPw().length() > 20){
+        if (requestDto.getNewPw().length() < 6 || requestDto.getNewPw().length() > 20) {
             throw new ContapException(ErrorCode.PASSWORD_PATTERN_LENGTH);
         }
 
-        if ( !requestDto.getNewPw().equals(requestDto.getNewPwCheck())){
+        if (!requestDto.getNewPw().equals(requestDto.getNewPwCheck())) {
             throw new ContapException(ErrorCode.NEW_PASSWORD_NOT_EQUAL);
         }
 
@@ -282,5 +217,65 @@ public class UserService {
 
         user.updatePw(requestDto);
     }
-
 }
+
+//    @Transactional //table join으로 검색.
+//    public List<UserRequestDto> getuser(List<HashTag> hashTags) {
+//        QUser hu = QUser.user;
+//        List<Long> ids2 = Arrays.asList(new Long(GetRandom.randomRange(1,10)),new Long(GetRandom.randomRange(1,10)),new Long(GetRandom.randomRange(1,10)));
+//        List<UserRequestDto> abc;
+//        abc = jpaQueryFactory
+//                .select(
+//                        Projections.constructor(UserRequestDto.class,
+//                                hu.id,
+//                                hu.email,
+//                                hu.profile,
+//                                hu.kakaoId,
+//                                hu.userName,
+//                                hu.pw,
+//                                hu.hashTagsString
+//                        )).distinct()
+//                .from(hu)
+//                .where(hu.tags.any().id.in(ids2))
+//                .offset(9).limit(9)
+//                .fetch();
+//        return abc;
+//    }
+//
+//    @Transactional // table join 없이 검색
+//    public List<UserRequestDto> getuser2(List<HashTag> hashTags,int type) {
+//        BooleanBuilder builder = new BooleanBuilder();
+//        QUser hu = QUser.user;
+//        int a = GetRandom.randomRange(0,19);
+//        int b = GetRandom.randomRange(0,19);
+//        int c = GetRandom.randomRange(0,19);
+//        List<String> ids2 = Arrays.asList(tagnames.get(a),tagnames.get(c),tagnames.get(b));
+//        if (type == 0) {
+//            for (String tagna : ids2) {
+//                builder.or(hu.hashTagsString.contains(tagna));
+//            }
+//        }
+//        else
+//        {
+//            for (String tagna : ids2) {
+//                builder.and(hu.hashTagsString.contains(tagna));
+//            }
+//        }
+//        List<UserRequestDto> abc;
+//        abc = jpaQueryFactory
+//                .select(
+//                        Projections.constructor(UserRequestDto.class,
+//                                hu.id,
+//                                hu.email,
+//                                hu.profile,
+//                                hu.kakaoId,
+//                                hu.userName,
+//                                hu.pw,
+//                                hu.hashTagsString
+//                        )).distinct()
+//                .from(hu)
+//                .where(builder)
+//                .offset(9).limit(9)
+//                .fetch();
+//        return abc;
+//    }

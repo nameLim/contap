@@ -1,0 +1,118 @@
+package com.project.contap.service;
+
+import com.project.contap.dto.UserRequestDto;
+import com.project.contap.model.*;
+import com.project.contap.repository.FriendRepository;
+import com.project.contap.repository.TapRepository;
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.util.List;
+
+@Service
+public class ContapService {
+
+    private final TapRepository tapRepository;
+    private final JPAQueryFactory jpaQueryFactory;
+    private final FriendRepository friendRepository;
+    @Autowired
+    public  ContapService(
+            TapRepository tapRepository,
+            JPAQueryFactory jpaQueryFactory,
+            FriendRepository friendRepository
+    )
+    {
+        this.tapRepository = tapRepository;
+        this.jpaQueryFactory =jpaQueryFactory;
+        this.friendRepository = friendRepository;
+    }
+
+    public List<UserRequestDto> getMydoTap(User user) {
+        QTap qtap = QTap.tap;
+        List<UserRequestDto> abc;
+        abc = jpaQueryFactory
+                .select(
+                        Projections.constructor(UserRequestDto.class,
+                                qtap.receiveUser.id,
+                                qtap.receiveUser.email,
+                                qtap.receiveUser.profile,
+                                qtap.receiveUser.kakaoId,
+                                qtap.receiveUser.userName,
+                                qtap.receiveUser.pw,
+                                qtap.receiveUser.hashTagsString,
+                                qtap.id
+                        )).distinct()
+                .from(qtap)
+                .where(qtap.sendUser.id.eq(user.getId()))
+                .fetch();
+        return abc;
+    }
+
+    public List<UserRequestDto> getMyTap(User user) {
+        QTap qtap = QTap.tap;
+        List<UserRequestDto> abc;
+        abc = jpaQueryFactory
+                .select(
+                        Projections.constructor(UserRequestDto.class,
+                                qtap.sendUser.id,
+                                qtap.sendUser.email,
+                                qtap.sendUser.profile,
+                                qtap.sendUser.kakaoId,
+                                qtap.sendUser.userName,
+                                qtap.sendUser.pw,
+                                qtap.sendUser.hashTagsString,
+                                qtap.id
+                        )).distinct()
+                .from(qtap)
+                .where(qtap.receiveUser.id.eq(user.getId()))
+                .fetch();
+        return abc;
+    }
+
+    public void tapReject(Long tagId) {
+        Tap tap = tapRepository.findById(tagId).orElse(null);
+        if (tap != null)
+        {
+            tap.setStatus(1);
+            tapRepository.save(tap);
+        }
+    }
+
+    @Transactional
+    public void rapAccept(Long tagId) {
+        Tap tap = tapRepository.findById(tagId).orElse(null);
+        if (tap != null)
+        {
+            tap.setStatus(2);
+            tapRepository.save(tap);
+            Friend fir = new Friend(tap.getSendUser(),tap.getReceiveUser());
+            Friend sec = new Friend(tap.getReceiveUser(),tap.getSendUser());
+            friendRepository.save(fir);
+            friendRepository.save(sec);
+
+        }
+    }
+
+    public List<UserRequestDto> getMyfriends(User user) {
+        QFriend qfriend = QFriend.friend;
+        List<UserRequestDto> abc;
+        abc = jpaQueryFactory
+                .select(
+                        Projections.constructor(UserRequestDto.class,
+                                qfriend.you.id,
+                                qfriend.you.email,
+                                qfriend.you.profile,
+                                qfriend.you.kakaoId,
+                                qfriend.you.userName,
+                                qfriend.you.pw,
+                                qfriend.you.hashTagsString
+                        )).distinct()
+                .from(qfriend)
+                .where(qfriend.me.id.eq(user.getId()))
+                .fetch();
+        return abc;
+    }
+}

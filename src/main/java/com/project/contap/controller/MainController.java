@@ -1,64 +1,101 @@
 package com.project.contap.controller;
 
-import com.project.contap.dto.UserRequestDto;
-import com.project.contap.dto.UserResponseDto;
+import com.project.contap.dto.*;
 import com.project.contap.exception.ContapException;
-import com.project.contap.model.Card;
+import com.project.contap.exception.ErrorCode;
 import com.project.contap.model.HashTag;
 import com.project.contap.security.UserDetailsImpl;
-import com.project.contap.service.CardService;
-import com.project.contap.service.HashTagService;
-import com.project.contap.service.UserService;
+import com.project.contap.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 public class MainController {
-    private final HashTagService hashTagService;
-    private final UserService userService;
-    private final CardService cardService;
+    private final MainService mainService;
 
     @Autowired
-    public MainController(HashTagService hashTagService,UserService userService,CardService cardService)
+    public MainController(
+            MainService mainService
+            )
     {
-        this.hashTagService = hashTagService;
-        this.userService= userService;
-        this.cardService = cardService;
+        this.mainService = mainService;
     }
 
     // 해시태그
     @GetMapping("/main/hashtag")
     public List<HashTag> getHashag() throws ContapException {
-        return hashTagService.getHashTag();
+        return mainService.getHashTag();
     }
 
-    //검색
-    @GetMapping("/main/search") //@RequestBody List<HashTag> hashTags
+
+    @PostMapping("/main/search") //@RequestBody List<HashTag> hashTags
     public List<UserRequestDto> search(
+            @RequestBody SearchRequestDto tagsandtype
+            ) throws ContapException {
+        return mainService.searchuser(tagsandtype);
+    }
+    @GetMapping("/main/search2") //@RequestBody List<HashTag> hashTags
+    public List<UserRequestDto> search2(
     ) throws ContapException {
-        return userService.getuser(null);
+        return mainService.fortestsearchuser();
     }
 
     //카드 뒷면
     @GetMapping("/main/{userId}")
-    public List<Card> getCards(@PathVariable Long userId) throws ContapException {
-        return cardService.getCards(userId);
+    public List<QCardDto> getCards(@PathVariable Long userId) throws Exception {
+        return mainService.getCards(userId);
     }
 
     //카드 앞면
     @GetMapping("/main")
     public Map<String, Object> getUserDtoList(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         Map<String, Object> result = new HashMap<>();
-        List<UserResponseDto> users = userService.getUserDtoList(userDetails);
+        List<UserRequestDto> users = mainService.getUserDtoList(userDetails);
         result.put("users", users);
         return result;
     }
+    @PostMapping("/main/posttap")
+    public void tap(
+            @RequestBody(required = false)  UserRequestDto userid,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
 
-
+    ) {
+        mainService.dotap(userDetails.getUser(),userid.getUserId());
+    }
+    @GetMapping("/display/{file}")
+    public ResponseEntity<Resource> display(
+            @PathVariable String file
+    ) {
+        String path = "/home/ubuntu/images/"+file; // 이경로는 우분투랑 윈도우랑 다르니까 주의해야댐 우분투 : / 윈도우 \\ 인것같음.
+        String folder = "";
+        org.springframework.core.io.Resource resource = new FileSystemResource(path);
+        if (!resource.exists())
+            return new ResponseEntity<org.springframework.core.io.Resource>(HttpStatus.NOT_FOUND);
+        HttpHeaders header = new HttpHeaders();
+        Path filePath = null;
+        try {
+            filePath = Paths.get(path);
+            header.add("Content-Type", Files.probeContentType(filePath));
+        } catch (IOException e) {
+            return null;
+        }
+        return new ResponseEntity<Resource>(resource, header, HttpStatus.OK);
+    }
+    // 만에하나 유저정보가 null값일 경우를 대비해 예외처리가 필요함! 유저정보중 특히나 이메일 부분!!!우린 널이면 안된다했는데 혹시~적용이 안될수도 있기 때문.
 
 }

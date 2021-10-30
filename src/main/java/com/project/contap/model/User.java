@@ -1,10 +1,7 @@
 package com.project.contap.model;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.contap.dto.PwRequestDto;
+
 import com.project.contap.dto.PwUpdateRequestDto;
 import com.project.contap.dto.SignUpRequestDto;
-
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,10 +42,10 @@ public class User extends TimeStamped{
     @Column(nullable = false)
     private AuthorityEnum authorityEnum;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user")
     private List<Card> cards;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private List<HashTag> tags;
 
     public User(String email, String pw, String userName, Long kakaoId) {
@@ -82,8 +79,23 @@ public class User extends TimeStamped{
         this.userName = userName;
         this.kakaoId = null;
         this.authorityEnum = AuthorityEnum.CANT_OTHER_READ;
-
     }
+    public User(String email, String pw, String userName,String profile) {
+        this.email = email;
+        this.pw = pw;
+        this.userName = userName;
+        this.kakaoId = null;
+        this.authorityEnum = AuthorityEnum.CANT_OTHER_READ;
+        this.profile = profile;
+    }
+
+    public User(Long id, String userName, String profile,String hashTagsString) {
+        this.id=id;
+        this.userName = userName;
+        this.profile = profile;
+        this.hashTagsString = hashTagsString;
+    }
+
 
     public User(SignUpRequestDto signUpRequestDto) {
         this.email = signUpRequestDto.getEmail();
@@ -92,11 +104,16 @@ public class User extends TimeStamped{
         this.kakaoId = null;
         this.profile = "https://district93.org/wp-content/uploads/2017/07/icon-user-default.png";
     }
+    public User(Long id) {
+        this.id = id;
+    }
 
 
     public void updatePw(PwUpdateRequestDto requestDto) {
         this.pw = requestDto.getNewPw();
     }
 
-
+    public boolean isWritedBy(User user) {
+        return this.email.equals(user.getEmail());
+    }
 }

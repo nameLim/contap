@@ -1,6 +1,6 @@
 package com.project.contap.dto;
 
-import lombok.Builder;
+import lombok.*;
 
 import java.util.List;
 

@@ -1,7 +1,6 @@
 package com.project.contap.dto;
 
 import com.project.contap.exception.ContapException;
-import com.project.contap.exception.ErrorCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

@@ -6,7 +6,8 @@ build/
 !**/src/test/**/build/
 /src/main/resources/application.properties
 # Log file
-*.log
+*.log*
+
 ### STS ###
 .apt_generated
 .classpath
