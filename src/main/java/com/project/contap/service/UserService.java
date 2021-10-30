@@ -230,13 +230,10 @@ public class UserService {
 
     //회원탈퇴
     @Transactional
-    public void deleteUser( PwRequestDto requestDto) throws ContapException {
+    public void deleteUser( PwRequestDto requestDto, User user) throws ContapException {
         if (!requestDto.getPw().equals(requestDto.getPwCheck())) {
             throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
         }
-        User user = userRepository.findById(requestDto.getId()).orElseThrow(
-                ()-> new ContapException(ErrorCode.REGISTER_ERROR)
-        );
         if (passwordEncoder.matches(requestDto.getPw(), user.getPw())) {
             userRepository.delete(user);
         }

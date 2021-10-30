@@ -87,10 +87,10 @@ public class UserController {
 
     //회원탈퇴
     @DeleteMapping("/setting/withdrawal")
-    public Map<String, String> deleteUser(@RequestBody PwRequestDto requestDto) throws ContapException {
+    public Map<String, String> deleteUser(@RequestBody PwRequestDto requestDto,@AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
 
 
-        userService.deleteUser(requestDto);
+        userService.deleteUser(requestDto,userDetails.getUser());
 
         Map<String, String> result = new HashMap<>();
         result.put("result", "success");
@@ -99,6 +99,7 @@ public class UserController {
 
     }
 
+    //비밀번호 경
     @PostMapping("/setting/password")
     public Map<String,String> updateMyPageInfoPassword(@RequestBody PwUpdateRequestDto requestDto ,@AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
         userService.updatePassword(requestDto,userDetails.getUsername());
