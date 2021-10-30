@@ -271,6 +271,7 @@ public class UserService {
         if ( !requestDto.getNewPw().equals(requestDto.getNewPwCheck())){
             throw new ContapException(ErrorCode.NEW_PASSWORD_NOT_EQUAL);
         }
+
         User user = getUsers(email);
 
         if(!passwordEncoder.matches(requestDto.getCurrentPw(), user.getPw())){
