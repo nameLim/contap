@@ -65,13 +65,6 @@ public class User extends TimeStamped{
         this.profile = profile;
         this.authorityEnum = AuthorityEnum.CANT_OTHER_READ;
     }
-//    public User(String email, String pw, String userName, Long kakaoId) {
-//        this.email = email;
-//        this.pw = pw;
-//        this.userName = userName;
-//        this.kakaoId = kakaoId;
-//    }
-//
 
     public User(String email, String pw, String userName) {
         this.email = email;
