@@ -40,14 +40,11 @@ public class Card extends TimeStamped{
     @ManyToMany
     private List<HashTag> tags;
 
-
-    public Card(User user, Long cardOrder, String title, String content, String filePath)
-    {
+    public Card(User user, Long cardOrder, String title, String content){
         this.user = user;
         this.cardOrder = cardOrder;
         this.title = title;
         this.content = content;
-        this.filePath = filePath;
     }
 
     public boolean isWritedBy(User user) {

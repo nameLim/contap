@@ -14,11 +14,15 @@ public class MypageController {
 
     private final MypageService mypageService;
 
+
+    //나의 정보
     @GetMapping("/myinfo")
     public UserInfoDto getMyInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return mypageService.getMyInfo(userDetails.getUser());
     }
 
+
+    //카드 앞면
     @PostMapping("/frontCard")
     public FrontResponseCardDto modifyFrontCard(@RequestBody FrontRequestCardDto frontRequestCardDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return mypageService.modifyFrontCard(frontRequestCardDto, userDetails.getUser());

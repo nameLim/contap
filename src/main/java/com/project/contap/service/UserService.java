@@ -35,10 +35,10 @@ public class UserService {
     private static final String ADMIN_TOKEN = "AAABnv/xRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,JPAQueryFactory jpaQueryFactory,CardRepository cardRepository,HashTagRepositoty hashTagRepositoty) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JPAQueryFactory jpaQueryFactory, CardRepository cardRepository, HashTagRepositoty hashTagRepositoty) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.jpaQueryFactory =jpaQueryFactory;
+        this.jpaQueryFactory = jpaQueryFactory;
         this.cardRepository = cardRepository;
         this.hashTagRepositoty = hashTagRepositoty;
     }
@@ -121,7 +121,7 @@ public class UserService {
         );
 
         if (!passwordEncoder.matches(requestDto.getPw(), user.getPw())) {
-            throw new ContapException(ErrorCode. NOT_EQUAL_PASSWORD);
+            throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
         }
 
         return user;
@@ -176,7 +176,7 @@ public class UserService {
     @Transactional
     public List<UserRequestDto> getuser(List<HashTag> hashTags) {
         QUser hu = QUser.user;
-        List<Long> ids2 = Arrays.asList(new Long(GetRandom.randomRange(1,10)),new Long(GetRandom.randomRange(1,10)),new Long(GetRandom.randomRange(1,10)));
+        List<Long> ids2 = Arrays.asList(new Long(GetRandom.randomRange(1, 10)), new Long(GetRandom.randomRange(1, 10)), new Long(GetRandom.randomRange(1, 10)));
         List<UserRequestDto> abc;
         abc = jpaQueryFactory
                 .select(
@@ -199,7 +199,7 @@ public class UserService {
     @Transactional
     public List<UserRequestDto> getuser2(List<HashTag> hashTags) {
         QUser hu = QUser.user;
-        List<Long> ids2 = Arrays.asList(new Long(GetRandom.randomRange(1,10)),new Long(GetRandom.randomRange(1,10)),new Long(GetRandom.randomRange(1,10)));
+        List<Long> ids2 = Arrays.asList(new Long(GetRandom.randomRange(1, 10)), new Long(GetRandom.randomRange(1, 10)), new Long(GetRandom.randomRange(1, 10)));
         List<UserRequestDto> abc;
         abc = jpaQueryFactory
                 .select(
@@ -221,7 +221,7 @@ public class UserService {
 
     //회원탈퇴
     @Transactional
-    public void deleteUser( PwRequestDto requestDto, User user) throws ContapException {
+    public void deleteUser(PwRequestDto requestDto, User user) throws ContapException {
         if (!requestDto.getPw().equals(requestDto.getPwCheck())) {
             throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
         }
@@ -239,24 +239,24 @@ public class UserService {
 
     //비밀번호 변경
     @Transactional
-    public void updatePassword(PwUpdateRequestDto requestDto,String email) throws ContapException {
-        if(requestDto.getCurrentPw().isEmpty()){
+    public void updatePassword(PwUpdateRequestDto requestDto, String email) throws ContapException {
+        if (requestDto.getCurrentPw().isEmpty()) {
             throw new ContapException(ErrorCode.CURRNET_EMPTY_PASSWORD);
         }
 
-        if(requestDto.getNewPw().isEmpty() || requestDto.getNewPw().isEmpty()){
+        if (requestDto.getNewPw().isEmpty() || requestDto.getNewPw().isEmpty()) {
             throw new ContapException(ErrorCode.CHANGE_EMPTY_PASSWORD);
         }
 
-        if(requestDto.getCurrentPw().equals(requestDto.getNewPw())){
+        if (requestDto.getCurrentPw().equals(requestDto.getNewPw())) {
             throw new ContapException(ErrorCode.NEW_PASSWORD_NOT_EQUAL);
         }
 
-        if(requestDto.getNewPw().length() < 6 || requestDto.getNewPw().length() > 20){
+        if (requestDto.getNewPw().length() < 6 || requestDto.getNewPw().length() > 20) {
             throw new ContapException(ErrorCode.PASSWORD_PATTERN_LENGTH);
         }
 
-        if ( !requestDto.getNewPw().equals(requestDto.getNewPwCheck())){
+        if (!requestDto.getNewPw().equals(requestDto.getNewPwCheck())) {
             throw new ContapException(ErrorCode.NEW_PASSWORD_NOT_EQUAL);
         }
 
@@ -273,5 +273,4 @@ public class UserService {
 
         user.updatePw(requestDto);
     }
-
 }
