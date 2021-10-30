@@ -90,13 +90,6 @@ public class User extends TimeStamped{
     }
 
 
-    public User(SignUpRequestDto signUpRequestDto) {
-        this.email = signUpRequestDto.getEmail();
-        this.pw = signUpRequestDto.getPw();
-        this.userName = signUpRequestDto.getUserName();
-        this.kakaoId = null;
-        this.profile = "https://district93.org/wp-content/uploads/2017/07/icon-user-default.png";
-    }
     public User(Long id) {
         this.id = id;
     }

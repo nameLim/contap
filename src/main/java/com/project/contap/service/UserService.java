@@ -181,7 +181,7 @@ public class UserService {
                 .orElseThrow(() -> new ContapException(ErrorCode.REGISTER_ERROR));
     }
 
-    //비밀번호 변경
+    //비밀번호 변경 ,유효성
     @Transactional
     public void updatePassword(PwUpdateRequestDto requestDto, String email) throws ContapException {
         if (requestDto.getCurrentPw().isEmpty()) {
