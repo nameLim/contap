@@ -7,16 +7,11 @@ import com.project.contap.model.User;
 
 import com.project.contap.repository.CardRepository;
 import com.project.contap.model.*;
-import com.project.contap.repository.CardRepository;
 import com.project.contap.repository.HashTagRepositoty;
 import com.project.contap.repository.UserRepository;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.util.GetRandom;
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -185,6 +180,8 @@ public class UserService {
         user.setProfile(profile);
         return userRepository.save(user);
     }
+
+    //검색
     @Transactional
     public List<UserRequestDto> getuser(List<HashTag> hashTags) {
         QUser hu = QUser.user;
@@ -230,6 +227,8 @@ public class UserService {
                 .fetch();
         return abc;
     }
+
+    //회원탈퇴
     @Transactional
     public void deleteUser( PwRequestDto requestDto) throws ContapException {
         if (!requestDto.getPw().equals(requestDto.getPwCheck())) {
@@ -244,20 +243,27 @@ public class UserService {
 
     }
 
+
+    private User getUsers(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ContapException(ErrorCode.REGISTER_ERROR));
+    }
+
     //비밀번호 변경
     @Transactional
-    public void updatePassword(PwUpdateRequestDto requestDto) throws ContapException {
-        User user = userRepository.findById(requestDto.getId()).orElseThrow(
-                ()->  new ContapException(ErrorCode.REGISTER_ERROR)
-        );
+    public void updatePassword(PwUpdateRequestDto requestDto,String email) throws ContapException {
+        User user = getUsers(email);
 
         if(!passwordEncoder.matches(requestDto.getCurrentPw(), user.getPw())){
             throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
         }
-
+        if (!requestDto.getNewPw().equals(requestDto.getNewPwCheck())) {
+            throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
+        }
         String newPw = passwordEncoder.encode(requestDto.getNewPw());
         requestDto.setNewPw(newPw);
 
         user.updatePw(requestDto);
     }
+
 }

@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Random;
-
 @Service
 public class CardService {
     private final CardRepository cardRepository;
@@ -31,9 +29,5 @@ public class CardService {
         List<Card> ret = abc.getResults();
         return ret;
     }
-//    public Card getCards(Long id) throws ContapException {
-//        return cardRepository.findById(id).orElseThrow(
-//                () -> new ContapException(ErrorCode.CARD_NOT_FOUND)
-//        );
-//    }
+
 }

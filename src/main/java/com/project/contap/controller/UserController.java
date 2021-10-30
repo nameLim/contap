@@ -52,19 +52,17 @@ public class UserController {
         Map<String, String> result = new HashMap<>();
         result.put("token", jwtTokenProvider.createToken(user.getEmail(), user.getEmail(), user.getUserName())); // "username" : {username}
         result.put("email", user.getEmail());
-        result.put("nickname", user.getUserName());
+        result.put("userName", user.getUserName());
         result.put("result", "success");
 
         return result;
     }
 
-
-    @PostMapping("/user/emailcheck")
+    @PostMapping("/signup/emailcheck")
     public Map<String, String> duplicateId(@RequestBody UserRequestDto userRequestDto) {
         return userService.duplicateId(userRequestDto);
     }
 
-    //닉네임 중복
     @PostMapping("/signup/namecheck")
     public Map<String, String> duplicateuserName(@RequestBody SignUpRequestDto signUpRequestDto) {
         return userService.duplicateuserName(signUpRequestDto);
@@ -101,10 +99,9 @@ public class UserController {
 
     }
 
-    //비밀번호 수정
     @PostMapping("/setting/password")
-    public Map<String,String> updateMyPageInfoPassword(@RequestBody PwUpdateRequestDto requestDto) throws ContapException {
-        userService.updatePassword(requestDto);
+    public Map<String,String> updateMyPageInfoPassword(@RequestBody PwUpdateRequestDto requestDto ,@AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
+        userService.updatePassword(requestDto,userDetails.getUsername());
 
         Map<String,String> result = new HashMap<>();
         result.put("result", "success");
