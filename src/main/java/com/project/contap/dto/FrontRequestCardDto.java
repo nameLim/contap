@@ -9,8 +9,8 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserFrontCardDto {
+public class FrontRequestCardDto {
     private String profile;
     private String userName;
-    private List<HashTag> stackHashTags;
+    private List<HashTag> hashTags;
 }

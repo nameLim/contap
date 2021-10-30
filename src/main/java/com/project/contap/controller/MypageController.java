@@ -1,18 +1,11 @@
 package com.project.contap.controller;
 
-import com.project.contap.dto.ProjectAddDto;
-import com.project.contap.dto.QUserInfoDto;
-import com.project.contap.dto.UserFrontCardDto;
-import com.project.contap.dto.UserInfoDto;
-import com.project.contap.model.User;
+import com.project.contap.dto.*;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.service.MypageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @RequiredArgsConstructor
 @RestController
@@ -21,42 +14,32 @@ public class MypageController {
 
     private final MypageService mypageService;
 
+
+    //나의 정보
     @GetMapping("/myinfo")
-    public User getMyInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public UserInfoDto getMyInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return mypageService.getMyInfo(userDetails.getUser());
     }
 
+
+    //카드 앞면
     @PostMapping("/frontCard")
-    public UserFrontCardDto modifyFrontCard(
-            @RequestBody UserFrontCardDto userFrontCardDto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) throws Exception {
-        throw new Exception();
-//        return mypageService.modifyFrontCard(userFrontCardDto, userDetails.getUser());
+    public FrontResponseCardDto modifyFrontCard(@RequestBody FrontRequestCardDto frontRequestCardDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return mypageService.modifyFrontCard(frontRequestCardDto, userDetails.getUser());
     }
 
     @PostMapping("/backCard")
-    public void addProject(
-            @RequestBody ProjectAddDto projectAddDto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            HttpServletRequest req,
-            HttpServletResponse rsp
-    ) throws Exception{
-        throw new Exception();
-//        mypageService.addProject(projectAddDto, userDetails.getUser());
+    public BackResponseCardDto createBackCard(@RequestBody BackRequestCardDto backRequestCardDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return mypageService.createBackCard(backRequestCardDto, userDetails.getUser());
     }
+
     @PostMapping("/backCard/{cardId}")
-    public void addProject(
-            @RequestBody ProjectAddDto projectAddDto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PathVariable Long cardId
-    ) {
-        mypageService.editCard(cardId,projectAddDto, userDetails.getUser());
+    public BackResponseCardDto modifyBackCard(@PathVariable Long cardId, @RequestBody BackRequestCardDto backRequestCardDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return mypageService.modifyBackCard(cardId, backRequestCardDto, userDetails.getUser());
     }
-    @PostMapping("/bakard/{cardId}")
-    public void delCard(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PathVariable Long cardId
-    ) {
-        mypageService.delCard(cardId, userDetails.getUser());
+
+    @DeleteMapping("/backCard/{cardId}")
+    public BackResponseCardDto deleteBackCard(@PathVariable Long cardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return mypageService.deleteBackCard(cardId, userDetails.getUser());
     }
 }

@@ -4,7 +4,6 @@ import com.project.contap.dto.*;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
 import com.project.contap.model.HashTag;
-import com.project.contap.model.User;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,10 +35,13 @@ public class MainController {
     {
         this.mainService = mainService;
     }
+
+    // 해시태그
     @GetMapping("/main/hashtag")
     public List<HashTag> getHashag() throws ContapException {
         return mainService.getHashTag();
     }
+
 
     @PostMapping("/main/search") //@RequestBody List<HashTag> hashTags
     public List<UserRequestDto> search(
@@ -53,11 +55,13 @@ public class MainController {
         return mainService.fortestsearchuser();
     }
 
+    //카드 뒷면
     @GetMapping("/main/{userId}")
     public List<QCardDto> getCards(@PathVariable Long userId) throws Exception {
         return mainService.getCards(userId);
     }
 
+    //카드 앞면
     @GetMapping("/main")
     public Map<String, Object> getUserDtoList(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         Map<String, Object> result = new HashMap<>();
@@ -65,7 +69,6 @@ public class MainController {
         result.put("users", users);
         return result;
     }
-
     @PostMapping("/main/posttap")
     public void tap(
             @RequestBody(required = false)  UserRequestDto userid,
@@ -93,21 +96,6 @@ public class MainController {
         }
         return new ResponseEntity<Resource>(resource, header, HttpStatus.OK);
     }
-
     // 만에하나 유저정보가 null값일 경우를 대비해 예외처리가 필요함! 유저정보중 특히나 이메일 부분!!!우린 널이면 안된다했는데 혹시~적용이 안될수도 있기 때문.
 
-//    //카드 뒷면
-//    @GetMapping("/main/{id}")
-//    public Map<String, Object> getCards(@PathVariable Long id) throws ContapException {
-//        Card card = cardService.getCards(id);
-//
-//        Map<String, Object> result = new HashMap<>();
-//
-//        result.put("id", card.getCardId());
-//        result.put("insertDt", card.getInsertDt());
-//        result.put("content", card.getContent());
-//        result.put("title", card.getTitle());
-//
-//        return result;
-//    }
 }

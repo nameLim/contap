@@ -3,34 +3,25 @@ package com.project.contap.service;
 import com.project.contap.dto.*;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
+import com.project.contap.model.HashTag;
+import com.project.contap.model.QUser;
 import com.project.contap.model.User;
-
-import com.project.contap.repository.CardRepository;
-import com.project.contap.model.*;
 import com.project.contap.repository.CardRepository;
 import com.project.contap.repository.HashTagRepositoty;
 import com.project.contap.repository.UserRepository;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.util.GetRandom;
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 @Service
 public class UserService {
@@ -38,16 +29,22 @@ public class UserService {
     private final UserRepository userRepository;
     private final JPAQueryFactory jpaQueryFactory; // 이건차후에 쓸수도있을것같아서 남겨둠
 
-
-
     private static final String ADMIN_TOKEN = "AAABnv/xRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,JPAQueryFactory jpaQueryFactory) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.jpaQueryFactory =jpaQueryFactory;
+        this.jpaQueryFactory = jpaQueryFactory;
     }
+
+//    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JPAQueryFactory jpaQueryFactory, CardRepository cardRepository, HashTagRepositoty hashTagRepositoty) {
+//        this.userRepository = userRepository;
+//        this.passwordEncoder = passwordEncoder;
+//        this.jpaQueryFactory = jpaQueryFactory;
+//        this.cardRepository = cardRepository;
+//        this.hashTagRepositoty = hashTagRepositoty;
+//    }
 
 
     public User registerUser(SignUpRequestDto requestDto) throws ContapException {
@@ -66,6 +63,10 @@ public class UserService {
 
         //가입 email(id) 중복체크
         String email = requestDto.getEmail();
+        if (!isValidEmail(email)) {
+            throw new ContapException(ErrorCode.EMAIL_FORM_INVALID);
+        }
+
         Optional<User> found = userRepository.findByEmail(email);
         if (found.isPresent()) {
             throw new ContapException(ErrorCode.EMAIL_DUPLICATE);
@@ -104,6 +105,18 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    //이메일 검사
+    private boolean isValidEmail(String email) {
+        boolean err = false;
+        String regex = "^[_a-z0-9-]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(email);
+        if (m.matches()) {
+            err = true;
+        }
+        return err;
+    }
+
     //로그인
     public User login(UserRequestDto requestDto) throws ContapException {
         User user = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(
@@ -111,7 +124,7 @@ public class UserService {
         );
 
         if (!passwordEncoder.matches(requestDto.getPw(), user.getPw())) {
-            throw new ContapException(ErrorCode.USER_NOT_FOUND);
+            throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
         }
 
         return user;
@@ -153,36 +166,52 @@ public class UserService {
         user.setProfile(profile);
         return userRepository.save(user);
     }
+
     @Transactional
-    public void deleteUser( PwRequestDto requestDto) throws ContapException {
+    public void deleteUser(PwRequestDto requestDto, User user) throws ContapException {
         if (!requestDto.getPw().equals(requestDto.getPwCheck())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
         }
-        User user = userRepository.findById(requestDto.getId()).orElseThrow(
-                ()-> new ContapException(ErrorCode.NOT_EQUAL_PASSWORD)
-        );
         if (passwordEncoder.matches(requestDto.getPw(), user.getPw())) {
             userRepository.delete(user);
         }
-
     }
-
-//    private User getUsers(String email) throws ContapException {
-//        return userRepository.findByEmail(email)
-//                .orElseThrow(() -> new ContapException(ErrorCode.REGISTER_ERROR));
-//    }
+    private User getUsers(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ContapException(ErrorCode.REGISTER_ERROR));
+    }
 
     //비밀번호 변경
     @Transactional
-    public void updatePassword(PwUpdateRequestDto requestDto) throws ContapException {
-        User user = userRepository.findById(requestDto.getId()).orElseThrow(
-                ()->  new ContapException(ErrorCode.REGISTER_ERROR)
-        );
+    public void updatePassword(PwUpdateRequestDto requestDto, String email) throws ContapException {
+        if (requestDto.getCurrentPw().isEmpty()) {
+            throw new ContapException(ErrorCode.CURRNET_EMPTY_PASSWORD);
+        }
+
+        if (requestDto.getNewPw().isEmpty() || requestDto.getNewPw().isEmpty()) {
+            throw new ContapException(ErrorCode.CHANGE_EMPTY_PASSWORD);
+        }
+
+        if (requestDto.getCurrentPw().equals(requestDto.getNewPw())) {
+            throw new ContapException(ErrorCode.NEW_PASSWORD_NOT_EQUAL);
+        }
+
+        if (requestDto.getNewPw().length() < 6 || requestDto.getNewPw().length() > 20) {
+            throw new ContapException(ErrorCode.PASSWORD_PATTERN_LENGTH);
+        }
+
+        if (!requestDto.getNewPw().equals(requestDto.getNewPwCheck())) {
+            throw new ContapException(ErrorCode.NEW_PASSWORD_NOT_EQUAL);
+        }
+
+        User user = getUsers(email);
 
         if(!passwordEncoder.matches(requestDto.getCurrentPw(), user.getPw())){
             throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
         }
-
+        if (!requestDto.getNewPw().equals(requestDto.getNewPwCheck())) {
+            throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
+        }
         String newPw = passwordEncoder.encode(requestDto.getNewPw());
         requestDto.setNewPw(newPw);
 

@@ -7,13 +7,12 @@ import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.security.jwt.JwtTokenProvider;
 import com.project.contap.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,13 +51,13 @@ public class UserController {
         Map<String, String> result = new HashMap<>();
         result.put("token", jwtTokenProvider.createToken(user.getEmail(), user.getEmail(), user.getUserName())); // "username" : {username}
         result.put("email", user.getEmail());
-        result.put("nickname", user.getUserName());
+        result.put("userName", user.getUserName());
         result.put("result", "success");
 
         return result;
     }
 
-    @PostMapping("/user/emailcheck")
+    @PostMapping("/signup/emailcheck")
     public Map<String, String> duplicateId(@RequestBody UserRequestDto userRequestDto) {
         return userService.duplicateId(userRequestDto);
     }
@@ -87,10 +86,10 @@ public class UserController {
 
     //회원탈퇴
     @DeleteMapping("/setting/withdrawal")
-    public Map<String, String> deleteUser(@RequestBody PwRequestDto requestDto) throws ContapException {
+    public Map<String, String> deleteUser(@RequestBody PwRequestDto requestDto,@AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
 
 
-        userService.deleteUser(requestDto);
+        userService.deleteUser(requestDto,userDetails.getUser());
 
         Map<String, String> result = new HashMap<>();
         result.put("result", "success");
@@ -99,9 +98,10 @@ public class UserController {
 
     }
 
+    //비밀번호 경
     @PostMapping("/setting/password")
-    public Map<String,String> updateMyPageInfoPassword(@RequestBody PwUpdateRequestDto requestDto) throws ContapException {
-        userService.updatePassword(requestDto);
+    public Map<String,String> updateMyPageInfoPassword(@RequestBody PwUpdateRequestDto requestDto ,@AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
+        userService.updatePassword(requestDto,userDetails.getUsername());
 
         Map<String,String> result = new HashMap<>();
         result.put("result", "success");

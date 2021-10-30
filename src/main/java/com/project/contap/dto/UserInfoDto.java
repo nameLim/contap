@@ -13,8 +13,6 @@ public class UserInfoDto {
     private String password;
     private String userName;
     private String profile;
-    private List<String> stackHashTags;
-    private List<String> interestHashTags;
     private AuthorityEnum authorityEnum;
-    private List<CardDto> cardDtoList;
+    private List<BackResponseCardDto> cardDtoList;
 }
