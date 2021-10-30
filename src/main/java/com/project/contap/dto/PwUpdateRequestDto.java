@@ -17,25 +17,7 @@ public class PwUpdateRequestDto {
 
     public PwUpdateRequestDto(String currentPw, String newPw, String newPwCheck) throws ContapException {
 
-        if(currentPw.isEmpty()){
-            throw new ContapException(ErrorCode.CURRNET_EMPTY_PASSWORD);
-        }
 
-        if(newPw.isEmpty() || newPw.isEmpty()){
-            throw new ContapException(ErrorCode.CHANGE_EMPTY_PASSWORD);
-        }
-
-        if(currentPw.equals(newPw)){
-            throw new ContapException(ErrorCode.NEW_PASSWORD_NOT_EQUAL);
-        }
-
-        if(newPw.length() < 6 || newPw.length() > 20){
-            throw new ContapException(ErrorCode.PASSWORD_PATTERN_LENGTH);
-        }
-
-        if ( !newPw.equals(newPwCheck)){
-            throw new ContapException(ErrorCode.NEW_PASSWORD_NOT_EQUAL);
-        }
 
         this.currentPw = currentPw;
         this.newPw = newPw;

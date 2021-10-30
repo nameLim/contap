@@ -232,10 +232,10 @@ public class UserService {
     @Transactional
     public void deleteUser( PwRequestDto requestDto) throws ContapException {
         if (!requestDto.getPw().equals(requestDto.getPwCheck())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
         }
         User user = userRepository.findById(requestDto.getId()).orElseThrow(
-                ()-> new ContapException(ErrorCode.NOT_EQUAL_PASSWORD)
+                ()-> new ContapException(ErrorCode.REGISTER_ERROR)
         );
         if (passwordEncoder.matches(requestDto.getPw(), user.getPw())) {
             userRepository.delete(user);
@@ -252,6 +252,25 @@ public class UserService {
     //비밀번호 변경
     @Transactional
     public void updatePassword(PwUpdateRequestDto requestDto,String email) throws ContapException {
+        if(requestDto.getCurrentPw().isEmpty()){
+            throw new ContapException(ErrorCode.CURRNET_EMPTY_PASSWORD);
+        }
+
+        if(requestDto.getNewPw().isEmpty() || requestDto.getNewPw().isEmpty()){
+            throw new ContapException(ErrorCode.CHANGE_EMPTY_PASSWORD);
+        }
+
+        if(requestDto.getCurrentPw().equals(requestDto.getNewPw())){
+            throw new ContapException(ErrorCode.NEW_PASSWORD_NOT_EQUAL);
+        }
+
+        if(requestDto.getNewPw().length() < 6 || requestDto.getNewPw().length() > 20){
+            throw new ContapException(ErrorCode.PASSWORD_PATTERN_LENGTH);
+        }
+
+        if ( !requestDto.getNewPw().equals(requestDto.getNewPwCheck())){
+            throw new ContapException(ErrorCode.NEW_PASSWORD_NOT_EQUAL);
+        }
         User user = getUsers(email);
 
         if(!passwordEncoder.matches(requestDto.getCurrentPw(), user.getPw())){
