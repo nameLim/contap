@@ -55,12 +55,12 @@ public class UserController {
         return result;
     }
 
-    @PostMapping("/signup/emailcheck")
+    @PostMapping("/user/emailcheck")
     public Map<String, String> duplicateId(@RequestBody UserRequestDto userRequestDto) {
         return userService.duplicateId(userRequestDto);
     }
 
-    @PostMapping("/signup/namecheck")
+    @PostMapping("/user/namecheck")
     public Map<String, String> duplicateuserName(@RequestBody SignUpRequestDto signUpRequestDto) {
         return userService.duplicateuserName(signUpRequestDto);
     }
