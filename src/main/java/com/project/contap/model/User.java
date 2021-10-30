@@ -84,6 +84,22 @@ public class User extends TimeStamped{
         this.authorityEnum = AuthorityEnum.CANT_OTHER_READ;
 
     }
+    public User(String email, String pw, String userName,String profile) {
+        this.email = email;
+        this.pw = pw;
+        this.userName = userName;
+        this.kakaoId = null;
+        this.authorityEnum = AuthorityEnum.CANT_OTHER_READ;
+        this.profile = profile;
+    }
+
+    public User(Long id, String userName, String profile,String hashTagsString) {
+        this.id=id;
+        this.userName = userName;
+        this.profile = profile;
+        this.hashTagsString = hashTagsString;
+    }
+
 
     public User(SignUpRequestDto signUpRequestDto) {
         this.email = signUpRequestDto.getEmail();
@@ -91,6 +107,9 @@ public class User extends TimeStamped{
         this.userName = signUpRequestDto.getUserName();
         this.kakaoId = null;
         this.profile = "https://district93.org/wp-content/uploads/2017/07/icon-user-default.png";
+    }
+    public User(Long id) {
+        this.id = id;
     }
 
 

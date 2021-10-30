@@ -24,7 +24,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     //List<User> findDistinctByTagsIn(List<HashTag> tags);
 
     @Query("SELECT NEW com.project.contap.model.User(" +
-            "u.id,u.email,u.pw,u.userName,u.kakaoId,u.profile)" +
+            "u.id,u.userName,u.profile,u.hashTagsString)" +
             " FROM User as u" +
             " WHERE u.id = :id")
     User lsjfind(@Param("id") Long id);

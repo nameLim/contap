@@ -9,9 +9,14 @@ import com.project.contap.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 @Component
 public class SetData implements ApplicationRunner{
@@ -22,17 +27,70 @@ public class SetData implements ApplicationRunner{
     HashTagRepositoty hashTagRepositoty;
     @Autowired
     CardRepository cardRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
 
     @Override
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
-        for(int i = 0 ; i< 5000 ;i++)// 1~300
+        List<String> imgfiles = Arrays.asList(
+                "http://52.79.248.107:8080/display/1.jpg",
+                "http://52.79.248.107:8080/display/2.jpg",
+                "http://52.79.248.107:8080/display/3.jpg",
+                "http://52.79.248.107:8080/display/4.jpg",
+                "http://52.79.248.107:8080/display/5.jpg",
+                "http://52.79.248.107:8080/display/6.jpg",
+                "http://52.79.248.107:8080/display/7.jpg",
+                "http://52.79.248.107:8080/display/8.jpg",
+                "http://52.79.248.107:8080/display/9.jpg",
+                "http://52.79.248.107:8080/display/10.jpg",
+                "http://52.79.248.107:8080/display/11.jpg",
+                "http://52.79.248.107:8080/display/12.jpg",
+                "http://52.79.248.107:8080/display/13.jpg"
+        );
+        for(int i = 0 ; i< 300 ;i++)// 1~300
         {
+            Random random = new Random();
+            int page = random.nextInt(13);
             User user = new User(
                     String.format("userid%d", i)
                     ,String.format("userpw%d", i)
-                    ,String.format("username%d", i));
+                    ,String.format("username%d", i)
+                    ,imgfiles.get(page));
+            userRepository.save(user);
+        }
+        for(int i = 0 ; i< 1 ;i++)// 1~300
+        {
+            Random random = new Random();
+            int page = random.nextInt(13);
+            User user = new User(
+                    String.format("tmdwns%d", i)
+                    ,passwordEncoder.encode(String.format("tmdwns%d", i))
+                    ,String.format("tmdwns%d", i)
+                    ,imgfiles.get(page));
+            userRepository.save(user);
+        }
+        for(int i = 0 ; i< 3 ;i++)// 1~300
+        {
+            Random random = new Random();
+            int page = random.nextInt(13);
+            User user = new User(
+                    String.format("dntjr%d", i)
+                    ,passwordEncoder.encode(String.format("dntjr%d", i))
+                    ,String.format("dntjr%d", i)
+                    ,imgfiles.get(page));
+            userRepository.save(user);
+        }
+        for(int i = 0 ; i< 3 ;i++)// 1~300
+        {
+            Random random = new Random();
+            int page = random.nextInt(13);
+            User user = new User(
+                    String.format("wnstjr%d", i)
+                    ,passwordEncoder.encode(String.format("wnstjr%d", i))
+                    ,String.format("wnstjr%d", i)
+                    ,imgfiles.get(page));
             userRepository.save(user);
         }
 
@@ -79,29 +137,29 @@ public class SetData implements ApplicationRunner{
 
 
 
-        for(long i = 1 ; i< 5001 ;i++)// 801~
+        for(long i = 1 ; i< 307 ;i++)// 801~
         {
             User user = userRepository.findById(i).orElse(null);
             Card ca1 = new Card(user,1L,String.format("title%d", i),String.format("content%d", i));
             Card ca2 = new Card(user,2L,String.format("title%d", i),String.format("content%d", i));
             Card ca3 = new Card(user,3L,String.format("title%d", i),String.format("content%d", i));
-            Card ca4 = new Card(user,1L,String.format("title%d", i),String.format("content%d", i));
-            Card ca5 = new Card(user,2L,String.format("title%d", i),String.format("content%d", i));
-            Card ca6 = new Card(user,3L,String.format("title%d", i),String.format("content%d", i));
-            Card ca7 = new Card(user,1L,String.format("title%d", i),String.format("content%d", i));
-            Card ca8 = new Card(user,2L,String.format("title%d", i),String.format("content%d", i));
-            Card ca9 = new Card(user,3L,String.format("title%d", i),String.format("content%d", i));
-            Card ca0 = new Card(user,3L,String.format("title%d", i),String.format("content%d", i));
+//            Card ca4 = new Card(user,1L,String.format("title%d", i),String.format("content%d", i));
+//            Card ca5 = new Card(user,2L,String.format("title%d", i),String.format("content%d", i));
+//            Card ca6 = new Card(user,3L,String.format("title%d", i),String.format("content%d", i));
+//            Card ca7 = new Card(user,1L,String.format("title%d", i),String.format("content%d", i));
+//            Card ca8 = new Card(user,2L,String.format("title%d", i),String.format("content%d", i));
+//            Card ca9 = new Card(user,3L,String.format("title%d", i),String.format("content%d", i));
+//            Card ca0 = new Card(user,3L,String.format("title%d", i),String.format("content%d", i));
             cardRepository.save(ca1);
             cardRepository.save(ca2);
             cardRepository.save(ca3);
-            cardRepository.save(ca4);
-            cardRepository.save(ca5);
-            cardRepository.save(ca6);
-            cardRepository.save(ca7);
-            cardRepository.save(ca8);
-            cardRepository.save(ca9);
-            cardRepository.save(ca0);
+//            cardRepository.save(ca4);
+//            cardRepository.save(ca5);
+//            cardRepository.save(ca6);
+//            cardRepository.save(ca7);
+//            cardRepository.save(ca8);
+//            cardRepository.save(ca9);
+//            cardRepository.save(ca0);
 
         }
     }

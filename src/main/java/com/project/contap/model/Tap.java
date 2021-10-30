@@ -1,11 +1,15 @@
 package com.project.contap.model;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @NoArgsConstructor
 @Entity
+@Getter
+@Setter
 public class Tap {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -16,7 +20,12 @@ public class Tap {
 
     @OneToOne(fetch = FetchType.LAZY)
     private User receiveUser;
-
     @Column
-    private TapStatusEnum status;
+    private int status;//0 or 1
+    public Tap (User sendUser, User receiveUser)
+    {
+        this.receiveUser = receiveUser;
+        this.sendUser = sendUser;
+        this.status = 0;
+    }
 }

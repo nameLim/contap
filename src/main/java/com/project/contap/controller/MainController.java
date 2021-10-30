@@ -2,13 +2,25 @@ package com.project.contap.controller;
 
 import com.project.contap.dto.*;
 import com.project.contap.exception.ContapException;
+import com.project.contap.exception.ErrorCode;
 import com.project.contap.model.HashTag;
+import com.project.contap.model.User;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,17 +54,46 @@ public class MainController {
     }
 
     @GetMapping("/main/{userId}")
-    public List<QCardDto> getCards(@PathVariable Long userId) throws ContapException {
+    public List<QCardDto> getCards(@PathVariable Long userId) throws Exception {
         return mainService.getCards(userId);
     }
 
     @GetMapping("/main")
     public Map<String, Object> getUserDtoList(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         Map<String, Object> result = new HashMap<>();
-        List<UserResponseDto> users = mainService.getUserDtoList(userDetails);
+        List<UserRequestDto> users = mainService.getUserDtoList(userDetails);
         result.put("users", users);
         return result;
     }
+
+    @PostMapping("/main/posttap")
+    public void tap(
+            @RequestBody(required = false)  UserRequestDto userid,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+
+    ) {
+        mainService.dotap(userDetails.getUser(),userid.getUserId());
+    }
+    @GetMapping("/display/{file}")
+    public ResponseEntity<Resource> display(
+            @PathVariable String file
+    ) {
+        String path = "/home/ubuntu/images/"+file; // 이경로는 우분투랑 윈도우랑 다르니까 주의해야댐 우분투 : / 윈도우 \\ 인것같음.
+        String folder = "";
+        org.springframework.core.io.Resource resource = new FileSystemResource(path);
+        if (!resource.exists())
+            return new ResponseEntity<org.springframework.core.io.Resource>(HttpStatus.NOT_FOUND);
+        HttpHeaders header = new HttpHeaders();
+        Path filePath = null;
+        try {
+            filePath = Paths.get(path);
+            header.add("Content-Type", Files.probeContentType(filePath));
+        } catch (IOException e) {
+            return null;
+        }
+        return new ResponseEntity<Resource>(resource, header, HttpStatus.OK);
+    }
+
     // 만에하나 유저정보가 null값일 경우를 대비해 예외처리가 필요함! 유저정보중 특히나 이메일 부분!!!우린 널이면 안된다했는데 혹시~적용이 안될수도 있기 때문.
 
 //    //카드 뒷면

@@ -6,6 +6,8 @@ import com.project.contap.model.*;
 import com.project.contap.repository.CardRepository;
 import com.project.contap.repository.HashTagRepositoty;
 import com.project.contap.repository.UserRepository;
+import com.project.contap.service.ContapService;
+import com.project.contap.service.MainService;
 import com.project.contap.util.GetRandom;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
@@ -29,6 +31,8 @@ public class TestController {
     private final UserRepository userRepository;
     private final HashTagRepositoty hashTagRepositoty;
     private final CardRepository cardRepository;
+    private final ContapService contapService;
+    private final MainService mainService;
     private final com.querydsl.jpa.impl.JPAQueryFactory jpaQueryFactory;
     private Long test1RunTime = 0L;
     private Long test2RunTime = 0L;
@@ -36,15 +40,24 @@ public class TestController {
     private Long test2cnt = 0L;
     private Boolean lsjcheck = true;
     @Autowired
-    public TestController(UserRepository userRepository,HashTagRepositoty hashTagRepositoty,CardRepository cardRepository,com.querydsl.jpa.impl.JPAQueryFactory jpaQueryFactory) {
+    public TestController(
+            UserRepository userRepository,
+            HashTagRepositoty hashTagRepositoty,
+            CardRepository cardRepository,
+            com.querydsl.jpa.impl.JPAQueryFactory jpaQueryFactory,
+            ContapService contapService,
+            MainService mainService
+    ) {
         this.userRepository = userRepository;
         this.hashTagRepositoty =hashTagRepositoty;
         this.cardRepository =  cardRepository;
         this.jpaQueryFactory = jpaQueryFactory;
+        this.contapService = contapService;
+        this.mainService = mainService;
     }
     @GetMapping("/lsj/test") // dbSet 이라서 그냥 냅둠..
     public String test() throws ContapException {
-        for(long i = 1 ; i< 5001 ;i++)// 1~300 // 5001
+        for(long i = 1 ; i< 307 ;i++)// 1~300 // 5001
         {
             User user = userRepository.findById(i).orElse(null);
             HashTag has1 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,20))).orElse(null);
@@ -81,14 +94,14 @@ public class TestController {
             userRepository.save(user);
         }
 
-        for(long i = 1 ; i< 800 ;i++)// 1~300
+        for(long i = 1 ; i< 900 ;i++)// 1~300
         {
             Card user = cardRepository.findById(i).orElse(null);
-            HashTag has1 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
-            HashTag has2 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
-            HashTag has3 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
-            HashTag has4 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
-            HashTag has5 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
+            HashTag has1 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,20))).orElse(null);
+            HashTag has2 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,20))).orElse(null);
+            HashTag has3 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,20))).orElse(null);
+            HashTag has4 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,20))).orElse(null);
+            HashTag has5 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,20))).orElse(null);
             List<HashTag> ENSENS = new ArrayList<>();
             ENSENS.add(has1);
             ENSENS.add(has2);
@@ -118,6 +131,25 @@ public class TestController {
             cardRepository.save(user);
         }
         return "DBSet 완료염~";
+    }
+    @GetMapping("/lsj/test2") // dbSet 이라서 그냥 냅둠..
+    public String test22() throws ContapException {
+        User tmdwns = new User(5001L);
+        mainService.dotap(tmdwns,5002L);
+        mainService.dotap(tmdwns,5003L);
+        mainService.dotap(tmdwns,5004L);
+        mainService.dotap(tmdwns,5005L);
+        mainService.dotap(tmdwns,5006L);
+        mainService.dotap(tmdwns,5007L);
+        return "친구신청완료~";
+    }
+    @GetMapping("/lsj/test3") // dbSet 이라서 그냥 냅둠..
+    public String test33() throws ContapException {
+        contapService.tapReject(2L);
+        contapService.tapReject(5L);
+        contapService.rapAccept(1L);
+        contapService.rapAccept(4L);
+        return "친구거절및수락완료~";
     }
 
     @GetMapping("/test2")

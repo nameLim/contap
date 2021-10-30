@@ -20,5 +20,10 @@ public class Friend {
 
     @ManyToOne
     private User you;
+    public Friend(User me , User you)
+    {
+        this.me = me;
+        this.you = you;
+    }
 }
 

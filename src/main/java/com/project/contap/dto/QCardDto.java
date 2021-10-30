@@ -14,16 +14,20 @@ public class QCardDto {
     private List<String> stackHashTags;
     private List<String> interestHashTags;
     private String hashTags;
+    private Long userId;
 
     public QCardDto(
             Long cardId,
             String title,
             String content,
-            String hashTags
+            String hashTags,
+            Long userId
+
     ) {
         this.cardId = cardId;
         this.title = title;
         this.content = content;
         this.hashTags = hashTags;
+        this.userId = userId;
     }
 }

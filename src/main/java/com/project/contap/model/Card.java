@@ -45,4 +45,11 @@ public class Card extends TimeStamped{
         this.title = title;
         this.content = content;
     }
+    public Card(User user, Long cardOrder, String title, String content,List<HashTag> Tags){
+        this.user = user;
+        this.cardOrder = cardOrder;
+        this.title = title;
+        this.content = content;
+        this.Tags = Tags;
+    }
 }
