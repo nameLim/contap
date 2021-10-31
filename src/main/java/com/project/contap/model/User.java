@@ -48,6 +48,11 @@ public class User extends TimeStamped{
     @ManyToMany
     private List<HashTag> tags;
 
+
+    @OneToMany(mappedBy = "me", fetch = FetchType.LAZY)
+    private  List<Friend> friends;
+
+
     public User(String email, String pw, String userName, Long kakaoId) {
         this.email = email;
         this.pw = pw;
