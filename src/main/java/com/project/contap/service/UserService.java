@@ -150,7 +150,7 @@ public class UserService {
     }
 
 
-    //비밀번호 변경 ,유효성
+    //비밀번호 변경
     private User getUsers(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new ContapException(ErrorCode.REGISTER_ERROR));
