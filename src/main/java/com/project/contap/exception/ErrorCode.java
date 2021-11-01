@@ -18,6 +18,7 @@ public enum ErrorCode {
     EQUAL_PREV_PASSWORD(BAD_REQUEST, "현재비밀번호와 새로운 비밀번호가 같습니다."),
     EMAIL_FORM_INVALID(BAD_REQUEST, "이메일 형식이 올바르지 않습니다."),
     REGISTER_ERROR(BAD_REQUEST, "회원정보를 입력해주세요."),
+    FILESAVE_ERROR(BAD_REQUEST, "파일 저장 실패"),
 
     CARD_NOT_FOUND(BAD_REQUEST, "해당 카드를 찾을 수 없습니다."),
 
@@ -31,6 +32,7 @@ public enum ErrorCode {
     LOGIN_TOKEN_EXPIRE(BAD_REQUEST, "로그인이 만료되었습니다. 재로그인 하세요!"),
     WRONG_HASHTAG_TYPE(BAD_REQUEST, "잘못된 해쉬태그타입이 존재합니다. 관리자에게 문의하세요."),
     WRONG_USER(BAD_REQUEST, "잘못된 회원정보가 존재합니다."),
+
 
     NOT_FOUND_CARD(BAD_REQUEST, "해당 카드를 찾을 수 없습니다."),
     ACCESS_DENIED(BAD_REQUEST, "권한이 없습니다."),

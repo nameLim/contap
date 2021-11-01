@@ -1,5 +1,6 @@
 package com.project.contap.service;
 
+import com.project.contap.dto.DefaultRsp;
 import com.project.contap.dto.UserRequestDto;
 import com.project.contap.model.*;
 import com.project.contap.repository.FriendRepository;
@@ -72,27 +73,40 @@ public class ContapService {
         return abc;
     }
 
-    public void tapReject(Long tagId) {
+    public DefaultRsp tapReject(Long tagId) {
         Tap tap = tapRepository.findById(tagId).orElse(null);
         if (tap != null)
         {
+            if (tap.getStatus() !=0)
+                return new DefaultRsp("이미 처리된 Tap 입니다.");
             tap.setStatus(1);
             tapRepository.save(tap);
+            return new DefaultRsp("정상적으로 처리 되었습니다.");
+        }
+        else
+        {
+            return new DefaultRsp("해당 tab이 존재하지 않습니다 TabID를 다시확인해주세요..");
         }
     }
 
     @Transactional
-    public void rapAccept(Long tagId) {
+    public DefaultRsp rapAccept(Long tagId) {
         Tap tap = tapRepository.findById(tagId).orElse(null);
         if (tap != null)
         {
+            if (tap.getStatus() !=0)
+                return new DefaultRsp("이미 처리된 Tap 입니다.");
             tap.setStatus(2);
             tapRepository.save(tap);
             Friend fir = new Friend(tap.getSendUser(),tap.getReceiveUser());
             Friend sec = new Friend(tap.getReceiveUser(),tap.getSendUser());
             friendRepository.save(fir);
             friendRepository.save(sec);
-
+            return new DefaultRsp("정상적으로 처리 되었습니다.");
+        }
+        else
+        {
+            return new DefaultRsp("해당 tab이 존재하지 않습니다 TabID를 다시확인해주세요..");
         }
     }
 

@@ -6,31 +6,34 @@ import com.project.contap.service.MypageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
-@RestController
 @RequestMapping("/mypage")
+@RestController
 public class MypageController {
-
     private final MypageService mypageService;
-
-
     //나의 정보
     @GetMapping("/myinfo")
     public UserInfoDto getMyInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return mypageService.getMyInfo(userDetails.getUser());
     }
-
-
     //카드 앞면
     @PostMapping("/frontCard")
-    public FrontResponseCardDto modifyFrontCard(@RequestBody FrontRequestCardDto frontRequestCardDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return mypageService.modifyFrontCard(frontRequestCardDto, userDetails.getUser());
+    public FrontResponseCardDto modifyFrontCard(
+            @RequestParam(value = "profile",required = false) MultipartFile files,
+            @RequestBody FrontRequestCardDto frontRequestCardDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        return mypageService.modifyFrontCard(files,frontRequestCardDto, userDetails.getUser());
     }
 
     @PostMapping("/backCard")
     public BackResponseCardDto createBackCard(@RequestBody BackRequestCardDto backRequestCardDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return mypageService.createBackCard(backRequestCardDto, userDetails.getUser());
+        return mypageService.createBackCard(
+                backRequestCardDto,
+                userDetails.getUser()
+        );
     }
 
     @PostMapping("/backCard/{cardId}")

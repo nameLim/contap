@@ -1,5 +1,6 @@
 package com.project.contap.controller;
 
+import com.project.contap.dto.DefaultRsp;
 import com.project.contap.dto.TagDto;
 import com.project.contap.dto.UserInfoDto;
 import com.project.contap.dto.UserRequestDto;
@@ -37,16 +38,16 @@ public class ContapController {
     }
 
     @PostMapping("/contap/reject")
-    public void tapreject(
+    public DefaultRsp tapreject(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody(required = false) TagDto tagId) {
-        contapService.tapReject(tagId.getTagId());
+        return contapService.tapReject(tagId.getTagId());
     }
     @PostMapping("/contap/accept")
-    public void acreject(
+    public DefaultRsp acreject(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody(required = false)  TagDto tagId) {
-        contapService.rapAccept(tagId.getTagId());
+        return contapService.rapAccept(tagId.getTagId());
     }
 
 }

@@ -1,10 +1,10 @@
 package com.project.contap.service;
 
-import com.project.contap.dto.QCardDto;
-import com.project.contap.dto.SearchRequestDto;
-import com.project.contap.dto.UserRequestDto;
-import com.project.contap.dto.UserResponseDto;
+import com.project.contap.dto.*;
+import com.project.contap.exception.ContapException;
+import com.project.contap.exception.ErrorCode;
 import com.project.contap.model.*;
+import com.project.contap.repository.FriendRepository;
 import com.project.contap.repository.HashTagRepositoty;
 import com.project.contap.repository.TapRepository;
 import com.project.contap.repository.UserRepository;
@@ -14,11 +14,13 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Query;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -29,18 +31,21 @@ public class MainService {
     private final UserRepository userRepository;
     private final JPAQueryFactory jpaQueryFactory;
     private final TapRepository tapRepository;
+    private final FriendRepository friendRepository;
 
     @Autowired
     public MainService(
             HashTagRepositoty hashTagRepositoty,
             JPAQueryFactory jpaQueryFactory,
             UserRepository userRepository,
-            TapRepository tapRepository)
+            TapRepository tapRepository,
+            FriendRepository friendRepository)
     {
         this.hashTagRepositoty=hashTagRepositoty;
         this.jpaQueryFactory =jpaQueryFactory;
         this.userRepository = userRepository;
         this.tapRepository = tapRepository;
+        this.friendRepository = friendRepository;
     }
 
     public List<HashTag> getHashTag() {
@@ -120,8 +125,10 @@ public class MainService {
 
     public List<UserRequestDto> getUserDtoList(UserDetailsImpl userDetails) {
         Random random = new Random();
-        int page = random.nextInt(200);
+        int page = random.nextInt(300);
+
         QUser hu = QUser.user;
+
         List<UserRequestDto> abc;
         abc = jpaQueryFactory
                 .select(
@@ -137,12 +144,74 @@ public class MainService {
                 .from(hu)
                 .offset(page*9).limit(9)
                 .fetch();
+
+        if(userDetails != null) {
+            QFriend qfriend = QFriend.friend;
+            List<Long> listFriendId = jpaQueryFactory
+                    .select(
+                            qfriend.you.id
+                    ).distinct()
+                    .from(qfriend)
+                    .where(qfriend.me.id.eq(userDetails.getUser().getId()))
+                    .fetch();
+            for (UserRequestDto checkid : abc){
+                checkid.setIsFriend(listFriendId.contains(checkid.getUserId()));
+            }
+        }
         return abc;
     }
-    public void dotap(User senduser, Long otherUserId) {
+
+
+    @Transactional
+    public DefaultRsp dotap(User sendUser, Long otherUserId) {
         User receiveUser = new User(otherUserId);
-        Tap newTap = new Tap(senduser,receiveUser);
+        //======================================
+        QFriend qFriend = QFriend.friend;
+
+        Boolean checkFriend = jpaQueryFactory.from(qFriend)
+                .where(qFriend.me.eq(sendUser)
+                        .and(qFriend.you.eq(receiveUser)))
+                .fetchFirst() != null;
+
+        if (checkFriend)
+        {
+            return new DefaultRsp("이미 친구 관계입니다.");
+        }
+        //==========================================
+
+        //==========================================
+        QTap qTap = QTap.tap;
+        Tap checkrecievetap = jpaQueryFactory.select(qTap)
+        .from(qTap)
+                .where(qTap.sendUser.eq(receiveUser)
+                        .and(qTap.receiveUser.eq(sendUser))
+                        .and(qTap.status.eq(0)))
+                .fetchOne();
+        if (checkrecievetap != null)
+        {
+            checkrecievetap.setStatus(2);
+            Friend newF = new Friend(receiveUser,sendUser);
+            Friend newF2 = new Friend(sendUser,receiveUser);
+            friendRepository.save(newF);
+            friendRepository.save(newF2);
+            tapRepository.save(checkrecievetap);
+            return new DefaultRsp("상대방의 요청을 수락 하였습니다.");
+        }
+        //==========================================
+
+        Boolean checksendtap = jpaQueryFactory.from(qTap)
+                .where(qTap.sendUser.eq(sendUser)
+                        .and(qTap.receiveUser.eq(receiveUser))
+                        .and(qTap.status.eq(0)))
+                .fetchFirst() != null;
+        if (checksendtap)
+        {
+            return new DefaultRsp("이미 상대에게 요청을 보낸 상태입니다.");
+        }
+        //====================================================
+
+        Tap newTap = new Tap(sendUser,receiveUser);
         tapRepository.save(newTap);
-        return;
+        return new DefaultRsp("정상적으로 처리 되었습니다.");
     }
 }

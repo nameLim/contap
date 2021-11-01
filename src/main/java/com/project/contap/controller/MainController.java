@@ -70,12 +70,12 @@ public class MainController {
         return result;
     }
     @PostMapping("/main/posttap")
-    public void tap(
+    public DefaultRsp tap(
             @RequestBody(required = false)  UserRequestDto userid,
             @AuthenticationPrincipal UserDetailsImpl userDetails
 
     ) {
-        mainService.dotap(userDetails.getUser(),userid.getUserId());
+        return mainService.dotap(userDetails.getUser(),userid.getUserId());
     }
     @GetMapping("/display/{file}")
     public ResponseEntity<Resource> display(
