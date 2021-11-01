@@ -32,6 +32,7 @@ public class AddLog {
             sb.append(name + " : " + request.getParameter(name) + "     ");
         }
         log.error(sb);
+        //LSJ
     }
 
     public static void addAPIUseTime(
