@@ -9,10 +9,14 @@ import com.project.contap.model.HashTag;
 import com.project.contap.model.User;
 import com.project.contap.repository.CardRepository;
 import com.project.contap.repository.UserRepository;
+import com.project.contap.util.MD5Generator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -21,6 +25,7 @@ public class MypageService {
 
     private final UserRepository userRepository;
     private final CardRepository cardRepository;
+
 
     // 회원 정보 가져오기
     // 가져오는 값 : 기본 회원정보(앞면카드), 모든 뒷면카드
@@ -60,35 +65,60 @@ public class MypageService {
 
     //앞면 카드 정보 수정
     // 변경할 수 있는 값 : profile, userName, hashTags
-    public FrontResponseCardDto modifyFrontCard(FrontRequestCardDto frontRequestCardDto, User requestUser){
+    public FrontResponseCardDto modifyFrontCard(MultipartFile files,FrontRequestCardDto frontRequestCardDto, User requestUser){
 
         if (requestUser == null) {
             throw new ContapException(ErrorCode.USER_NOT_FOUND); //회원 정보를 찾을 수 없습니다.
         }
-
         User user = userRepository.findById(requestUser.getId()).orElse(null);
         if (user.getEmail()!=null && !user.isWritedBy(requestUser))
             throw new ContapException(ErrorCode.ACCESS_DENIED); //권한이 없습니다.
-
-        StringBuilder tagBuilder = new StringBuilder();
+        String filename = "basic.jpg";
+        StringBuilder StacktagBuilder = new StringBuilder();
+        String splitstr = "@_";
+        StringBuilder interesttagBuilder = new StringBuilder();
         List<HashTag> hashTagList = frontRequestCardDto.getHashTags();
+
         if(hashTagList.size()>0) {
-            tagBuilder.append("@");
             for(HashTag hash: hashTagList) {
                 if(hash.getType()==1){
-                    tagBuilder.append("_@");
+                    interesttagBuilder.append("@" + hash.getName());
                 }
-                tagBuilder.append(hash.getName()+"@");
+                else{
+                    StacktagBuilder.append("@" + hash.getName());
+                }
+            }
+            interesttagBuilder.append("@");
+        }
+        StacktagBuilder.append(splitstr);
+        StacktagBuilder.append(interesttagBuilder);
+        try
+        {
+            if (files != null) {
+                String origFilename = files.getOriginalFilename();
+                filename = new MD5Generator(origFilename).toString() + ".jpg";
+                String savePath = "/home/ubuntu/images/";
+
+                if (!new File(savePath).exists()) {
+                    try {
+                        new File(savePath).mkdir();
+                    } catch (Exception e) {
+                        e.getStackTrace();
+                    }
+                }
+                String filePath = savePath +filename;
+                files.transferTo(new File(filePath));
             }
         }
-
+        catch (Exception e) {
+            throw new ContapException(ErrorCode.FILESAVE_ERROR);
+        }
         //user 값 넣기
-        user.setProfile(frontRequestCardDto.getProfile());
+        user.setProfile("http://52.79.248.107:8080/display/" +filename);
         user.setUserName(frontRequestCardDto.getUserName());
         user.setTags(frontRequestCardDto.getHashTags());
-        user.setHashTagsString(tagBuilder.toString());
+        user.setHashTagsString(StacktagBuilder.toString());
         user = userRepository.save(user);
-
         //response
         return FrontResponseCardDto.builder()
                 .profile(user.getProfile())
@@ -112,17 +142,25 @@ public class MypageService {
         if( cardSize >= 10 )
             throw new ContapException(ErrorCode.EXCESS_CARD_MAX); //카드 최대 가능 수를 초과하였습니다.
 
-        StringBuilder tagBuilder = new StringBuilder();
+        StringBuilder StacktagBuilder = new StringBuilder();
+        String splitstr = "@_";
+        StringBuilder interesttagBuilder = new StringBuilder();
         List<HashTag> hashTagList = backRequestCardDto.getHashTags();
+
         if(hashTagList.size()>0) {
-            tagBuilder.append("@");
             for(HashTag hash: hashTagList) {
                 if(hash.getType()==1){
-                    tagBuilder.append("_@");
+                    interesttagBuilder.append("@" + hash.getName());
                 }
-                tagBuilder.append(hash.getName()+"@");
+                else{
+                    StacktagBuilder.append("@" + hash.getName());
+                }
             }
+            interesttagBuilder.append("@");
         }
+        StacktagBuilder.append(splitstr);
+        StacktagBuilder.append(interesttagBuilder);
+
 
         // card 값 넣기
         if(cardSize == 0) {
@@ -137,7 +175,7 @@ public class MypageService {
         card.setTitle(backRequestCardDto.getTitle());
         card.setContent(backRequestCardDto.getContent());
         card.setTags(backRequestCardDto.getHashTags());
-        card.setHashTagsString(tagBuilder.toString());
+        card.setHashTagsString(StacktagBuilder.toString());
         cardRepository.save(card);
 
         //response
@@ -163,20 +201,27 @@ public class MypageService {
         if(card == null)
             throw new ContapException(ErrorCode.NOT_FOUND_CARD); //해당 카드를 찾을 수 없습니다.
 
-        StringBuilder tagBuilder = new StringBuilder();
+
+        StringBuilder StacktagBuilder = new StringBuilder();
+        String splitstr = "@_";
+        StringBuilder interesttagBuilder = new StringBuilder();
         List<HashTag> hashTagList = backRequestCardDto.getHashTags();
+
         if(hashTagList.size()>0) {
-            tagBuilder.append("@");
             for(HashTag hash: hashTagList) {
                 if(hash.getType()==1){
-                    tagBuilder.append("_@");
+                    interesttagBuilder.append("@" + hash.getName());
                 }
-                tagBuilder.append(hash.getName()+"@");
+                else{
+                    StacktagBuilder.append("@" + hash.getName());
+                }
             }
+            interesttagBuilder.append("@");
         }
-
+        StacktagBuilder.append(splitstr);
+        StacktagBuilder.append(interesttagBuilder);
         //card 값 넣기
-        card.update(backRequestCardDto, tagBuilder.toString());
+        card.update(backRequestCardDto, StacktagBuilder.toString());
         card = cardRepository.save(card);
 
         //response
