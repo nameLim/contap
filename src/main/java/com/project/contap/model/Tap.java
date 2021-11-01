@@ -21,7 +21,7 @@ public class Tap {
     @OneToOne(fetch = FetchType.LAZY)
     private User receiveUser;
     @Column
-    private int status;//0 or 1
+    private int status;//0 : 대기 - 1 : 거절 - 2 : 수락
     public Tap (User sendUser, User receiveUser)
     {
         this.receiveUser = receiveUser;

@@ -1,25 +1,20 @@
 package com.project.contap.controller;
 
-import com.project.contap.dto.UserRequestDto;
 import com.project.contap.exception.ContapException;
-import com.project.contap.model.*;
+import com.project.contap.model.Card;
+import com.project.contap.model.HashTag;
+import com.project.contap.model.User;
 import com.project.contap.repository.CardRepository;
 import com.project.contap.repository.HashTagRepositoty;
 import com.project.contap.repository.UserRepository;
 import com.project.contap.service.ContapService;
 import com.project.contap.service.MainService;
 import com.project.contap.util.GetRandom;
-import com.querydsl.core.QueryResults;
-import com.querydsl.core.Tuple;
-import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.impl.JPAQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -57,14 +52,14 @@ public class TestController {
     }
     @GetMapping("/lsj/test") // dbSet 이라서 그냥 냅둠..
     public String test() throws ContapException {
-        for(long i = 1 ; i< 307 ;i++)// 1~300 // 5001
+        for(long i = 1 ; i< 5000 ;i++)// 1~5007번까지 있오
         {
             User user = userRepository.findById(i).orElse(null);
-            HashTag has1 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,20))).orElse(null);
-            HashTag has2 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,20))).orElse(null);
-            HashTag has3 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,20))).orElse(null);
-            HashTag has4 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,20))).orElse(null);
-            HashTag has5 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,20))).orElse(null);
+            HashTag has1 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,414))).orElse(null);
+            HashTag has2 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,414))).orElse(null);
+            HashTag has3 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,414))).orElse(null);
+            HashTag has4 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,414))).orElse(null);
+            HashTag has5 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,414))).orElse(null);
             List<HashTag> ENSENS = new ArrayList<>();
             ENSENS.add(has1);
             ENSENS.add(has2);
@@ -94,14 +89,14 @@ public class TestController {
             userRepository.save(user);
         }
 
-        for(long i = 1 ; i< 900 ;i++)// 1~300
+        for(long i = 1 ; i< 35000 ;i++)// 1~300
         {
             Card user = cardRepository.findById(i).orElse(null);
-            HashTag has1 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,20))).orElse(null);
-            HashTag has2 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,20))).orElse(null);
-            HashTag has3 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,20))).orElse(null);
-            HashTag has4 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,20))).orElse(null);
-            HashTag has5 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,20))).orElse(null);
+            HashTag has1 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,414))).orElse(null);
+            HashTag has2 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,414))).orElse(null);
+            HashTag has3 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,414))).orElse(null);
+            HashTag has4 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,414))).orElse(null);
+            HashTag has5 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,414))).orElse(null);
             List<HashTag> ENSENS = new ArrayList<>();
             ENSENS.add(has1);
             ENSENS.add(has2);
@@ -161,13 +156,13 @@ public class TestController {
         if(userId == 0L)
             userId = 1L;
         User user = userRepository.findById(userId).orElse(null);
-        List<Card> abc = cardRepository.findAllByUser(userId);
+//        List<Card> abc = cardRepository.findAllByUser(userId);
         long endTime = System.currentTimeMillis();
         long runTime = endTime - startTime;
         test2RunTime = runTime + test2RunTime;
         Logger log = LogManager.getLogger("test2");
         log.error(runTime+"ms");
-        return abc;
+        return null;
     }
 
     @GetMapping("/test1/getRuntime")
@@ -190,5 +185,39 @@ public class TestController {
     void getTest1123RunTime() throws ContapException {
         Logger log = LogManager.getLogger("test2");
         log.error("for test!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    }
+
+
+
+    @GetMapping("/forclient1/{id}") // 한유저가쓴 카드 모두조회
+    List<Card> forclient1(
+            @PathVariable Long id
+    ) throws ContapException {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null)
+            return null;
+        return cardRepository.findAllByUser(user);
+    }
+
+    @GetMapping("/forclient2/{id}") // 한유저가쓴 카드 모두조회
+    User forclient2(
+            @PathVariable Long id
+    ) throws ContapException {
+        User user = userRepository.findById(id).orElse(null);
+        return user;
+    }
+    @GetMapping("/forclient3/{id}") // 한유저가쓴 카드 모두조회
+    User forclient3(
+            @PathVariable String id
+    ) throws ContapException {
+        User user = userRepository.findByEmail(id).orElse(null);
+        return user;
+    }
+    @GetMapping("/forclient4/{id}") // 한유저가쓴 카드 모두조회
+    Card forclient4(
+            @PathVariable Long id
+    ) throws ContapException {
+        Card card = cardRepository.findById(id).orElse(null);
+        return card;
     }
 }

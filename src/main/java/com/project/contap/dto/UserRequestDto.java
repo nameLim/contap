@@ -22,6 +22,7 @@ public class UserRequestDto {
     private String hashTags;
     private Long tapId;
     private List<Card> cards;
+    private Boolean isFriend;
 
     public UserRequestDto(Long id,String email,String profile, Long kakaoId, String userName, String pw,String hashTagsString) {
         this.userId = id;
@@ -31,6 +32,7 @@ public class UserRequestDto {
         this.kakaoId = kakaoId;
         this.profile = profile;
         this.hashTags=hashTagsString;
+        this.isFriend = false;
     }
     public UserRequestDto(Long id,String email,String profile, Long kakaoId, String userName, String pw,String hashTagsString,Long tapId) {
         this.userId = id;
