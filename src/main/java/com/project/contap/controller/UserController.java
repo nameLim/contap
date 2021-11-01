@@ -55,15 +55,6 @@ public class UserController {
         return result;
     }
 
-    @PostMapping("/user/emailcheck")
-    public Map<String, String> duplicateId(@RequestBody UserRequestDto userRequestDto) {
-        return userService.duplicateId(userRequestDto);
-    }
-
-    @PostMapping("/user/namecheck")
-    public Map<String, String> duplicateuserName(@RequestBody SignUpRequestDto signUpRequestDto) {
-        return userService.duplicateuserName(signUpRequestDto);
-    }
 
     @PostMapping("/user/image")
     public Map<String, String> updateUserProfileImage(
