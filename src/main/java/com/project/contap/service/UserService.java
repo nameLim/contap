@@ -185,7 +185,7 @@ public class UserService {
     @Transactional
     public void updatePassword(PwUpdateRequestDto requestDto, String email) throws ContapException {
         if (requestDto.getCurrentPw().isEmpty()) {
-            throw new ContapException(ErrorCode.CURRNET_EMPTY_PASSWORD);
+            throw new ContapException(ErrorCode.CURRENT_EMPTY_PASSWORD);
         }
 
         if (requestDto.getNewPw().isEmpty() || requestDto.getNewPw().isEmpty()) {
@@ -193,7 +193,7 @@ public class UserService {
         }
 
         if (requestDto.getCurrentPw().equals(requestDto.getNewPw())) {
-            throw new ContapException(ErrorCode.NEW_PASSWORD_NOT_EQUAL);
+            throw new ContapException(ErrorCode.EQUAL_PREV_PASSWORD);
         }
 
         if (requestDto.getNewPw().length() < 6 || requestDto.getNewPw().length() > 20) {
@@ -203,6 +203,7 @@ public class UserService {
         if (!requestDto.getNewPw().equals(requestDto.getNewPwCheck())) {
             throw new ContapException(ErrorCode.NEW_PASSWORD_NOT_EQUAL);
         }
+
 
         User user = getUsers(email);
 
@@ -217,6 +218,7 @@ public class UserService {
 
         user.updatePw(requestDto);
     }
+
 }
 
 //    @Transactional //table join으로 검색.
