@@ -2,7 +2,6 @@ package com.project.contap.controller;
 
 import com.project.contap.dto.DefaultRsp;
 import com.project.contap.dto.TagDto;
-import com.project.contap.dto.UserInfoDto;
 import com.project.contap.dto.UserRequestDto;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.service.ContapService;

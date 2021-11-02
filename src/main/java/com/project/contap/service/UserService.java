@@ -130,34 +130,7 @@ public class UserService {
         return user;
     }
 
-    // 가입 중복 email
-    public Map<String, String> duplicateId(UserRequestDto userRequestDto) {
-        User user = userRepository.findByEmail(userRequestDto.getEmail()).orElse(null);
 
-        Map<String, String> result = new HashMap<>();
-        if (user == null) {
-            result.put("result", "success");
-            return result;
-        }
-
-        result.put("result", "fail");
-        result.put("message", "중복된 email이 존재합니다.");
-        return result;
-    }
-
-    //로그인 닉네임 중복체크
-    public Map<String, String> duplicateuserName(SignUpRequestDto signUpRequestDto) {
-        User user = userRepository.findByUserName(signUpRequestDto.getUserName()).orElse(null);
-        Map<String, String> result = new HashMap<>();
-        if (user == null) {
-            result.put("result", "success");
-            return result;
-        }
-
-        result.put("result", "fail");
-        result.put("message", "중복된 닉네임이 있습니다.");
-        return result;
-    }
     //유저 프로필 사진 수정
     public User updateUserProfileImage(String profile, String userId) throws ContapException {
         User user = userRepository.findByEmail(userId).orElseThrow(
@@ -167,25 +140,26 @@ public class UserService {
         return userRepository.save(user);
     }
 
+
+    //회원탈퇴
     @Transactional
     public void deleteUser(PwRequestDto requestDto, User user) throws ContapException {
-        if (!requestDto.getPw().equals(requestDto.getPwCheck())) {
-            throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
-        }
         if (passwordEncoder.matches(requestDto.getPw(), user.getPw())) {
             userRepository.delete(user);
         }
     }
+
+
+    //비밀번호 변경
     private User getUsers(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new ContapException(ErrorCode.REGISTER_ERROR));
     }
 
-    //비밀번호 변경 ,유효성
     @Transactional
     public void updatePassword(PwUpdateRequestDto requestDto, String email) throws ContapException {
         if (requestDto.getCurrentPw().isEmpty()) {
-            throw new ContapException(ErrorCode.CURRNET_EMPTY_PASSWORD);
+            throw new ContapException(ErrorCode.CURRENT_EMPTY_PASSWORD);
         }
 
         if (requestDto.getNewPw().isEmpty() || requestDto.getNewPw().isEmpty()) {
@@ -193,7 +167,7 @@ public class UserService {
         }
 
         if (requestDto.getCurrentPw().equals(requestDto.getNewPw())) {
-            throw new ContapException(ErrorCode.NEW_PASSWORD_NOT_EQUAL);
+            throw new ContapException(ErrorCode.EQUAL_PREV_PASSWORD);
         }
 
         if (requestDto.getNewPw().length() < 6 || requestDto.getNewPw().length() > 20) {
@@ -203,6 +177,7 @@ public class UserService {
         if (!requestDto.getNewPw().equals(requestDto.getNewPwCheck())) {
             throw new ContapException(ErrorCode.NEW_PASSWORD_NOT_EQUAL);
         }
+
 
         User user = getUsers(email);
 
@@ -217,6 +192,7 @@ public class UserService {
 
         user.updatePw(requestDto);
     }
+
 }
 
 //    @Transactional //table join으로 검색.

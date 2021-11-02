@@ -1,15 +1,16 @@
 package com.project.contap.controller;
 
-import com.project.contap.dto.*;
+import com.project.contap.dto.DefaultRsp;
+import com.project.contap.dto.QCardDto;
+import com.project.contap.dto.SearchRequestDto;
+import com.project.contap.dto.UserRequestDto;
 import com.project.contap.exception.ContapException;
-import com.project.contap.exception.ErrorCode;
 import com.project.contap.model.HashTag;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
