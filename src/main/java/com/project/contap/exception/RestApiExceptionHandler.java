@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
+
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,7 +22,7 @@ public class RestApiExceptionHandler {
 
         if (ex instanceof ContapException) // 처리한 예외이면
         {
-            restApiException.setHttpStatus(HttpStatus.OK);
+            restApiException.setHttpStatus(HttpStatus.BAD_REQUEST);
             restApiException.setErrorMessage(((ContapException) ex).getErrorCode().getMessage());
         } else // 아니면
         {

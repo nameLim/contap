@@ -2,6 +2,7 @@ package com.project.contap.controller;
 
 import com.project.contap.dto.*;
 import com.project.contap.exception.ContapException;
+import com.project.contap.exception.ErrorCode;
 import com.project.contap.model.User;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.security.jwt.JwtTokenProvider;
@@ -9,10 +10,7 @@ import com.project.contap.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,15 +55,6 @@ public class UserController {
         return result;
     }
 
-    @PostMapping("/signup/emailcheck")
-    public Map<String, String> duplicateId(@RequestBody UserRequestDto userRequestDto) {
-        return userService.duplicateId(userRequestDto);
-    }
-
-    @PostMapping("/signup/namecheck")
-    public Map<String, String> duplicateuserName(@RequestBody SignUpRequestDto signUpRequestDto) {
-        return userService.duplicateuserName(signUpRequestDto);
-    }
 
     @PostMapping("/user/image")
     public Map<String, String> updateUserProfileImage(
@@ -112,16 +101,16 @@ public class UserController {
 
 
 
-//    @GetMapping("/auth")
-//    public Map<String, String> loginCheck(@AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
-//        if (userDetails == null) {
-//            throw new ContapException(ErrorCode.LOGIN_TOKEN_EXPIRE);
-//        }
-//        Map<String, String> result = new HashMap<>();
-//        result.put("email", userDetails.getUser().getEmail());
-//        result.put("nickname", userDetails.getUser().getNickname());
-//        result.put("result", "success");
-//
-//        return result;
-//    }
+    @GetMapping("/auth")
+    public Map<String, String> loginCheck(@AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
+        if (userDetails == null) {
+            throw new ContapException(ErrorCode.LOGIN_TOKEN_EXPIRE);
+        }
+        Map<String, String> result = new HashMap<>();
+        result.put("email", userDetails.getUser().getEmail());
+        result.put("userName", userDetails.getUser().getUserName());
+        result.put("result", "success");
+
+        return result;
+    }
 }
