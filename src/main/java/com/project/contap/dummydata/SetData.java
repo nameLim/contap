@@ -34,7 +34,9 @@ public class SetData implements ApplicationRunner{
     @Override
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
+        System.out.println("setdt");
 //        setdata();
+        System.out.println("setdtend");
     }
     private void setdata(){
         List<String> imgfiles = Arrays.asList(

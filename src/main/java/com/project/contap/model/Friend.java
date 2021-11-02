@@ -20,10 +20,15 @@ public class Friend {
 
     @ManyToOne
     private User you;
-    public Friend(User me , User you)
+
+    @Column
+    private String roomId;
+
+    public Friend(User me , User you, String roomId)
     {
         this.me = me;
         this.you = you;
+        this.roomId = roomId;
     }
 }
 
