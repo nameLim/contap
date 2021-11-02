@@ -1,6 +1,7 @@
 package com.project.contap.service;
 
 import com.project.contap.dto.DefaultRsp;
+import com.project.contap.dto.TagDto;
 import com.project.contap.dto.UserRequestDto;
 import com.project.contap.model.*;
 import com.project.contap.repository.FriendRepository;
@@ -129,4 +130,5 @@ public class ContapService {
                 .fetch();
         return abc;
     }
+
 }
