@@ -147,6 +147,9 @@ public class UserService {
         if (passwordEncoder.matches(requestDto.getPw(), user.getPw())) {
             userRepository.delete(user);
         }
+        else {
+            throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
+        }
     }
 
 
@@ -192,6 +195,22 @@ public class UserService {
 
         user.updatePw(requestDto);
     }
+
+
+//    //비밀번호 찾기
+//    @Transactional
+//    public void setPw(PwUpdateRequestDto requestDto) {
+//        if (!requestDto.getNewPw().equals(requestDto.getNewPwCheck())) {
+//            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+//        }
+//
+//        User user = userRepository.findByEmail(requestDto.get()).orElseThrow(
+//                () -> new IllegalArgumentException("There is no user.")
+//        );
+//        String newPw = passwordEncoder.encode(requestDto.getNewPw());
+//        user.updatePw(newPw);
+//
+//    }
 
 }
 

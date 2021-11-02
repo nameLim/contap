@@ -19,6 +19,7 @@ public enum ErrorCode {
     EMAIL_FORM_INVALID(BAD_REQUEST, "이메일 형식이 올바르지 않습니다."),
     REGISTER_ERROR(BAD_REQUEST, "회원정보를 입력해주세요."),
     FILESAVE_ERROR(BAD_REQUEST, "파일 저장 실패"),
+    NOT_EQUAL_NUMBER(BAD_REQUEST, "인증번호가 일치하지 않습니다."),
 
     CARD_NOT_FOUND(BAD_REQUEST, "해당 카드를 찾을 수 없습니다."),
 
