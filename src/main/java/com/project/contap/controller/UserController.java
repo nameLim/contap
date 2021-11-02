@@ -8,6 +8,7 @@ import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.security.jwt.JwtTokenProvider;
 import com.project.contap.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -87,7 +88,7 @@ public class UserController {
 
     }
 
-    //비밀번호 경
+    //비밀번호 변경
     @PostMapping("/setting/password")
     public Map<String,String> updateMyPageInfoPassword(@RequestBody PwUpdateRequestDto requestDto ,@AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
         userService.updatePassword(requestDto,userDetails.getUsername());
@@ -97,6 +98,13 @@ public class UserController {
 
         return result;
     }
+
+//    //비번찾고 변경
+//    @PostMapping("/setting/password/new")
+//    public ResponseEntity<String> setPassword(@RequestBody PwUpdateRequestDto requestDto) {
+//        userService.setPw(requestDto);
+//        return ResponseEntity.ok("ok");
+//    }
 
 
 
