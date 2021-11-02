@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ContapService {
@@ -99,8 +100,9 @@ public class ContapService {
                 return new DefaultRsp("이미 처리된 Tap 입니다.");
             tap.setStatus(2);
             tapRepository.save(tap);
-            Friend fir = new Friend(tap.getSendUser(),tap.getReceiveUser());
-            Friend sec = new Friend(tap.getReceiveUser(),tap.getSendUser());
+            String roomId = UUID.randomUUID().toString();
+            Friend fir = new Friend(tap.getSendUser(),tap.getReceiveUser(),roomId);
+            Friend sec = new Friend(tap.getReceiveUser(),tap.getSendUser(),roomId);
             friendRepository.save(fir);
             friendRepository.save(sec);
             return new DefaultRsp("정상적으로 처리 되었습니다.");
@@ -123,7 +125,8 @@ public class ContapService {
                                 qfriend.you.kakaoId,
                                 qfriend.you.userName,
                                 qfriend.you.pw,
-                                qfriend.you.hashTagsString
+                                qfriend.you.hashTagsString,
+                                qfriend.roomId
                         )).distinct()
                 .from(qfriend)
                 .where(qfriend.me.id.eq(user.getId()))

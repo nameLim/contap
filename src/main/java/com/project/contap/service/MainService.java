@@ -1,8 +1,9 @@
 package com.project.contap.service;
 
-import com.project.contap.dto.*;
-import com.project.contap.exception.ContapException;
-import com.project.contap.exception.ErrorCode;
+import com.project.contap.dto.DefaultRsp;
+import com.project.contap.dto.QCardDto;
+import com.project.contap.dto.SearchRequestDto;
+import com.project.contap.dto.UserRequestDto;
 import com.project.contap.model.*;
 import com.project.contap.repository.FriendRepository;
 import com.project.contap.repository.HashTagRepositoty;
@@ -11,19 +12,16 @@ import com.project.contap.repository.UserRepository;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.util.GetRandom;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.Query;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 @Service
 public class MainService {
@@ -113,7 +111,7 @@ public class MainService {
                                 hu.id,
                                 hu.title,
                                 hu.content,
-                                hu.hashTagsString,
+                                hu.tagsString,
                                 hu.user.id
                         )
                 )
@@ -190,8 +188,9 @@ public class MainService {
         if (checkrecievetap != null)
         {
             checkrecievetap.setStatus(2);
-            Friend newF = new Friend(receiveUser,sendUser);
-            Friend newF2 = new Friend(sendUser,receiveUser);
+            String roomId = UUID.randomUUID().toString();
+            Friend newF = new Friend(receiveUser,sendUser,roomId);
+            Friend newF2 = new Friend(sendUser,receiveUser,roomId);
             friendRepository.save(newF);
             friendRepository.save(newF2);
             tapRepository.save(checkrecievetap);

@@ -1,24 +1,18 @@
 package com.project.contap.controller;
 
-import com.project.contap.dto.UserRequestDto;
 import com.project.contap.exception.ContapException;
-import com.project.contap.model.*;
+import com.project.contap.model.Card;
+import com.project.contap.model.HashTag;
+import com.project.contap.model.User;
 import com.project.contap.repository.CardRepository;
 import com.project.contap.repository.HashTagRepositoty;
 import com.project.contap.repository.UserRepository;
 import com.project.contap.service.ContapService;
 import com.project.contap.service.MainService;
 import com.project.contap.util.GetRandom;
-import com.querydsl.core.QueryResults;
-import com.querydsl.core.Tuple;
-import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.impl.JPAQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -128,7 +122,7 @@ public class TestController {
                     dlf = dlf +"@"+ha.getName();
                 }
             }
-            user.setHashTagsString(dud+"@_"+dlf+"@");
+            user.setTagsString(dud+"@_"+dlf+"@");
             cardRepository.save(user);
         }
         return "DBSet 완료염~";

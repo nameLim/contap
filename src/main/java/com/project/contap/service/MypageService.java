@@ -8,10 +8,10 @@ import com.project.contap.model.Card;
 import com.project.contap.model.HashTag;
 import com.project.contap.model.User;
 import com.project.contap.repository.CardRepository;
+import com.project.contap.repository.HashTagRepositoty;
 import com.project.contap.repository.UserRepository;
 import com.project.contap.util.MD5Generator;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,7 +25,7 @@ public class MypageService {
 
     private final UserRepository userRepository;
     private final CardRepository cardRepository;
-
+    private final HashTagRepositoty hashTagRepositoty;
 
     // 회원 정보 가져오기
     // 가져오는 값 : 기본 회원정보(앞면카드), 모든 뒷면카드
@@ -48,56 +48,41 @@ public class MypageService {
                     .cardId(card.getId())
                     .userId(card.getUser().getId())
                     .title(card.getTitle())
-                    .hashTagsString(card.getHashTagsString())
-                    .content(card.getContent()).build();
+                    .content(card.getContent())
+                    .tagsStr(card.getTagsString())
+                    .link(card.getLink())
+                    .build();
             cardDtoList.add(cardDto);
         }
 
-        UserInfoDto userInfoDto = UserInfoDto.builder()
+        return UserInfoDto.builder()
                 .userId(user.getId())
                 .password(user.getPw())
                 .userName(user.getUserName())
                 .profile(user.getProfile())
                 .authorityEnum(user.getAuthorityEnum())
                 .cardDtoList(cardDtoList).build();
-        return userInfoDto;
     }
 
-    //앞면 카드 정보 수정
-    // 변경할 수 있는 값 : profile, userName, hashTags
-    public FrontResponseCardDto modifyFrontCard(MultipartFile files,FrontRequestCardDto frontRequestCardDto, User requestUser){
-
+    public FrontResponseCardDto modifyFrontCard(FrontRequestCardDto frontRequestCardDto, User requestUser){
+    //userName, hashtagName
         if (requestUser == null) {
             throw new ContapException(ErrorCode.USER_NOT_FOUND); //회원 정보를 찾을 수 없습니다.
         }
         User user = userRepository.findById(requestUser.getId()).orElse(null);
         if (user.getEmail()!=null && !user.isWritedBy(requestUser))
             throw new ContapException(ErrorCode.ACCESS_DENIED); //권한이 없습니다.
-        String filename = "basic.jpg";
-        StringBuilder StacktagBuilder = new StringBuilder();
-        String splitstr = "@_";
-        StringBuilder interesttagBuilder = new StringBuilder();
-        List<HashTag> hashTagList = frontRequestCardDto.getHashTags();
 
-        if(hashTagList.size()>0) {
-            for(HashTag hash: hashTagList) {
-                if(hash.getType()==1){
-                    interesttagBuilder.append("@" + hash.getName());
-                }
-                else{
-                    StacktagBuilder.append("@" + hash.getName());
-                }
-            }
-            interesttagBuilder.append("@");
-        }
-        StacktagBuilder.append(splitstr);
-        StacktagBuilder.append(interesttagBuilder);
+        String filename = "basic.jpg";
+        MultipartFile files = frontRequestCardDto.getProfile();
+        String savePath;
+        String filePath="";
         try
         {
             if (files != null) {
                 String origFilename = files.getOriginalFilename();
                 filename = new MD5Generator(origFilename).toString() + ".jpg";
-                String savePath = "/home/ubuntu/images/";
+                savePath = "/home/ubuntu/contap/image/";
 
                 if (!new File(savePath).exists()) {
                     try {
@@ -106,19 +91,41 @@ public class MypageService {
                         e.getStackTrace();
                     }
                 }
-                String filePath = savePath +filename;
+                filePath = savePath +filename;
+                System.out.println(filePath);
                 files.transferTo(new File(filePath));
             }
         }
         catch (Exception e) {
             throw new ContapException(ErrorCode.FILESAVE_ERROR);
         }
+
+        String requestTagStr = frontRequestCardDto.getHashTagsStr();
+        List<String> tagsList = new ArrayList<>();
+        String[] tagArr = new String[0];
+
+        if(requestTagStr.contains("@_@")) {
+            String[] tagsArr = requestTagStr.split("@_@");
+            tagsList.addAll(Arrays.asList(tagsArr[0].split("@")));
+            tagsList.addAll(Arrays.asList(tagsArr[1].split("@")));
+        }
+        else if(requestTagStr.contains("@")) {
+            tagArr = requestTagStr.split("@");
+        }
+        Set<String> tagsSet = new HashSet<>();
+        for(String str: tagArr) {
+            tagsSet.add(str);
+        }
+
+        List<HashTag> hashTagList = hashTagRepositoty.findAllByNameIn(tagsSet);
+
         //user 값 넣기
-        user.setProfile("http://52.79.248.107:8080/display/" +filename);
+        user.setProfile("http://52.79.199.239" + filePath);
         user.setUserName(frontRequestCardDto.getUserName());
-        user.setTags(frontRequestCardDto.getHashTags());
-        user.setHashTagsString(StacktagBuilder.toString());
+        user.setTags(hashTagList);
+        user.setHashTagsString(frontRequestCardDto.getHashTagsStr());
         user = userRepository.save(user);
+
         //response
         return FrontResponseCardDto.builder()
                 .profile(user.getProfile())
@@ -142,26 +149,6 @@ public class MypageService {
         if( cardSize >= 10 )
             throw new ContapException(ErrorCode.EXCESS_CARD_MAX); //카드 최대 가능 수를 초과하였습니다.
 
-        StringBuilder StacktagBuilder = new StringBuilder();
-        String splitstr = "@_";
-        StringBuilder interesttagBuilder = new StringBuilder();
-        List<HashTag> hashTagList = backRequestCardDto.getHashTags();
-
-        if(hashTagList.size()>0) {
-            for(HashTag hash: hashTagList) {
-                if(hash.getType()==1){
-                    interesttagBuilder.append("@" + hash.getName());
-                }
-                else{
-                    StacktagBuilder.append("@" + hash.getName());
-                }
-            }
-            interesttagBuilder.append("@");
-        }
-        StacktagBuilder.append(splitstr);
-        StacktagBuilder.append(interesttagBuilder);
-
-
         // card 값 넣기
         if(cardSize == 0) {
             user.setAuthorityEnum(AuthorityEnum.CAN_OTHER_READ);
@@ -174,17 +161,17 @@ public class MypageService {
         card.setUser(user);
         card.setTitle(backRequestCardDto.getTitle());
         card.setContent(backRequestCardDto.getContent());
-        card.setTags(backRequestCardDto.getHashTags());
-        card.setHashTagsString(StacktagBuilder.toString());
-        cardRepository.save(card);
+        card.setTagsString(backRequestCardDto.getTagsStr());
+        card = cardRepository.save(card);
 
         //response
         return BackResponseCardDto.builder()
                 .cardId(card.getId())
                 .userId(user.getId())
-                .title(card.getTitle())
-                .content(card.getContent())
-                .hashTagsString(card.getHashTagsString()).build();
+                .title(backRequestCardDto.getTitle())
+                .content(backRequestCardDto.getContent())
+                .tagsStr(backRequestCardDto.getTagsStr())
+                .link(backRequestCardDto.getLink()).build();
     }
 
     @Transactional
@@ -201,27 +188,8 @@ public class MypageService {
         if(card == null)
             throw new ContapException(ErrorCode.NOT_FOUND_CARD); //해당 카드를 찾을 수 없습니다.
 
-
-        StringBuilder StacktagBuilder = new StringBuilder();
-        String splitstr = "@_";
-        StringBuilder interesttagBuilder = new StringBuilder();
-        List<HashTag> hashTagList = backRequestCardDto.getHashTags();
-
-        if(hashTagList.size()>0) {
-            for(HashTag hash: hashTagList) {
-                if(hash.getType()==1){
-                    interesttagBuilder.append("@" + hash.getName());
-                }
-                else{
-                    StacktagBuilder.append("@" + hash.getName());
-                }
-            }
-            interesttagBuilder.append("@");
-        }
-        StacktagBuilder.append(splitstr);
-        StacktagBuilder.append(interesttagBuilder);
         //card 값 넣기
-        card.update(backRequestCardDto, StacktagBuilder.toString());
+        card.update(backRequestCardDto);
         card = cardRepository.save(card);
 
         //response
@@ -230,7 +198,8 @@ public class MypageService {
                 .userId(user.getId())
                 .title(card.getTitle())
                 .content(card.getContent())
-                .hashTagsString(card.getHashTagsString())
+                .tagsStr(card.getTagsString())
+                .link(card.getLink())
                 .build();
     }
 
@@ -254,14 +223,14 @@ public class MypageService {
             user.setAuthorityEnum(AuthorityEnum.CANT_OTHER_READ);
         }
 
-
         //response
         return BackResponseCardDto.builder()
                 .cardId(card.getId())
                 .userId(user.getId())
                 .title(card.getTitle())
                 .content(card.getContent())
-                .hashTagsString(card.getHashTagsString())
+                .tagsStr(card.getTagsString())
+                .link(card.getLink())
                 .build();
     }
 }

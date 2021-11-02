@@ -26,45 +26,44 @@
 <body>
 <h1>16조 채팅방</h1>
 <div class="content" data-room-id="{{room.id}}" data-member="{{member}}">
-    <ul class="chat_box">
-    </ul>
-    <textarea id = 'memo'></textarea>
-    <button class="send" , onclick="enterroom()">입장</button>
-    <br>
-    <br>
-    <textarea id = 'msg'></textarea>
-    <button class="senddd">보내기</button>
+    <button class="senddd" onclick="enterroom(1)">1번방</button>
+    <button class="senddd" onclick="enterroom(2)">2번방</button>
+    <button class="senddd" onclick="enterroom(3)">3번방</button>
 </div>
 <script>
-    console.log(window.location.href);
-
-    var sock = new SockJS("/ws-stomp");
-    var client = Stomp.over(sock);
-    let roomId=window.location.href.split("?")[1];
-    let userId=window.location.href.split("?")[2];
-    console.log("roomId===============userId");
-    console.log(roomId);
-    console.log(userId);
-    console.log("roomId===============userId");
-
-    client.connect({}, function () {
-        client.subscribe(`/sub/chat/room/${roomId}` , function (chat) {
-            var content = JSON.parse(chat.body);
-            console.log(content)
-            chatBox.append('<li>' + content.writer+" : " + content.message + '</li>')
-        },{id:userId});
-    });
-
-    var chatBox = $('.chat_box');
-    var messageInput = $('input[name="message"]');
-
-    var sendBtn = $('.senddd');
-
-    sendBtn.click(function () {
-        let message123 =$("#msg").val();
-        client.send('/pub/chat/message', {}, JSON.stringify({"roomId": roomId, message: message123, "writer":userId}));
-        messageInput.val('');
-    });
+    function enterroom(num) {
+        let userId = window.location.href.split("?")[1];
+        window.location.href = `/mytest.html?${num}?${userId}`;
+    }
+    // }
+    //
+    // var sock = new SockJS("/ws-stomp");
+    // var client = Stomp.over(sock);
+    // let roomId=window.location.href.split("?")[1];
+    // let userId=window.location.href.split("?")[2];
+    // console.log("roomId===============userId");
+    // console.log(roomId);
+    // console.log(userId);
+    // console.log("roomId===============userId");
+    //
+    // client.connect({}, function () {
+    //     client.subscribe(`/sub/chat/room/${roomId}` , function (chat) {
+    //         var content = JSON.parse(chat.body);
+    //         console.log(content)
+    //         chatBox.append('<li>' + content.writer+" : " + content.message + '</li>')
+    //     },{id:userId});
+    // });
+    //
+    // var chatBox = $('.chat_box');
+    // var messageInput = $('input[name="message"]');
+    //
+    // var sendBtn = $('.senddd');
+    //
+    // sendBtn.click(function () {
+    //     let message123 =$("#msg").val();
+    //     client.send('/pub/chat/message', {}, JSON.stringify({"roomId": roomId, message: message123, "writer":userId}));
+    //     messageInput.val('');
+    // });
 
 </script>
 </body>
