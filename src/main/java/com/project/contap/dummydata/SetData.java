@@ -34,7 +34,7 @@ public class SetData implements ApplicationRunner{
     @Override
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
-        setdata();
+//        setdata();
     }
     private void setdata(){
         List<String> imgfiles = Arrays.asList(
