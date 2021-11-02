@@ -24,6 +24,7 @@ import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 @Service
 public class MainService {
@@ -190,8 +191,9 @@ public class MainService {
         if (checkrecievetap != null)
         {
             checkrecievetap.setStatus(2);
-            Friend newF = new Friend(receiveUser,sendUser);
-            Friend newF2 = new Friend(sendUser,receiveUser);
+            String roomId = UUID.randomUUID().toString();
+            Friend newF = new Friend(receiveUser,sendUser,roomId);
+            Friend newF2 = new Friend(sendUser,receiveUser,roomId);
             friendRepository.save(newF);
             friendRepository.save(newF2);
             tapRepository.save(checkrecievetap);
