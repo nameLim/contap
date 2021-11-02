@@ -110,7 +110,7 @@ public class MainService {
                                 hu.id,
                                 hu.title,
                                 hu.content,
-                                hu.hashTagsString,
+                                hu.tagsString,
                                 hu.user.id
                         )
                 )

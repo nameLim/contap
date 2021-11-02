@@ -122,7 +122,7 @@ public class TestController {
                     dlf = dlf +"@"+ha.getName();
                 }
             }
-            user.setHashTagsString(dud+"@_"+dlf+"@");
+            user.setTagsString(dud+"@_"+dlf+"@");
             cardRepository.save(user);
         }
         return "DBSet 완료염~";

@@ -32,10 +32,13 @@ public class Card extends TimeStamped{
     private String content;
 
     @Column
+    private String link;
+
+    @Column
     private String filePath;
 
     @Column
-    private String hashTagsString;
+    private String tagsString;
 
     @ManyToMany
     private List<HashTag> tags;
@@ -55,19 +58,15 @@ public class Card extends TimeStamped{
         this.tags = tags;
     }
 
-
     public boolean isWritedBy(User user) {
         return this.user.equals(user);
     }
-    public List<HashTag> addHashTag(HashTag tag) {
-        this.tags.add(tag);
-        return this.tags;
-    }
 
-    public void update(BackRequestCardDto backRequestCardDto, String tagString) {
+    public void update(BackRequestCardDto backRequestCardDto) {
         this.title = backRequestCardDto.getTitle();
         this.content = backRequestCardDto.getContent();
-        this.tags = backRequestCardDto.getHashTags();
-        this.hashTagsString = tagString;
+        this.tags = null;
+        this.tagsString = backRequestCardDto.getTagsStr();
+        this.link = backRequestCardDto.getLink();
     }
 }
