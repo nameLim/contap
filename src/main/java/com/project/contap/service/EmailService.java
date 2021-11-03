@@ -51,28 +51,8 @@ public class EmailService {
         emailRepository.createEmailCertification(validatedEmail, randomNumber);
     }
 
-//    //이메일로 인증번호 발송 (비밀번호 재설정)
-//    public void sendEmailToChangePw(String email) throws UnsupportedEncodingException, MessagingException {
-//
-//        userRepository.findByEmail(email).orElseThrow(
-//                () -> new IllegalArgumentException("The email does not exist !")
-//        );
-//
-//        String randomNumber = makeRandomNumber();
-//
-//        MimeMessage message = createMessageToChangePw(email, randomNumber);
-//        try{
-//            emailSender.send(message);
-//            log.info("send authorize code to email.");
-//        }catch(MailException es){
-//            es.printStackTrace();
-//            throw new IllegalArgumentException();
-//        }
-//
-//        emailRepository.createEmailCertification(email, randomNumber);
-//    }
 
-    //유저가 입력한 인증번호가 Redis 에 저장된 인증번호와 일치하는지 확인
+    //인증번호 redis저장 일치 확인
     public void verifyEmail(EmailRequestDto requestDto) throws ContapException {
 
         String validatedEmail = requestDto.getEmail().replaceAll(" ", "");
@@ -97,27 +77,27 @@ public class EmailService {
     }
 
 
-    //이메일 보내기 (회원가입 시 인증용 이메일)
+    //회원가입 인증번호 보내기
     private MimeMessage createMessage(String email, String randomNumber) throws MessagingException, UnsupportedEncodingException {
 
         MimeMessage message = emailSender.createMimeMessage();
-        //to.you
+
         message.addRecipients(MimeMessage.RecipientType.TO, email);
-        //mail title (상단에 노출)
-        message.setSubject("[ConTap] 환영합니다. ConTap 회원 가입 인증 이메일 입니다.");
-        //content
+
+        message.setSubject("[ConTap] 환영합니다. ConTap 회원 가입 인증번호가 발송되었습니다.");
+
         String msg="";
-        msg += "<img width=\"500\" height=\"300\" style=\"margin-top: 0; margin-right: 0; margin-bottom: 32px; margin-left: 0px; padding-right: 30px; padding-left: 30px;\" src=\"https://media.vlpt.us/images/junseokoo/post/0c40280b-5ff5-4923-b2aa-4179b860f44b/%EC%BA%A1%EC%B2%98.PNG\" alt=\"\" loading=\"lazy\">";
+        msg += "<img width=\"500\" height=\"300\" style=\"margin-top: 0; margin-right: 0; margin-bottom: 32px; margin-left: 0px; padding-right: 30px; padding-left: 30px;\" src=\"https://media.vlpt.us/images/junseokoo/post/c78c6c89-3b0c-403f-8776-0c39a7303816/%EC%9E%90%EC%82%B0%201@4x-8%201.png\" alt=\"\" loading=\"lazy\">";
         msg += "<h1 style=\"font-size: 30px; padding-right: 30px; padding-left: 30px;\">Contap 홈페이지를 방문해주셔서 감사합니다.</h1>";
         msg += "<p style=\"font-size: 14px; padding-right: 30px; padding-left: 30px;\">" +
                 "<b>안녕하세요!</b> 회원 가입을 계속 하시려면 해당 인증번호를 인증번호 확인란에 기입해주세요.<br>"+
-                "만약에 실수로 요청하셨거나, 본인이 요청하지 않았다면, 이 메일을 무시하세요. " +
+                "요청한게 본인이 아니라면 발송된 메일을 무시해주세요. " +
                 "</p>";
         msg += "<div style=\"padding-right: 30px; padding-left: 30px; margin: 32px 0 40px;\"><table style=\"border-collapse: collapse; border: 0; background-color: #F4F4F4; height: 70px; table-layout: fixed; word-wrap: break-word; border-radius: 6px;\"><tbody><tr><td style=\"text-align: center; vertical-align: middle; font-size: 30px;\">";
         msg += randomNumber;
         msg += "</td></tr></tbody></table></div>";
         msg += "<p style=\"font-size: 13px; padding-right: 30px; padding-left: 30px;\">" +
-                "이 인증번호는 3분 동안 유효합니다."+
+                "인증번호 유효시간은 3분입니다."+
                 "</p>";
         msg += "<a href=\"https://\" style=\"padding-right: 30px; padding-left: 30px; text-decoration: none; color: #434245;\" rel=\"noreferrer noopener\" target=\"_blank\">2021 Contap</a>";
 
@@ -127,37 +107,6 @@ public class EmailService {
         return message;
     }
 
-//    //이메일 보내기 (비밀번호 찾기 시 인증용)
-//    private MimeMessage createMessageToChangePw(String email, String randomNumber) throws MessagingException, UnsupportedEncodingException {
-//
-//        MimeMessage message = emailSender.createMimeMessage();
-//        //to.you
-//        message.addRecipients(MimeMessage.RecipientType.TO, email);
-//        //mail title (상단에 노출)
-//        message.setSubject("[ConTap] 비밀번호 재설정 이메일 입니다");
-//        //content
-//        String msg="";
-//         msg += "<img width=\"500\" height=\"300\" style=\"margin-top: 0; margin-right: 0; margin-bottom: 32px; margin-left: 0px; padding-right: 30px; padding-left: 30px;\" src=\"https://media.vlpt.us/images/junseokoo/post/0c40280b-5ff5-4923-b2aa-4179b860f44b/%EC%BA%A1%EC%B2%98.PNG\" alt=\"\" loading=\"lazy\">";
-//        msg += "<h1 style=\"font-size: 30px; padding-right: 30px; padding-left: 30px;\">SleepWell 비밀번호 재설정</h1>";
-//        msg += "<p style=\"font-size: 14px; padding-right: 30px; padding-left: 30px;\">" +
-//                "비밀번호를 다시 설정하려면 아래 해당 인증번호를 인증번호 확인란에 입력하여 주십시오.<br>"+
-//                "<br>" +
-//                "만약 새로운 비밀번호 설정을 요청하신 적이 없다면 이 메일을 무시해주세요.<br> " +
-//                "기존 비밀번호가 유지 됩니다." +
-//                "</p>";
-//        msg += "<div style=\"padding-right: 30px; padding-left: 30px; margin: 32px 0 40px;\"><table style=\"border-collapse: collapse; border: 0; background-color: #F4F4F4; height: 70px; table-layout: fixed; word-wrap: break-word; border-radius: 6px;\"><tbody><tr><td style=\"text-align: center; vertical-align: middle; font-size: 30px;\">";
-//        msg += randomNumber;
-//        msg += "</td></tr></tbody></table></div>";
-//        msg += "<p style=\"font-size: 13px; padding-right: 30px; padding-left: 30px;\">" +
-//                "이 인증번호는 3분 동안 유효합니다."+
-//                "</p>";
-//        msg += "<a href=\"https://\" style=\"padding-right: 30px; padding-left: 30px; text-decoration: none; color: #434245;\" rel=\"noreferrer noopener\" target=\"_blank\">2021 ConTap</a>";
-//
-//        message.setText(msg, "utf-8", "html");
-//        message.setFrom(new InternetAddress("ooojunseok@gmail.com","ConTap"));
-//
-//        return message;
-//    }
 
 }
 

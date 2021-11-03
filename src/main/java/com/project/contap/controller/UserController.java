@@ -99,15 +99,6 @@ public class UserController {
         return result;
     }
 
-//    //비번찾고 변경
-//    @PostMapping("/setting/password/new")
-//    public Map setPassword(@RequestBody PwUpdateRequestDto requestDto) {
-//        userService.setPw(requestDto);
-//        return ResponseEntity.ok("ok");
-//    }
-
-
-
 
     @GetMapping("/auth")
     public Map<String, String> loginCheck(@AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
