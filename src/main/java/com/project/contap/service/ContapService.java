@@ -1,5 +1,6 @@
 package com.project.contap.service;
 
+import com.project.contap.chatcontroller.ChatRoomRepository;
 import com.project.contap.dto.DefaultRsp;
 import com.project.contap.dto.UserRequestDto;
 import com.project.contap.model.*;
@@ -20,16 +21,19 @@ public class ContapService {
     private final TapRepository tapRepository;
     private final JPAQueryFactory jpaQueryFactory;
     private final FriendRepository friendRepository;
+    private final ChatRoomRepository chatRoomRepository;
     @Autowired
     public  ContapService(
             TapRepository tapRepository,
             JPAQueryFactory jpaQueryFactory,
-            FriendRepository friendRepository
+            FriendRepository friendRepository,
+            ChatRoomRepository chatRoomRepository
     )
     {
         this.tapRepository = tapRepository;
         this.jpaQueryFactory =jpaQueryFactory;
         this.friendRepository = friendRepository;
+        this.chatRoomRepository= chatRoomRepository;
     }
 
     public List<UserRequestDto> getMydoTap(User user) {
@@ -104,6 +108,7 @@ public class ContapService {
             Friend sec = new Friend(tap.getReceiveUser(),tap.getSendUser(),roomId);
             friendRepository.save(fir);
             friendRepository.save(sec);
+            chatRoomRepository.whenMakeFriend(roomId,tap.getSendUser().getEmail(),tap.getReceiveUser().getEmail());
             return new DefaultRsp("정상적으로 처리 되었습니다.");
         }
         else
@@ -113,6 +118,8 @@ public class ContapService {
     }
 
     public List<UserRequestDto> getMyfriends(User user) {
+        int page = 0;
+        List<String> order = chatRoomRepository.getMyFriendsOrderByDate(page,user.getEmail());
         QFriend qfriend = QFriend.friend;
         List<UserRequestDto> abc;
         abc = jpaQueryFactory
@@ -128,7 +135,8 @@ public class ContapService {
                                 qfriend.roomId
                         )).distinct()
                 .from(qfriend)
-                .where(qfriend.me.id.eq(user.getId()))
+                .where(qfriend.me.id.eq(user.getId())
+                        .and(qfriend.roomId.in(order)))
                 .fetch();
         return abc;
     }
