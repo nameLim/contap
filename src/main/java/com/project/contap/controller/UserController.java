@@ -57,22 +57,22 @@ public class UserController {
     }
 
 
-    @PostMapping("/user/image")
-    public Map<String, String> updateUserProfileImage(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody ProfileRequestDto requestDto) throws ContapException {
-        if (userDetails == null) {
-            throw new AuthenticationServiceException("로그인이 필요합니다.");
-        }
-        User user = userService.updateUserProfileImage(requestDto.getProfile(), userDetails.getUser().getEmail());
-        Map<String, String> result = new HashMap<>();
-
-        result.put("profile", user.getProfile());
-        result.put("email", user.getEmail());
-        result.put("result", "success");
-
-        return result;
-    }
+//    @PostMapping("/user/image")
+//    public Map<String, String> updateUserProfileImage(
+//            @AuthenticationPrincipal UserDetailsImpl userDetails,
+//            @RequestBody ProfileRequestDto requestDto) throws ContapException {
+//        if (userDetails == null) {
+//            throw new AuthenticationServiceException("로그인이 필요합니다.");
+//        }
+//        User user = userService.updateUserProfileImage(requestDto.getProfile(), userDetails.getUser().getEmail());
+//        Map<String, String> result = new HashMap<>();
+//
+//        result.put("profile", user.getProfile());
+//        result.put("email", user.getEmail());
+//        result.put("result", "success");
+//
+//        return result;
+//    }
 
     //회원탈퇴
     @DeleteMapping("/setting/withdrawal")
@@ -98,15 +98,6 @@ public class UserController {
 
         return result;
     }
-
-//    //비번찾고 변경
-//    @PostMapping("/setting/password/new")
-//    public Map setPassword(@RequestBody PwUpdateRequestDto requestDto) {
-//        userService.setPw(requestDto);
-//        return ResponseEntity.ok("ok");
-//    }
-
-
 
 
     @GetMapping("/auth")
