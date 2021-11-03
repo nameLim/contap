@@ -75,13 +75,13 @@ dependencies {
     implementation "io.springfox:springfox-boot-starter:3.0.0"
     implementation "io.springfox:springfox-swagger-ui:3.0.0"
 
-
-
     // WobSocket
     //스프링 웹소켓
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
     //스프링 redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
     //embedded redis
     implementation 'it.ozimov:embedded-redis:0.7.2'
     implementation 'com.google.code.gson:gson:2.8.0'
@@ -95,6 +95,10 @@ dependencies {
 
     //mail
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    // AWS S3
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    implementation 'commons-io:commons-io:2.5'
 
 }
 // QueryDSL
