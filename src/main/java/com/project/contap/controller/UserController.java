@@ -101,7 +101,7 @@ public class UserController {
 
 //    //비번찾고 변경
 //    @PostMapping("/setting/password/new")
-//    public ResponseEntity<String> setPassword(@RequestBody PwUpdateRequestDto requestDto) {
+//    public Map setPassword(@RequestBody PwUpdateRequestDto requestDto) {
 //        userService.setPw(requestDto);
 //        return ResponseEntity.ok("ok");
 //    }
