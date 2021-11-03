@@ -104,7 +104,7 @@ public class EmailService {
         //to.you
         message.addRecipients(MimeMessage.RecipientType.TO, email);
         //mail title (상단에 노출)
-        message.setSubject("[Contap] 환영합니다. Contap 회원 가입 인증 이메일 입니다.");
+        message.setSubject("[ConTap] 환영합니다. ConTap 회원 가입 인증 이메일 입니다.");
         //content
         String msg="";
         msg += "<img width=\"500\" height=\"300\" style=\"margin-top: 0; margin-right: 0; margin-bottom: 32px; margin-left: 0px; padding-right: 30px; padding-left: 30px;\" src=\"https://media.vlpt.us/images/junseokoo/post/0c40280b-5ff5-4923-b2aa-4179b860f44b/%EC%BA%A1%EC%B2%98.PNG\" alt=\"\" loading=\"lazy\">";
@@ -122,7 +122,7 @@ public class EmailService {
         msg += "<a href=\"https://\" style=\"padding-right: 30px; padding-left: 30px; text-decoration: none; color: #434245;\" rel=\"noreferrer noopener\" target=\"_blank\">2021 Contap</a>";
 
         message.setText(msg, "utf-8", "html");
-        message.setFrom(new InternetAddress("ooojunseok@gmail.com","Contap"));
+        message.setFrom(new InternetAddress("ooojunseok@gmail.com","ConTap"));
 
         return message;
     }
@@ -134,10 +134,10 @@ public class EmailService {
 //        //to.you
 //        message.addRecipients(MimeMessage.RecipientType.TO, email);
 //        //mail title (상단에 노출)
-//        message.setSubject("[SleepWell] 비밀번호 재설정 이메일 입니다");
+//        message.setSubject("[ConTap] 비밀번호 재설정 이메일 입니다");
 //        //content
 //        String msg="";
-//        msg += "<img width=\"120\" height=\"36\" style=\"margin-top: 0; margin-right: 0; margin-bottom: 32px; margin-left: 0px; padding-right: 30px; padding-left: 30px;\" src=\"https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FRYeu1%2Fbtq4s2GjDUS%2FhHSOoZ1s9GlSmKMHKGd5m0%2Fimg.png\" alt=\"\" loading=\"lazy\">";
+//         msg += "<img width=\"500\" height=\"300\" style=\"margin-top: 0; margin-right: 0; margin-bottom: 32px; margin-left: 0px; padding-right: 30px; padding-left: 30px;\" src=\"https://media.vlpt.us/images/junseokoo/post/0c40280b-5ff5-4923-b2aa-4179b860f44b/%EC%BA%A1%EC%B2%98.PNG\" alt=\"\" loading=\"lazy\">";
 //        msg += "<h1 style=\"font-size: 30px; padding-right: 30px; padding-left: 30px;\">SleepWell 비밀번호 재설정</h1>";
 //        msg += "<p style=\"font-size: 14px; padding-right: 30px; padding-left: 30px;\">" +
 //                "비밀번호를 다시 설정하려면 아래 해당 인증번호를 인증번호 확인란에 입력하여 주십시오.<br>"+
@@ -151,10 +151,10 @@ public class EmailService {
 //        msg += "<p style=\"font-size: 13px; padding-right: 30px; padding-left: 30px;\">" +
 //                "이 인증번호는 3분 동안 유효합니다."+
 //                "</p>";
-//        msg += "<a href=\"https://teamsleepwell.com\" style=\"padding-right: 30px; padding-left: 30px; text-decoration: none; color: #434245;\" rel=\"noreferrer noopener\" target=\"_blank\">2021 SleepWell</a>";
+//        msg += "<a href=\"https://\" style=\"padding-right: 30px; padding-left: 30px; text-decoration: none; color: #434245;\" rel=\"noreferrer noopener\" target=\"_blank\">2021 ConTap</a>";
 //
 //        message.setText(msg, "utf-8", "html");
-//        message.setFrom(new InternetAddress("yihyeonehyeon@gmail.com","SleepWell"));
+//        message.setFrom(new InternetAddress("ooojunseok@gmail.com","ConTap"));
 //
 //        return message;
 //    }
