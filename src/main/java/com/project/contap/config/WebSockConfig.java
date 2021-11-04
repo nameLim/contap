@@ -1,5 +1,6 @@
 package com.project.contap.config;
 
+import com.project.contap.config.handler.CustomHandshakeHandler;
 import com.project.contap.config.handler.StompHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +25,8 @@ public class WebSockConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws-stomp")
+                .setAllowedOriginPatterns("/*")
+                .setHandshakeHandler(new CustomHandshakeHandler())
                 .withSockJS();
     }
     @Override

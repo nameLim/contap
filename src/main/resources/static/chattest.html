@@ -37,8 +37,14 @@
     }
     // }
     //
-    // var sock = new SockJS("/ws-stomp");
-    // var client = Stomp.over(sock);
+    var sock = new SockJS("/ws-stomp");
+    var client = Stomp.over(sock);
+    client.connect({"useremail":"abc"}, function () {
+        client.subscribe("/user/sub/user" , function (chat) {
+            var content = JSON.parse(chat.body);
+            console.log(content)
+        },{"useremail":"abc"});
+    });
     // let roomId=window.location.href.split("?")[1];
     // let userId=window.location.href.split("?")[2];
     // console.log("roomId===============userId");
@@ -46,13 +52,7 @@
     // console.log(userId);
     // console.log("roomId===============userId");
     //
-    // client.connect({}, function () {
-    //     client.subscribe(`/sub/chat/room/${roomId}` , function (chat) {
-    //         var content = JSON.parse(chat.body);
-    //         console.log(content)
-    //         chatBox.append('<li>' + content.writer+" : " + content.message + '</li>')
-    //     },{id:userId});
-    // });
+
     //
     // var chatBox = $('.chat_box');
     // var messageInput = $('input[name="message"]');

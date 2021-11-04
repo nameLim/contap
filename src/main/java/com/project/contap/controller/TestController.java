@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @RestController
 public class TestController {
@@ -183,8 +181,32 @@ public class TestController {
 
     @GetMapping("/test3")
     void getTest1123RunTime() throws ContapException {
-        Logger log = LogManager.getLogger("test2");
-        log.error("for test!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        int num = GetRandom.randomRange(5000,80000);
+        List<String> ls = new ArrayList<String>();
+        HashMap<String, Boolean> map = new HashMap<String,Boolean>();
+        String abc = "";
+        for (int i = 0; i <= 90000; i++)
+        {
+            String a = UUID.randomUUID().toString();
+            if (i == num)
+                abc = a;
+            ls.add(a);
+            map.put(a,true);
+        }
+        long startTime = System.currentTimeMillis();
+        System.out.println(ls.contains(abc));
+        long endTime = System.currentTimeMillis();
+        long runTime = endTime - startTime;
+
+        long startTime2 = System.currentTimeMillis();
+        System.out.println(map.get(abc));
+        long endTime2 = System.currentTimeMillis();
+        long runTime2 = endTime - startTime;
+
+        System.out.println("1==" + runTime);
+        System.out.println("2==" + runTime2);
+
+
     }
 
 

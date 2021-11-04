@@ -52,6 +52,7 @@ public class UserController {
         result.put("email", user.getEmail());
         result.put("userName", user.getUserName());
         result.put("result", "success");
+        result.put("alarm", userService.getAlarm(user.getEmail()));
 
         return result;
     }

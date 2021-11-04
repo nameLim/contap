@@ -1,5 +1,6 @@
 package com.project.contap.service;
 
+import com.project.contap.chatcontroller.ChatRoomRepository;
 import com.project.contap.dto.*;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
@@ -28,14 +29,16 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final JPAQueryFactory jpaQueryFactory; // 이건차후에 쓸수도있을것같아서 남겨둠
+    private final ChatRoomRepository chatRoomRepository;
 
     private static final String ADMIN_TOKEN = "AAABnv/xRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,JPAQueryFactory jpaQueryFactory) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,JPAQueryFactory jpaQueryFactory,ChatRoomRepository chatRoomRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jpaQueryFactory = jpaQueryFactory;
+        this.chatRoomRepository =  chatRoomRepository;
     }
 
 //    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JPAQueryFactory jpaQueryFactory, CardRepository cardRepository, HashTagRepositoty hashTagRepositoty) {
@@ -196,7 +199,10 @@ public class UserService {
         user.updatePw(requestDto);
     }
 
-
+    public String getAlarm(String email) {
+        Boolean bAlarm = chatRoomRepository.readAlarm(email);
+        return bAlarm.toString();
+    }
 }
 
 //    @Transactional //table join으로 검색.
