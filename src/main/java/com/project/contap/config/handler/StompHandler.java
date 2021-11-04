@@ -36,7 +36,7 @@ public class StompHandler implements ChannelInterceptor  {
         if (StompCommand.CONNECT == accessor.getCommand()) { // websocket 연결요청
             System.out.println("connect");
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) { // 채팅룸 구독요청
-            chatService.userConnect(accessor.getDestination(),accessor.getUser().getName(),"asd",accessor.getSessionId());
+            chatService.userConnect(accessor.getDestination(),accessor.getUser().getName(),accessor.getNativeHeader("userEmail").get(0),accessor.getSessionId());
         } else if (StompCommand.DISCONNECT == accessor.getCommand()) { // Websocket 연결 종료
             chatService.userDisConnect(accessor.getUser().getName());
         }
