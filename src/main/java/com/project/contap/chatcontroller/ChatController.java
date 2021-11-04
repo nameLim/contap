@@ -23,10 +23,10 @@ public class ChatController {
         chatService.publish(message);
     }
 
-    @PostMapping("/chat/getmsg")
-    public List<ChatMessage> getmessage(@RequestBody String roomId)
+    @ResponseBody
+    @GetMapping("/chat/getmsg/{roomId}")
+    public List<ChatMessage> getmessage(@PathVariable String roomId)
     {
         return chatService.getchatmsg(roomId);// 권한체크 필수
     }
-
 }
