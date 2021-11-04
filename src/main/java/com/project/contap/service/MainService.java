@@ -144,7 +144,7 @@ public class MainService {
                                 hu.field
                         )).distinct()
                 .from(hu)
-                .offset(0).limit(9)
+                .offset(page).limit(9)
                 .fetch();
 
         if(userDetails != null) {
