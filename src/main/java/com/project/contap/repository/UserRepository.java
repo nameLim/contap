@@ -17,6 +17,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByUserName(String nickname);
 
+    boolean existsByEmail(String email);
+
     Page<User> findAll(Pageable pageable);
     //List<User> findDistinctByTagsIn(List<HashTag> tags);
 

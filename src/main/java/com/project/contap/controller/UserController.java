@@ -8,6 +8,7 @@ import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.security.jwt.JwtTokenProvider;
 import com.project.contap.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -57,22 +58,22 @@ public class UserController {
     }
 
 
-    @PostMapping("/user/image")
-    public Map<String, String> updateUserProfileImage(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody ProfileRequestDto requestDto) throws ContapException {
-        if (userDetails == null) {
-            throw new AuthenticationServiceException("로그인이 필요합니다.");
-        }
-        User user = userService.updateUserProfileImage(requestDto.getProfile(), userDetails.getUser().getEmail());
-        Map<String, String> result = new HashMap<>();
-
-        result.put("profile", user.getProfile());
-        result.put("email", user.getEmail());
-        result.put("result", "success");
-
-        return result;
-    }
+//    @PostMapping("/user/image")
+//    public Map<String, String> updateUserProfileImage(
+//            @AuthenticationPrincipal UserDetailsImpl userDetails,
+//            @RequestBody ProfileRequestDto requestDto) throws ContapException {
+//        if (userDetails == null) {
+//            throw new AuthenticationServiceException("로그인이 필요합니다.");
+//        }
+//        User user = userService.updateUserProfileImage(requestDto.getProfile(), userDetails.getUser().getEmail());
+//        Map<String, String> result = new HashMap<>();
+//
+//        result.put("profile", user.getProfile());
+//        result.put("email", user.getEmail());
+//        result.put("result", "success");
+//
+//        return result;
+//    }
 
     //회원탈퇴
     @DeleteMapping("/setting/withdrawal")
@@ -88,7 +89,7 @@ public class UserController {
 
     }
 
-    //비밀번호 경
+    //비밀번호 변경
     @PostMapping("/setting/password")
     public Map<String,String> updateMyPageInfoPassword(@RequestBody PwUpdateRequestDto requestDto ,@AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
         userService.updatePassword(requestDto,userDetails.getUsername());
@@ -98,8 +99,6 @@ public class UserController {
 
         return result;
     }
-
-
 
 
     @GetMapping("/auth")

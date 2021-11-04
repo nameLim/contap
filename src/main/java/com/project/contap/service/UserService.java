@@ -1,6 +1,5 @@
 package com.project.contap.service;
 
-import com.project.contap.chatcontroller.ChatRoomRepository;
 import com.project.contap.dto.*;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
@@ -14,7 +13,6 @@ import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.util.GetRandom;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -131,7 +129,6 @@ public class UserService {
             throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
         }
 
-
         return user;
     }
 
@@ -151,6 +148,9 @@ public class UserService {
     public void deleteUser(PwRequestDto requestDto, User user) throws ContapException {
         if (passwordEncoder.matches(requestDto.getPw(), user.getPw())) {
             userRepository.delete(user);
+        }
+        else {
+            throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
         }
     }
 
