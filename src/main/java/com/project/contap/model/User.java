@@ -81,13 +81,14 @@ public class User extends TimeStamped{
         this.kakaoId = null;
         this.authorityEnum = AuthorityEnum.CANT_OTHER_READ;
     }
-    public User(String email, String pw, String userName,String profile) {
+    public User(String email, String pw, String userName,String profile,int field) {
         this.email = email;
         this.pw = pw;
         this.userName = userName;
         this.kakaoId = null;
         this.authorityEnum = AuthorityEnum.CANT_OTHER_READ;
         this.profile = profile;
+        this.field = field;
     }
 
     public User(Long id, String userName, String profile,String hashTagsString) {
