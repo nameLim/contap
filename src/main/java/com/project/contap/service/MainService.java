@@ -132,7 +132,7 @@ public class MainService {
 
     public List<UserRequestDto> getUserDtoList(UserDetailsImpl userDetails) {
         Random random = new Random();
-        int page = random.nextInt(30);
+        int page = 0;//random.nextInt(0);
 
         QUser hu = QUser.user;
 
