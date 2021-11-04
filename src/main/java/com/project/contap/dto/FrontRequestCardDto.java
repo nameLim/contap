@@ -15,4 +15,5 @@ public class FrontRequestCardDto {
     private MultipartFile profile; // 사용안해서 임시로 바꿔둠
     private String userName;
     private String hashTagsStr;
+    private int field;
 }

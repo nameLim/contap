@@ -15,13 +15,16 @@ public class QCardDto {
     private List<String> interestHashTags;
     private String hashTags;
     private Long userId;
+    private int field;
+
 
     public QCardDto(
             Long cardId,
             String title,
             String content,
             String hashTags,
-            Long userId
+            Long userId,
+            int field
 
     ) {
         this.cardId = cardId;
@@ -29,5 +32,6 @@ public class QCardDto {
         this.content = content;
         this.hashTags = hashTags;
         this.userId = userId;
+        this.field = field;
     }
 }

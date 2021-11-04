@@ -64,7 +64,8 @@ public class MainService {
                                 hu.kakaoId,
                                 hu.userName,
                                 hu.pw,
-                                hu.hashTagsString
+                                hu.hashTagsString,
+                                hu.field
                         )).distinct()
                 .from(hu)
                 .where(hu.tags.any().id.in(ids2))
@@ -96,7 +97,8 @@ public class MainService {
                                 hu.kakaoId,
                                 hu.userName,
                                 hu.pw,
-                                hu.hashTagsString
+                                hu.hashTagsString,
+                                hu.field
                         )).distinct()
                 .from(hu)
                 .where(builder)
@@ -113,7 +115,8 @@ public class MainService {
                                 hu.title,
                                 hu.content,
                                 hu.tagsString,
-                                hu.user.id
+                                hu.user.id,
+                                hu.user.field
                         )
                 )
                 .from(hu)
@@ -124,7 +127,7 @@ public class MainService {
 
     public List<UserRequestDto> getUserDtoList(UserDetailsImpl userDetails) {
         Random random = new Random();
-        int page = random.nextInt(300);
+        int page = random.nextInt(10);
 
         QUser hu = QUser.user;
 
@@ -138,10 +141,11 @@ public class MainService {
                                 hu.kakaoId,
                                 hu.userName,
                                 hu.pw,
-                                hu.hashTagsString
+                                hu.hashTagsString,
+                                hu.field
                         )).distinct()
                 .from(hu)
-                .offset(page*9).limit(9)
+                .offset(0).limit(9)
                 .fetch();
 
         if(userDetails != null) {

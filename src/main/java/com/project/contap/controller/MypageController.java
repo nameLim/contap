@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RequiredArgsConstructor
 @RequestMapping("/mypage")
 @RestController
@@ -23,7 +25,7 @@ public class MypageController {
     public FrontResponseCardDto modifyFrontCard(
             @ModelAttribute FrontRequestCardDto frontRequestCardDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
-    ) {
+    ) throws IOException {
         return mypageService.modifyFrontCard(frontRequestCardDto, userDetails.getUser());
     }
 

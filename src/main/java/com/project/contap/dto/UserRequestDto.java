@@ -24,8 +24,9 @@ public class UserRequestDto {
     private List<Card> cards;
     private Boolean isFriend;
     private String roomId;
+    private int field;
 
-    public UserRequestDto(Long id,String email,String profile, Long kakaoId, String userName, String pw,String hashTagsString) {
+    public UserRequestDto(Long id,String email,String profile, Long kakaoId, String userName, String pw,String hashTagsString, int field) {
         this.userId = id;
         this.email = email;
         this.pw = pw;
@@ -34,6 +35,7 @@ public class UserRequestDto {
         this.profile = profile;
         this.hashTags=hashTagsString;
         this.isFriend = false;
+        this.field = field;
     }
     public UserRequestDto(Long id,
                           String email,
