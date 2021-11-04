@@ -75,6 +75,7 @@ public class MainService {
     }
     public List<UserRequestDto> searchuser(SearchRequestDto tagsandtype) {
         BooleanBuilder builder = new BooleanBuilder();
+        int page = 9*tagsandtype.getPage();
         QUser hu = QUser.user;
         if (tagsandtype.getType() == 0) {
             for (String tagna : tagsandtype.getSearchTags()) {
@@ -86,6 +87,10 @@ public class MainService {
             for (String tagna : tagsandtype.getSearchTags()) {
                 builder.and(hu.hashTagsString.contains("@"+tagna+"@"));
             }
+        }
+        if(tagsandtype.getField() != 3)
+        {
+            builder.and(hu.field.eq(tagsandtype.getField()));
         }
         List<UserRequestDto> abc;
         abc = jpaQueryFactory
@@ -102,7 +107,7 @@ public class MainService {
                         )).distinct()
                 .from(hu)
                 .where(builder)
-                .offset(9).limit(9)
+                .offset(page).limit(9)
                 .fetch();
         return abc;
     }
@@ -127,7 +132,7 @@ public class MainService {
 
     public List<UserRequestDto> getUserDtoList(UserDetailsImpl userDetails) {
         Random random = new Random();
-        int page = random.nextInt(10);
+        int page = random.nextInt(30);
 
         QUser hu = QUser.user;
 
@@ -145,7 +150,7 @@ public class MainService {
                                 hu.field
                         )).distinct()
                 .from(hu)
-                .offset(0).limit(9)
+                .offset(page).limit(9)
                 .fetch();
 
         if(userDetails != null) {
