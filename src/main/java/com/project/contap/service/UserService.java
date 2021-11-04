@@ -1,25 +1,21 @@
 package com.project.contap.service;
 
 import com.project.contap.chatcontroller.ChatRoomRepository;
-import com.project.contap.dto.*;
+import com.project.contap.dto.PwRequestDto;
+import com.project.contap.dto.PwUpdateRequestDto;
+import com.project.contap.dto.SignUpRequestDto;
+import com.project.contap.dto.UserRequestDto;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
-import com.project.contap.model.HashTag;
-import com.project.contap.model.QUser;
 import com.project.contap.model.User;
-import com.project.contap.repository.CardRepository;
-import com.project.contap.repository.HashTagRepositoty;
 import com.project.contap.repository.UserRepository;
-import com.project.contap.security.UserDetailsImpl;
-import com.project.contap.util.GetRandom;
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

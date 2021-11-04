@@ -73,6 +73,13 @@ public class MypageService {
         if (user.getEmail()!=null && !user.isWritedBy(requestUser))
             throw new ContapException(ErrorCode.ACCESS_DENIED); //권한이 없습니다.
 
+        //가입 nickname 중복체크
+        if(!user.getUserName().equals(frontRequestCardDto.getUserName())) {
+            Optional<User> found = userRepository.findByUserName(frontRequestCardDto.getUserName());
+            if (found.isPresent())
+                throw new ContapException(ErrorCode.NICKNAME_DUPLICATE);
+        }
+
         String uploadImageUrl = ImageService.upload(imageService, frontRequestCardDto.getProfile(), "static", user.getProfile());
 
         String requestTagStr = frontRequestCardDto.getHashTagsStr();
@@ -88,9 +95,7 @@ public class MypageService {
             tagArr = requestTagStr.split("@");
         }
         Set<String> tagsSet = new HashSet<>();
-        for(String str: tagArr) {
-            tagsSet.add(str);
-        }
+        Collections.addAll(tagsSet, tagArr);
 
         List<HashTag> hashTagList = hashTagRepositoty.findAllByNameIn(tagsSet);
 

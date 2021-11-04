@@ -1,11 +1,10 @@
 package com.project.contap.util;
 
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.project.contap.model.HashTag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,8 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,8 +32,6 @@ public class ImageService {
 
     @Value("${cloud.aws.s3.bucket.url}")
     private String bucketUrl;
-
-    private final Map<String, String> s3Url2userUrl = new HashMap<>();
 
     public static String upload(ImageService imageService, MultipartFile multipartFile, String dirName, String oldProfile) throws IOException {
 
@@ -77,6 +74,8 @@ public class ImageService {
         try {
              fileName =  "" +UUID.randomUUID() + System.currentTimeMillis() + file.getName();
              uploadImageUrl = putToS3(file, dirName + "/" + fileName);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         } finally {
             removeNewFile(file);
         }
@@ -85,9 +84,10 @@ public class ImageService {
     }
 
     //S3로 업로드
-    private String putToS3(File file, String fileName) {
+    private String putToS3(File file, String fileName) throws UnsupportedEncodingException {
         amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, file).withCannedAcl(CannedAccessControlList.PublicRead));
-        return amazonS3Client.getUrl(bucket, fileName).toString();
+        String url = amazonS3Client.getUrl(bucket, fileName).toString();
+        return URLDecoder.decode(url,"UTF-8");
     }
 
     // 로컬에 저장된 이미지 지우기
