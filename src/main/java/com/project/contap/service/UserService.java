@@ -1,5 +1,6 @@
 package com.project.contap.service;
 
+import com.project.contap.chatcontroller.ChatRoomRepository;
 import com.project.contap.dto.*;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;

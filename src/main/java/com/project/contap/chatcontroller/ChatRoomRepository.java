@@ -23,7 +23,7 @@ public class ChatRoomRepository {
     public static final String REVERSE_LOGIN_INFO = "REVERSE_LOGIN_INFO";
 
     @Resource(name = "redisTemplate")
-    private ZSetOperations<String, String> zSetforchatdate; // 정렬목적
+    private ZSetOperations<String, String> zSetforchatdate; // 이건 친구관계가있으면 사라지지 않는다
     // Key : UserEmail , Value : roomId , Score : 2105261420 년월일시분
     // 최신순으로 정렬한 방을 주기위해 만들어짐.
     // 이건 서버 시작과 동시에 set해줘야한다.
@@ -44,7 +44,7 @@ public class ChatRoomRepository {
     // 해당 유저가 로그인 되어있는지에대한 정보.
 
     @Resource(name = "redisTemplate")
-    private ListOperations<String, String> listOpsforRoomstatus;
+    private ListOperations<String, String> listOpsforRoomstatus; // 이건 친구관계가있으면 사라지지 않는다
 //        stringStringListOperations.rightPush("LSJ","sad 0");
 //    String a = stringStringListOperations.rightPop("LSJ");
     // Key : roomId , Value : [1] - Sender or @@ [2] - 방에입장해있는 유저의수.
@@ -52,7 +52,7 @@ public class ChatRoomRepository {
     // 이건 서버 시작과 동시에 set해줘야한다.
 
     @Resource(name = "redisTemplate")
-    private HashOperations<String, String, String> hashOpsRoomInfo; // 로그인 했을시 알람 울릴 목적
+    private HashOperations<String, String, String> hashOpsRoomInfo; //이건 사라진다.
     // disconnection 시 방 인원 줄일려고 만듬
 
 
