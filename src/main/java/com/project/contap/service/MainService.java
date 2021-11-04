@@ -14,14 +14,15 @@ import com.project.contap.util.GetRandom;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import net.nurigo.java_sdk.Coolsms;
+import net.nurigo.java_sdk.api.Message;
+import net.nurigo.java_sdk.exceptions.CoolsmsException;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class MainService {
@@ -211,6 +212,29 @@ public class MainService {
 
         Tap newTap = new Tap(sendUser,receiveUser);
         tapRepository.save(newTap);
+        //sendSMS(); // 여기서 상대방번호가 매개변수로 들어가야하지만 일단은 여기까지만
         return new DefaultRsp("정상적으로 처리 되었습니다.");
+    }
+
+    // 1인당 탭횟수 제한
+    private void sendSMS() {
+        String api_key = "a";
+        String api_secret = "a";
+        Message coolsms = new Message(api_key, api_secret);
+
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("to", "01040343120");   // 탭요청 알람을 받기위해서 정확하게 기재해주세요
+                                           // ㅎ
+        params.put("from", "01066454534"); //사전에 사이트에서 번호를 인증하고 등록하여야 함 // 070 번호하나사고
+        params.put("type", "SMS");
+        params.put("text", "이승준 님이 탭 요청을 하였습니다..!"); //메시지 내용
+        params.put("app_version", "test app 1.2");
+        try {
+            JSONObject obj = (JSONObject) coolsms.send(params);
+            System.out.println(obj.toString()); //전송 결과 출력
+        } catch (CoolsmsException e) {
+            System.out.println(e.getMessage());
+            System.out.println(e.getCode());
+        }
     }
 }

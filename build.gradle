@@ -82,6 +82,10 @@ dependencies {
     //스프링 redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+    // https://mvnrepository.com/artifact/net.nurigo/javaSDK 문자인증
+    implementation group: 'net.nurigo', name: 'javaSDK', version: '2.2'
+
+
     //embedded redis
     implementation 'it.ozimov:embedded-redis:0.7.2'
     implementation 'com.google.code.gson:gson:2.8.0'
