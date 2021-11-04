@@ -39,6 +39,9 @@ public class User extends TimeStamped{
     @Column
     private String hashTagsString;
 
+    @Column
+    private int field; // 0:BE, 1:FE, 2:Designer
+
     @Column(nullable = false)
     private AuthorityEnum authorityEnum;
 

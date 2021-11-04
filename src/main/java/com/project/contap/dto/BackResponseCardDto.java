@@ -16,4 +16,5 @@ public class BackResponseCardDto {
     private String content;
     private String tagsStr;
     private String link;
+    private int field;
 }

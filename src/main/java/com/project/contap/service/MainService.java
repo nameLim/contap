@@ -112,7 +112,8 @@ public class MainService {
                                 hu.title,
                                 hu.content,
                                 hu.tagsString,
-                                hu.user.id
+                                hu.user.id,
+                                hu.user.field
                         )
                 )
                 .from(hu)

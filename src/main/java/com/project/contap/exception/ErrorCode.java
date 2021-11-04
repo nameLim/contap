@@ -21,8 +21,6 @@ public enum ErrorCode {
     FILESAVE_ERROR(BAD_REQUEST, "파일 저장 실패"),
     NOT_EQUAL_NUMBER(BAD_REQUEST, "인증번호가 일치하지 않습니다."),
 
-    CARD_NOT_FOUND(BAD_REQUEST, "해당 카드를 찾을 수 없습니다."),
-
     EMAIL_DUPLICATE(BAD_REQUEST, "중복된 email이 존재합니다."),
     USER_NOT_FOUND(BAD_REQUEST, "회원 정보를 찾을 수 없습니다."),
 
@@ -37,7 +35,10 @@ public enum ErrorCode {
 
     NOT_FOUND_CARD(BAD_REQUEST, "해당 카드를 찾을 수 없습니다."),
     ACCESS_DENIED(BAD_REQUEST, "권한이 없습니다."),
-    EXCESS_CARD_MAX(BAD_REQUEST, "카드 최대 가능 수를 초과하였습니다.");
+    EXCESS_CARD_MAX(BAD_REQUEST, "카드 최대 가능 수를 초과하였습니다."),
+    ERROR_CONVERT_FILE(BAD_REQUEST, "파일 변환 중 에러가 발생하였습니다."),
+    ERROR_DELETE_FILE(BAD_REQUEST, "파일 삭제 중 실패하였습니다.");
+
     private final HttpStatus httpStatus;
     private final String message;
 }

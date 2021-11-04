@@ -10,13 +10,12 @@ import com.project.contap.model.User;
 import com.project.contap.repository.CardRepository;
 import com.project.contap.repository.HashTagRepositoty;
 import com.project.contap.repository.UserRepository;
-import com.project.contap.util.MD5Generator;
+import com.project.contap.util.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -26,6 +25,7 @@ public class MypageService {
     private final UserRepository userRepository;
     private final CardRepository cardRepository;
     private final HashTagRepositoty hashTagRepositoty;
+    private final ImageService imageService;
 
     // 회원 정보 가져오기
     // 가져오는 값 : 기본 회원정보(앞면카드), 모든 뒷면카드
@@ -64,7 +64,7 @@ public class MypageService {
                 .cardDtoList(cardDtoList).build();
     }
 
-    public FrontResponseCardDto modifyFrontCard(FrontRequestCardDto frontRequestCardDto, User requestUser){
+    public FrontResponseCardDto modifyFrontCard(FrontRequestCardDto frontRequestCardDto, User requestUser) throws IOException {
     //userName, hashtagName
         if (requestUser == null) {
             throw new ContapException(ErrorCode.USER_NOT_FOUND); //회원 정보를 찾을 수 없습니다.
@@ -73,32 +73,7 @@ public class MypageService {
         if (user.getEmail()!=null && !user.isWritedBy(requestUser))
             throw new ContapException(ErrorCode.ACCESS_DENIED); //권한이 없습니다.
 
-        String filename = "basic.jpg";
-        MultipartFile files = frontRequestCardDto.getProfile();
-        String savePath;
-        String filePath="";
-        try
-        {
-            if (files != null) {
-                String origFilename = files.getOriginalFilename();
-                filename = new MD5Generator(origFilename).toString() + ".jpg";
-                savePath = "/home/ubuntu/contap/image/";
-
-                if (!new File(savePath).exists()) {
-                    try {
-                        new File(savePath).mkdir();
-                    } catch (Exception e) {
-                        e.getStackTrace();
-                    }
-                }
-                filePath = savePath +filename;
-                System.out.println(filePath);
-                files.transferTo(new File(filePath));
-            }
-        }
-        catch (Exception e) {
-            throw new ContapException(ErrorCode.FILESAVE_ERROR);
-        }
+        String uploadImageUrl = ImageService.upload(imageService, frontRequestCardDto.getProfile(), "static", user.getProfile());
 
         String requestTagStr = frontRequestCardDto.getHashTagsStr();
         List<String> tagsList = new ArrayList<>();
@@ -120,17 +95,19 @@ public class MypageService {
         List<HashTag> hashTagList = hashTagRepositoty.findAllByNameIn(tagsSet);
 
         //user 값 넣기
-        user.setProfile("http://52.79.199.239" + filePath);
+        user.setProfile(uploadImageUrl);
         user.setUserName(frontRequestCardDto.getUserName());
         user.setTags(hashTagList);
         user.setHashTagsString(frontRequestCardDto.getHashTagsStr());
+        user.setField(frontRequestCardDto.getField());
         user = userRepository.save(user);
 
         //response
         return FrontResponseCardDto.builder()
                 .profile(user.getProfile())
                 .userName(user.getUserName())
-                .hashTagsString(user.getHashTagsString()).build();
+                .hashTagsString(user.getHashTagsString())
+                .field(user.getField()).build();
     }
 
     @Transactional
@@ -162,16 +139,18 @@ public class MypageService {
         card.setTitle(backRequestCardDto.getTitle());
         card.setContent(backRequestCardDto.getContent());
         card.setTagsString(backRequestCardDto.getTagsStr());
+        card.setLink(backRequestCardDto.getLink());
         card = cardRepository.save(card);
 
         //response
         return BackResponseCardDto.builder()
                 .cardId(card.getId())
                 .userId(user.getId())
-                .title(backRequestCardDto.getTitle())
-                .content(backRequestCardDto.getContent())
-                .tagsStr(backRequestCardDto.getTagsStr())
-                .link(backRequestCardDto.getLink()).build();
+                .title(card.getTitle())
+                .content(card.getContent())
+                .tagsStr(card.getTagsString())
+                .link(card.getLink())
+                .field(user.getField()).build();
     }
 
     @Transactional
@@ -200,6 +179,7 @@ public class MypageService {
                 .content(card.getContent())
                 .tagsStr(card.getTagsString())
                 .link(card.getLink())
+                .field(user.getField())
                 .build();
     }
 
@@ -231,6 +211,7 @@ public class MypageService {
                 .content(card.getContent())
                 .tagsStr(card.getTagsString())
                 .link(card.getLink())
+                .field(user.getField())
                 .build();
     }
 }
