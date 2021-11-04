@@ -37,9 +37,6 @@
 </div>
 <script>
     console.log(window.location.href);
-
-    var sock = new SockJS("/ws-stomp");
-    var client = Stomp.over(sock);
     let roomId=window.location.href.split("?")[1];
     let userId=window.location.href.split("?")[2];
     console.log("roomId===============userId");
@@ -47,6 +44,8 @@
     console.log(userId);
     console.log("roomId===============userId");
 
+    var sock = new SockJS("/ws-stomp");
+    var client = Stomp.over(sock);
     client.connect({}, function () {
         client.subscribe(`/sub/chat/room/${roomId}` , function (chat) {
             var content = JSON.parse(chat.body);
@@ -54,15 +53,12 @@
             chatBox.append('<li>' + content.writer+" : " + content.message + '</li>')
         },{id:userId});
     });
-
     var chatBox = $('.chat_box');
     var messageInput = $('input[name="message"]');
-
     var sendBtn = $('.senddd');
-
     sendBtn.click(function () {
         let message123 =$("#msg").val();
-        client.send('/pub/chat/message', {}, JSON.stringify({"roomId": roomId, message: message123, "writer":userId}));
+        client.send('/pub/chat/message', {}, JSON.stringify({"roomId": roomId, message: message123, "writer":userId,}));
         messageInput.val('');
     });
 
