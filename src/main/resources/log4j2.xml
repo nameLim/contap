@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="INFO">
+<Configuration status="DEBUG">
 
     <Properties>
         <Property name="Log_Exception">Log_Exception</Property>
@@ -50,10 +50,10 @@
 
     <Loggers>
         <logger name="AddExeption" additivity="true" >
-            <AppenderRef ref="logExeption" level="info" />
+            <AppenderRef ref="logExeption" level="debug" />
         </logger>
         <logger name="AddApiTime" additivity="true" >
-            <AppenderRef ref="logApiTime" level="info" />
+            <AppenderRef ref="logApiTime" level="debug" />
         </logger>
     </Loggers>
 </Configuration>
