@@ -28,8 +28,9 @@ public class ChatService {
     private List<String> updateRoomList = new ArrayList<>(); //  check new msg
     private List<ChatMessage> chatmessages= new ArrayList<>(); // for bulk insert
 
-    public void publish(ChatMessageDTO message) {
+    public void publish(ChatMessageDTO message,String senderName) {
         ChatMessage newmsg = new ChatMessage(message);
+        message.setWriterSessionId(senderName);
         chatmessages.add(newmsg);
         if(!updateRoomList.contains(newmsg.getRoomId()))
         {
@@ -40,22 +41,17 @@ public class ChatService {
         if(inRoomUserCnt == 1)
         {
             String recieverId = chatroomRepository.getSessionId(message.getReciever());
-            if (recieverId == null)
-                message.setType(1);
-            else {
+            if (recieverId == null) {
                 message.setType(2);
                 message.setSessionId(recieverId);
+                chatroomRepository.setAlarm(message.getReciever());
             }
+            else {
+                message.setType(1);
+            }
+        }
+        redisTemplate.convertAndSend(channelTopic.getTopic(), message);
 
-        }
-        if(message.getType() == 2)
-        {
-            chatroomRepository.setAlarm(message.getReciever());
-        }
-        else
-        {
-            redisTemplate.convertAndSend(channelTopic.getTopic(), message);
-        }
 
         chatroomRepository.newMsg(message.getRoomId(),message.getWriter(),message.getReciever(),message.getType());
         if (chatmessages.size() >= 100)
