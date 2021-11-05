@@ -60,7 +60,7 @@ public class MypageService {
 
         // nickname 변경했을 경우 중복체크
         if(!user.getUserName().equals(frontRequestCardDto.getUserName())) {
-            Optional<User> found = userRepository.findByUserName(frontRequestCardDto.getUserName());
+            Optional<User> found = userRepository.existUserByUserName(frontRequestCardDto.getUserName());
             if (found.isPresent())
                 throw new ContapException(ErrorCode.NICKNAME_DUPLICATE);
         }
@@ -178,7 +178,7 @@ public class MypageService {
     }
 
     // 사용자 권한 체크
-    private User checkUserAuthority(User requestUser) {
+    public User checkUserAuthority(User requestUser) {
         if(requestUser == null)
             throw new ContapException(ErrorCode.USER_NOT_FOUND); //회원 정보를 찾을 수 없습니다.
 

@@ -41,7 +41,7 @@ public class User extends TimeStamped{
     @Column
     private int field; // 0:BE, 1:FE, 2:Designer
 
-    @Column
+    @Column(unique = true)
     private String phoneNumber;
 
     @Column(nullable = false)

@@ -38,8 +38,8 @@ public enum ErrorCode {
     EXCESS_CARD_MAX(BAD_REQUEST, "카드 최대 가능 수를 초과하였습니다."),
     ERROR_CONVERT_FILE(BAD_REQUEST, "파일 변환 중 에러가 발생하였습니다."),
     ERROR_DELETE_FILE(BAD_REQUEST, "파일 삭제 중 실패하였습니다."),
-    PHONE_DUPLICATE(BAD_REQUEST, "중복된 전화번호가 존재합니다."),
-    PHON_FORM_INVALID(BAD_REQUEST, "전화번호 형식이 맞지 않습니다.");
+    PHONE_DUPLICATE(BAD_REQUEST, "중복된 핸드폰번호가 존재합니다."),
+    PHONE_FORM_INVALID(BAD_REQUEST, "핸드폰번호 형식이 맞지 않습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
