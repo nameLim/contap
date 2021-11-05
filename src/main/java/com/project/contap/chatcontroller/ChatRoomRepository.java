@@ -157,16 +157,21 @@ public class ChatRoomRepository {
         return true;
     }
 
-    public List<String> getMyFriendsOrderByDate(int page,String userName)
+    public List<List<String>> getMyFriendsOrderByDate(int page,String userName)
     {
 
         int start = 9*page;
         java.util.Set<ZSetOperations.TypedTuple<String>> ret = zSetforchatdate.reverseRangeWithScores(userName,start,start+8);
-        List<String> values = new ArrayList<>();
+        List<List<String>> values = new ArrayList<>();
+        List<String> rooms = new ArrayList<>();
+        List<String> dates = new ArrayList<>();
         for (Iterator<ZSetOperations.TypedTuple<String>> iterator = ret.iterator(); iterator.hasNext();) {
             ZSetOperations.TypedTuple<String> typedTuple = iterator.next();
-            values.add(typedTuple.getValue()+"@"+typedTuple.getScore().toString());
+            rooms.add(typedTuple.getValue());
+            dates.add(typedTuple.getScore().toString());
         }
+        values.add(rooms);
+        values.add(dates);
         return values;
     }
 }

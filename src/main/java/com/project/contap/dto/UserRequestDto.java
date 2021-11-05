@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -25,6 +26,7 @@ public class UserRequestDto {
     private Boolean isFriend;
     private String roomId;
     private int field;
+    List<List<String>> values = new ArrayList<>();
 
     public UserRequestDto(Long id,String email,String profile, Long kakaoId, String userName, String pw,String hashTagsString, int field) {
         this.userId = id;

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -120,25 +121,28 @@ public class ContapService {
 
     public List<UserRequestDto> getMyfriends(User user) {
         int page = 0;
-        List<String> order = chatRoomRepository.getMyFriendsOrderByDate(page,user.getEmail());
+        List<List<String>> order = chatRoomRepository.getMyFriendsOrderByDate(page,user.getEmail());
         QFriend qfriend = QFriend.friend;
-        List<UserRequestDto> abc;
-        abc = jpaQueryFactory
-                .select(
-                        Projections.constructor(UserRequestDto.class,
-                                qfriend.you.id,
-                                qfriend.you.email,
-                                qfriend.you.profile,
-                                qfriend.you.kakaoId,
-                                qfriend.you.userName,
-                                qfriend.you.pw,
-                                qfriend.you.hashTagsString,
-                                qfriend.roomId
-                        )).distinct()
-                .from(qfriend)
-                .where(qfriend.me.id.eq(user.getId())
-                        .and(qfriend.roomId.in(order)))
-                .fetch();
+        List<UserRequestDto> abc = new ArrayList<>();
+        if(order.get(0).size() != 0) {
+            abc = jpaQueryFactory
+                    .select(
+                            Projections.constructor(UserRequestDto.class,
+                                    qfriend.you.id,
+                                    qfriend.you.email,
+                                    qfriend.you.profile,
+                                    qfriend.you.kakaoId,
+                                    qfriend.you.userName,
+                                    qfriend.you.pw,
+                                    qfriend.you.hashTagsString,
+                                    qfriend.roomId
+                            )).distinct()
+                    .from(qfriend)
+                    .where(qfriend.me.id.eq(user.getId())
+                            .and(qfriend.roomId.in(order.get(0))))
+                    .fetch();
+            abc.get(0).setValues(order);
+        }
         return abc;
     }
 
