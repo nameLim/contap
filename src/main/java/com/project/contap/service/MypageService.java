@@ -32,8 +32,6 @@ public class MypageService {
     public UserInfoDto getMyInfo(User requestUser) {
 
         User user = checkUserAuthority(requestUser);
-
-        //Card
         List<Card> userCards = user.getCards();
         List<BackResponseCardDto> cardDtoList = new ArrayList<>();
 
@@ -63,19 +61,19 @@ public class MypageService {
                 throw new ContapException(ErrorCode.NICKNAME_DUPLICATE);
         }
 
-        // profile 변경외에는 null값으로 넘어옴
+        // profile 변경외에는 null
         String uploadImageUrl = "";
         if(frontRequestCardDto.getProfile()!=null){
             // profile 업로드
             uploadImageUrl = ImageService.upload(imageService, frontRequestCardDto.getProfile(), "static", user.getProfile());
         }
         else{
+            // null이기 때문에 사용자의 기존 profile 가져오기
             uploadImageUrl = user.getProfile();
         }
 
         String requestTagStr = frontRequestCardDto.getHashTagsStr();
         List<String> tagsList = new ArrayList<>();
-        String[] tagArr = new String[0];
 
         if(requestTagStr.contains("@_@")) {
             String[] tagsArr = requestTagStr.split("@_@");
@@ -83,11 +81,10 @@ public class MypageService {
             tagsList.addAll(Arrays.asList(tagsArr[1].split("@")));
         }
         else if(requestTagStr.contains("@")) {
-            tagArr = requestTagStr.split("@");
+            tagsList.addAll(Arrays.asList(requestTagStr.split("@")));
         }
-        Set<String> tagsSet = new HashSet<>();
-        Collections.addAll(tagsSet, tagArr);
 
+        Set<String> tagsSet = new HashSet<>(tagsList);
         List<HashTag> hashTagList = hashTagRepositoty.findAllByNameIn(tagsSet);
 
         //user 값 넣기
