@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@NoArgsConstructor
 public class ChatMessage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
