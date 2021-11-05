@@ -1,7 +1,6 @@
 package com.project.contap.model;
 
 import com.project.contap.dto.PwUpdateRequestDto;
-import com.project.contap.dto.SignUpRequestDto;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,6 +40,9 @@ public class User extends TimeStamped{
 
     @Column
     private int field; // 0:BE, 1:FE, 2:Designer
+
+    @Column
+    private String phoneNumber;
 
     @Column(nullable = false)
     private AuthorityEnum authorityEnum;

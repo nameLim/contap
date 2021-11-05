@@ -19,6 +19,7 @@ public class UserResponseDto {
     private String profile;
     private LocalDateTime InsertDt;
     private String hashTags;
+    private String phoneNumber;
 
     public static UserResponseDto of(User user) {
         return UserResponseDto.builder()

@@ -1,5 +1,6 @@
 package com.project.contap.service;
 
+import com.google.common.collect.Sets;
 import com.project.contap.dto.*;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
@@ -18,9 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.*;
 
+
 @RequiredArgsConstructor
 @Service
 public class MypageService {
+
+    private final String SPLIT_CHAR = ",";
 
     private final UserRepository userRepository;
     private final CardRepository cardRepository;
@@ -73,21 +77,14 @@ public class MypageService {
         }
 
         String requestTagStr = frontRequestCardDto.getHashTagsStr();
-        List<String> tagsList = new ArrayList<>();
-
-        if(requestTagStr.contains("@_@")) {
-            String[] tagsArr = requestTagStr.split("@_@");
-            tagsList.addAll(Arrays.asList(tagsArr[0].split("@")));
-            tagsList.addAll(Arrays.asList(tagsArr[1].split("@")));
-        }
-        else if(requestTagStr.contains("@")) {
-            tagsList.addAll(Arrays.asList(requestTagStr.split("@")));
+        Set<String> sets = null;
+        if(requestTagStr.contains(SPLIT_CHAR)) {
+            sets = new HashSet<>(Sets.newHashSet(requestTagStr.split(SPLIT_CHAR)));
         }
 
-        Set<String> tagsSet = new HashSet<>(tagsList);
-        List<HashTag> hashTagList = hashTagRepositoty.findAllByNameIn(tagsSet);
+        List<HashTag> hashTagList = hashTagRepositoty.findAllByNameIn(sets);
 
-        //user 값 넣기
+        //user
         user.setProfile(uploadImageUrl);
         user.setUserName(frontRequestCardDto.getUserName());
         user.setTags(hashTagList);
@@ -113,22 +110,18 @@ public class MypageService {
         if( cardSize >= 10 )
             throw new ContapException(ErrorCode.EXCESS_CARD_MAX); //카드 최대 가능 수를 초과하였습니다.
 
+        //card
         Card card = new Card();
-        // card 값 넣기
-        if(cardSize == 0) {
-            user.setAuthorityEnum(AuthorityEnum.CAN_OTHER_READ);
-            card.setCardOrder(1L);
-        }
-        else{
-            card.setCardOrder(Long.valueOf(cardSize +1));
-        }
-
+        card.setCardOrder(Long.valueOf(cardSize +1));
         card.setUser(user);
         card.setTitle(backRequestCardDto.getTitle());
         card.setContent(backRequestCardDto.getContent());
         card.setTagsString(backRequestCardDto.getTagsStr());
         card.setLink(backRequestCardDto.getLink());
         card = cardRepository.save(card);
+
+        //다른 user 뒷면 볼 수 있는 권한
+        user.setAuthorityEnum(AuthorityEnum.CAN_OTHER_READ);
 
         //response
         return makeBackResponseCardDto(card,user);
