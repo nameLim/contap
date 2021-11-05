@@ -29,6 +29,7 @@ public class MypageController {
         return mypageService.modifyFrontCard(frontRequestCardDto, userDetails.getUser());
     }
 
+    //카드 뒷면
     @PostMapping("/backCard")
     public BackResponseCardDto createBackCard(@RequestBody BackRequestCardDto backRequestCardDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return mypageService.createBackCard(
@@ -37,11 +38,13 @@ public class MypageController {
         );
     }
 
+    //카드 뒷면 수정
     @PostMapping("/backCard/{cardId}")
     public BackResponseCardDto modifyBackCard(@PathVariable Long cardId, @RequestBody BackRequestCardDto backRequestCardDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return mypageService.modifyBackCard(cardId, backRequestCardDto, userDetails.getUser());
     }
 
+    // 카드 뒷면 삭제
     @DeleteMapping("/backCard/{cardId}")
     public BackResponseCardDto deleteBackCard(@PathVariable Long cardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return mypageService.deleteBackCard(cardId, userDetails.getUser());
