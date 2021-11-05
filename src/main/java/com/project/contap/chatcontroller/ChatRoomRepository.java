@@ -96,7 +96,7 @@ public class ChatRoomRepository {
 //    //
     public int getChatUserCnt(String roomId) // null이면 처리해주자
     {
-        int userCnt = Integer.parseInt(listOpsforRoomstatus.index(roomId,-1));
+        int userCnt = Integer.parseInt(listOpsforRoomstatus.index(roomId,-1).split("/")[1]);
         return userCnt;
     }
     public void enterRoom(String roomId,String enterUser,String sessionId) // 최근에 보낸사람이 누군지 내가아니면 @@로 만들어주자

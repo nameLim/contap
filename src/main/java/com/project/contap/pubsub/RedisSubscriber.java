@@ -26,8 +26,8 @@ public class RedisSubscriber  {
             // 채팅방을 구독한 클라이언트에게 메시지 발송
             if(chatMessage.getType() == 1)
                 messagingTemplate.convertAndSendToUser(chatMessage.getSessionId(),"/sub/user",chatMessage);
-            else if (chatMessage.getType() == 0)
-                messagingTemplate.convertAndSend("/sub/chat/room/" + chatMessage.getRoomId(), chatMessage);
+            messagingTemplate.convertAndSend("/sub/chat/room/" + chatMessage.getRoomId(), chatMessage);
+
 
         } catch (Exception e) {
             log.error("Exception {}", e);

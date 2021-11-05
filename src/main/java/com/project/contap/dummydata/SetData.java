@@ -53,12 +53,12 @@ public class SetData implements ApplicationRunner{
                 "http://52.79.248.107:8080/display/12.jpg",
                 "http://52.79.248.107:8080/display/13.jpg"
         );
-        int userCnt = 5000;
+        int userCnt = 300;
         int userCntfortap = 7;
         String commonpw = "commonpw";
         commonpw = passwordEncoder.encode(commonpw);
         int field = 0;
-        for(int i = 0 ; i< 300 ;i++)// 1~300
+        for(int i = 0 ; i< userCnt ;i++)// 1~300
         {
 
             if(field == 3)
@@ -110,7 +110,7 @@ public class SetData implements ApplicationRunner{
         }
         setHashTag();
         //=====================
-        for(long i = 1 ; i< 306 ;i++)// 801~
+        for(long i = 1 ; i< userCnt+userCntfortap ;i++)// 801~
         {
             User user = userRepository.findById(i).orElse(null);
             Card ca1 = new Card(user,1L,String.format("title%d", i),String.format("content%d", i));
