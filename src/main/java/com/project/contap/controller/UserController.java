@@ -1,6 +1,9 @@
 package com.project.contap.controller;
 
-import com.project.contap.dto.*;
+import com.project.contap.dto.PwRequestDto;
+import com.project.contap.dto.PwUpdateRequestDto;
+import com.project.contap.dto.SignUpRequestDto;
+import com.project.contap.dto.UserRequestDto;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
 import com.project.contap.model.User;
@@ -8,8 +11,6 @@ import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.security.jwt.JwtTokenProvider;
 import com.project.contap.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -117,4 +118,9 @@ public class UserController {
     }
 
 
+    //핸드폰 번호 변경
+    @PostMapping("/setting/modifyPhoneNumber")
+    public String modifyPhoneNumber(@RequestParam String phoneNumber, @AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
+        return userService.modifyPhoneNumber(phoneNumber, userDetails.getUser());
+    }
 }

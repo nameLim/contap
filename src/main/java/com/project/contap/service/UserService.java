@@ -26,15 +26,17 @@ public class UserService {
     private final UserRepository userRepository;
     private final JPAQueryFactory jpaQueryFactory; // 이건차후에 쓸수도있을것같아서 남겨둠
     private final ChatRoomRepository chatRoomRepository;
+    private final MypageService mypageService;
 
     private static final String ADMIN_TOKEN = "AAABnv/xRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,JPAQueryFactory jpaQueryFactory,ChatRoomRepository chatRoomRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,JPAQueryFactory jpaQueryFactory,ChatRoomRepository chatRoomRepository,MypageService mypageService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jpaQueryFactory = jpaQueryFactory;
         this.chatRoomRepository =  chatRoomRepository;
+        this.mypageService = mypageService;
     }
 
 //    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JPAQueryFactory jpaQueryFactory, CardRepository cardRepository, HashTagRepositoty hashTagRepositoty) {
@@ -215,6 +217,34 @@ public class UserService {
     public String getAlarm(String email) {
         Boolean bAlarm = chatRoomRepository.readAlarm(email);
         return bAlarm.toString();
+    }
+
+    public String modifyPhoneNumber(String phoneNumber, User requestUser) {
+
+        User user = mypageService.checkUserAuthority(requestUser);
+
+        //핸드폰번호 정규식 검사
+        if(isValidPhoneNumber(phoneNumber)) {
+            throw new ContapException((ErrorCode.PHONE_FORM_INVALID)); //핸드폰번호 형식이 맞지 않습니다.
+        }
+
+        //휴대폰번호 중복 확인
+        Optional<User> found = userRepository.existUserByPhoneNumber(phoneNumber);
+        if (found.isPresent()) {
+            throw new ContapException(ErrorCode.PHONE_DUPLICATE); //중복된 핸드폰번호가 존재합니다.
+        }
+        user.setPhoneNumber(phoneNumber);
+        userRepository.save(user);
+        return phoneNumber;
+    }
+
+    //핸드폰번호 정규식 검사
+    private boolean isValidPhoneNumber(String phoneNumber) {
+        boolean err = false;
+        String regex = "^010-\\d{3,4}-\\d{4}$";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(phoneNumber);
+        return m.matches();
     }
 
 }
