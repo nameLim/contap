@@ -34,7 +34,7 @@ public class SetData implements ApplicationRunner{
     @Override
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
-        setdata();
+//        setdata();
         System.out.println("세팅 끝~~");
     }
     private void setdata(){

@@ -33,6 +33,9 @@ public class User extends TimeStamped{
     @Column(unique = true)
     private Long kakaoId;
 
+    @Column(unique = true)
+    private Long githubId;
+
     @Column(unique = false) // profile img path
     private String profile;
 
@@ -56,20 +59,22 @@ public class User extends TimeStamped{
     private  List<Friend> friends;
 
 
-    public User(String email, String pw, String userName, Long kakaoId) {
+    public User(String email, String pw, String userName, Long kakaoId,Long githubId) {
         this.email = email;
         this.pw = pw;
         this.userName = userName;
         this.kakaoId = kakaoId;
+        this.githubId = githubId;
         this.authorityEnum = AuthorityEnum.CANT_OTHER_READ;
     }
 
-    public User(Long id,String email, String pw, String userName, Long kakaoId,String profile) {
+    public User(Long id,String email, String pw, String userName, Long kakaoId,Long githubId,String profile) {
         this.id = id;
         this.email = email;
         this.pw = pw;
         this.userName = userName;
         this.kakaoId = kakaoId;
+        this.githubId = githubId;
         this.profile = profile;
         this.authorityEnum = AuthorityEnum.CANT_OTHER_READ;
     }
@@ -78,6 +83,7 @@ public class User extends TimeStamped{
         this.email = email;
         this.pw = pw;
         this.userName = userName;
+//        this.phonNumber = phonNumber;
         this.kakaoId = null;
         this.authorityEnum = AuthorityEnum.CANT_OTHER_READ;
     }
@@ -85,6 +91,7 @@ public class User extends TimeStamped{
         this.email = email;
         this.pw = pw;
         this.userName = userName;
+//        this.phonNumber = phonNumber;
         this.kakaoId = null;
         this.authorityEnum = AuthorityEnum.CANT_OTHER_READ;
         this.profile = profile;
@@ -102,6 +109,7 @@ public class User extends TimeStamped{
     public User(Long id) {
         this.id = id;
     }
+
 
 
     public void updatePw(PwUpdateRequestDto requestDto) {

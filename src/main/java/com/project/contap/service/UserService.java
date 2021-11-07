@@ -59,6 +59,9 @@ public class UserService {
         if (requestDto.getUserName() == "") {
             throw new ContapException(ErrorCode.REGISTER_ERROR);
         }
+//        if (requestDto.getPhonNumber() == "") {
+//            throw new ContapException(ErrorCode.REGISTER_ERROR);
+//        }
 
         //가입 email(id) 중복체크
         String email = requestDto.getEmail();
@@ -78,6 +81,7 @@ public class UserService {
         if (found2.isPresent()) {
             throw new ContapException(ErrorCode.NICKNAME_DUPLICATE);
         }
+
 
         //비밀번호확인
         String password = requestDto.getPw();
@@ -115,6 +119,19 @@ public class UserService {
         }
         return err;
     }
+
+    //핸드폰번호조건 01x - 3~4자리 - 4자리 '-' 붙이던말던상관x
+    public boolean Phon(String phonNumber) {
+       boolean err2 = false;
+       String regex = "^01([0|1|6|7|8|9])-([0-9]{3,4})-([0-9]{4})$";
+       Pattern p = Pattern.compile(regex);
+       Matcher m = p.matcher(phonNumber);
+       if (m.matches()) {
+           err2 = true;
+       }
+       return err2;
+    }
+
 
     //로그인
     public User login(UserRequestDto requestDto) throws ContapException {
@@ -199,7 +216,10 @@ public class UserService {
         Boolean bAlarm = chatRoomRepository.readAlarm(email);
         return bAlarm.toString();
     }
+
 }
+
+
 
 //    @Transactional //table join으로 검색.
 //    public List<UserRequestDto> getuser(List<HashTag> hashTags) {

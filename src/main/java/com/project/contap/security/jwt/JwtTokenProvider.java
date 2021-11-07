@@ -35,10 +35,10 @@ public class JwtTokenProvider {
     }
 
     // 토큰 생성
-    public String createToken(String userPk, String email, String nickname) {
+    public String createToken(String userPk, String email, String userName) {
         Claims claims = Jwts.claims().setSubject(userPk);
         claims.put("email", email);
-        claims.put("nickname", nickname);
+        claims.put("userName", userName);
         Date now = new Date();
         return Jwts.builder()
                 .setClaims(claims)
@@ -47,6 +47,8 @@ public class JwtTokenProvider {
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
+
+
 
     // 토큰에서 회원 정보 추출
     public String getUserPk(String token) {
@@ -73,4 +75,5 @@ public class JwtTokenProvider {
             return false;
         }
     }
+
 }
