@@ -21,6 +21,8 @@ public class ChatRoomRepository {
     public static final String LOGIN_INFO = "LOGIN_INFO";
     public static final String ROOM_INFO = "ROOM_INFO";
     public static final String REVERSE_LOGIN_INFO = "REVERSE_LOGIN_INFO";
+    public static final String NEW_MSG = "NEW_MSG";
+
 
     @Resource(name = "redisTemplate")
     private ZSetOperations<String, String> zSetforchatdate; // 이건 친구관계가있으면 사라지지 않는다
@@ -55,24 +57,25 @@ public class ChatRoomRepository {
     private HashOperations<String, String, String> hashOpsRoomInfo; //이건 사라진다.
     // disconnection 시 방 인원 줄일려고 만듬
 
-
-
-
+    @Resource(name = "redisTemplate")
+    private HashOperations<String, String, String> hashOpsNewMsg; // 로그인 했을시 알람 울릴 목적
 
     // Login User Info
     public void userConnect(String userEmail, String sessionId) {
         hashOpsLoginInfo.put(LOGIN_INFO,userEmail,sessionId);
         hashOpsReverseLoginInfo.put(REVERSE_LOGIN_INFO,sessionId,userEmail);
     }
-    public void userDisConnect(String sessionId) {
-        String userEmail =hashOpsReverseLoginInfo.get(REVERSE_LOGIN_INFO,sessionId);
+    public void userDisConnect(String userName,String sessionId) {
+        String userEmail =hashOpsReverseLoginInfo.get(REVERSE_LOGIN_INFO,userName);
         if (userEmail != null) {
+            System.out.println(userEmail);
             hashOpsReverseLoginInfo.delete(REVERSE_LOGIN_INFO, sessionId);
             hashOpsLoginInfo.delete(LOGIN_INFO, userEmail);
         }
 
         String roomId =hashOpsRoomInfo.get(ROOM_INFO,sessionId);
         if(roomId != null) {
+            System.out.println(roomId);
             hashOpsRoomInfo.delete(ROOM_INFO,sessionId,roomId);
             leaveRoom(roomId);
         }
@@ -83,17 +86,6 @@ public class ChatRoomRepository {
     }
     //
 
-//    // Alarm User Info
-//    public void addAlarmUser(String userEmail) {
-//        hashOpsAlarmInfo.put(ALARM_INFO,userEmail,"true");
-//    }
-//    public void removeAlarmUser(String userEmail) {
-//        hashOpsAlarmInfo.delete(ALARM_INFO,userEmail,"true");
-//    }
-//    public void getAlarmUser(String userEmail) {
-//        hashOpsAlarmInfo.get(LOGIN_INFO,userEmail);
-//    }
-//    //
     public int getChatUserCnt(String roomId) // null이면 처리해주자
     {
         int userCnt = Integer.parseInt(listOpsforRoomstatus.index(roomId,-1).split("/")[1]);
@@ -108,6 +100,8 @@ public class ChatRoomRepository {
             newStatus.append("@@/");
         int userCnt = Integer.parseInt(splitStatus[1]);
         newStatus.append(userCnt+1);
+        newStatus.append("/");
+        newStatus.append(splitStatus[2]);
         listOpsforRoomstatus.rightPush(roomId,newStatus.toString());
         hashOpsRoomInfo.put(ROOM_INFO,sessionId,roomId);
     }
@@ -119,26 +113,37 @@ public class ChatRoomRepository {
         newStatus.append(splitStatus[0]);
         newStatus.append("/");
         int userCnt = Integer.parseInt(splitStatus[1]);
-        newStatus.append(userCnt+1);
+        newStatus.append(userCnt-1);
+        newStatus.append("/");
+        newStatus.append(splitStatus[2]);
         listOpsforRoomstatus.rightPush(roomId,newStatus.toString());
     }
-    public void newMsg(String roomId,String Sender,String reciever, int type)
+    public void newMsg(String roomId,String Sender,String reciever, int type,String msg)
     {
+        // type 관련 상태값. 차후에 시간나면 바꿀거임
+        //0 둘다 채팅방
+        //1 한명만 채팅방 나머지 한명은 로그인
+        //2 한명만 채팅방 나머지 한명은 로그아웃
+
         if(type != 0) { // room에 한명있고 메시지 보낼때 들어와야한다
-            String roomStatus = Sender + "/1";
+            listOpsforRoomstatus.rightPop(roomId);
+            String roomStatus = Sender+"/1/"+msg;
+            listOpsforRoomstatus.rightPush(roomId, roomStatus);
+        }else{
+            String roomStatus = "@@/1/"+msg;
             listOpsforRoomstatus.rightPop(roomId);
             listOpsforRoomstatus.rightPush(roomId, roomStatus);
         }
-        double date = Double.parseDouble(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHss")));
-        double predate = zSetforchatdate.score("Sender","roomId");
-        zSetforchatdate.incrementScore(Sender,roomId,predate-date);
-        zSetforchatdate.incrementScore(reciever,roomId,predate-date);
+        double date = Double.parseDouble(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmSS")));
+        zSetforchatdate.add(Sender,roomId,date);
+        zSetforchatdate.add(reciever,roomId,date);
     }
 
     public void whenMakeFriend(String roomId,String me,String you)
     {
-        double date = Double.parseDouble(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHss")));
-        listOpsforRoomstatus.rightPush(roomId,"@@/0"); // [0] = 보낸사람 , [1] = 채팅방 인원수
+        double date = Double.parseDouble(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmSS")));
+
+        listOpsforRoomstatus.rightPush(roomId,"@@/0/개발자용 새MSG (이건 채팅방만들어지고 따로대화가없었던것임..)"); // [0] = 보낸사람 , [1] = 채팅방 인원수
         zSetforchatdate.add(me,roomId,date);
         zSetforchatdate.add(you,roomId,date);
     }
@@ -159,19 +164,19 @@ public class ChatRoomRepository {
 
     public List<List<String>> getMyFriendsOrderByDate(int page,String userName)
     {
-
         int start = 9*page;
-        java.util.Set<ZSetOperations.TypedTuple<String>> ret = zSetforchatdate.reverseRangeWithScores(userName,start,start+8);
+//        java.util.Set<ZSetOperations.TypedTuple<String>> ret = zSetforchatdate.reverseRangeWithScores(userName,start,start+8);
+        java.util.Set<ZSetOperations.TypedTuple<String>> ret = zSetforchatdate.reverseRangeWithScores(userName,0,-1);
         List<List<String>> values = new ArrayList<>();
         List<String> rooms = new ArrayList<>();
-        List<String> dates = new ArrayList<>();
+        List<String> newMsg = new ArrayList<>();
         for (Iterator<ZSetOperations.TypedTuple<String>> iterator = ret.iterator(); iterator.hasNext();) {
             ZSetOperations.TypedTuple<String> typedTuple = iterator.next();
             rooms.add(typedTuple.getValue());
-            dates.add(typedTuple.getScore().toString());
+            newMsg.add(listOpsforRoomstatus.index(typedTuple.getValue(),-1));
         }
         values.add(rooms);
-        values.add(dates);
+        values.add(newMsg);
         return values;
     }
 }

@@ -37,5 +37,4 @@ public class EmailRepository {
         return stringRedisTemplate.hasKey(PREFIX + email);
     }
 
-
 }

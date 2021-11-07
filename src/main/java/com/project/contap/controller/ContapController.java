@@ -1,6 +1,7 @@
 package com.project.contap.controller;
 
 import com.project.contap.dto.DefaultRsp;
+import com.project.contap.dto.SortedFriendsDto;
 import com.project.contap.dto.TagDto;
 import com.project.contap.dto.UserRequestDto;
 import com.project.contap.security.UserDetailsImpl;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class ContapController {
@@ -32,7 +34,7 @@ public class ContapController {
         return contapService.getMyTap(userDetails.getUser());
     }
     @GetMapping("/contap/getothers")
-    public List<UserRequestDto> getMyfriends(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public List<SortedFriendsDto> getMyfriends(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return contapService.getMyfriends(userDetails.getUser());
     }
 

@@ -2,6 +2,7 @@ package com.project.contap;
 
 
 import com.project.contap.dto.FrontResponseCardDto;
+import com.project.contap.model.testEnum;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,9 +34,14 @@ class ContapApplicationTests {
         zSetOperations.add("user1","abcabc11",11);
         zSetOperations.add("user1","abcabc12",12);
         zSetOperations.add("user1","abcabc13",13);
-        double checklsj = zSetOperations.score("user1","abcabc1");
-        double destdou = 18;
-        zSetOperations.incrementScore("user1","abcabc1",destdou-checklsj);
+        zSetOperations.add("user1","abcabc1",14);
+
+        java.util.Set<ZSetOperations.TypedTuple<String>> ret = zSetOperations.reverseRangeWithScores("user1",0,-1);
+        for (Iterator<ZSetOperations.TypedTuple<String>> iterator = ret.iterator(); iterator.hasNext();) {
+            ZSetOperations.TypedTuple<String> typedTuple = iterator.next();
+            System.out.println(typedTuple.getValue());
+        }
+
         java.util.Set<ZSetOperations.TypedTuple<String>> abc = zSetOperations.reverseRangeWithScores("user1",0,8);
         java.util.Set<ZSetOperations.TypedTuple<String>> abc2 = zSetOperations.reverseRangeWithScores("user1",9,17);
         List<String> values = new ArrayList<>();
@@ -61,13 +67,18 @@ class ContapApplicationTests {
 
     @Test
     void contextLoads3() {
-//        final ListOperations<String, String> stringStringListOperations = redisTemplate.opsForList();
-//        stringStringListOperations.rightPop("LSJ");
-//        stringStringListOperations.rightPush("LSJ","sad/0");
-//        Long splitIndex = stringStringListOperations.indexOf("LSJ","/");
-//        List<String> lastSender = stringStringListOperations.range("LSJ",0L,splitIndex);
-//
-//        System.out.println(stringStringListOperations);
+        for(testEnum a : testEnum.values())
+        {
+            System.out.println(a.getValue());
+        }
+        int data = 5;
+        data = data|testEnum.profile.getValue();
+
+        int abc = testEnum.total.getValue() - testEnum.profile.getValue();
+
+        System.out.println(testEnum.phone.getValue());
+        System.out.println(testEnum.profile.getValue());
+        System.out.println(testEnum.phone);
     }
 
 }
