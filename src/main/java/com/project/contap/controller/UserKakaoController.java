@@ -3,11 +3,8 @@ package com.project.contap.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.project.contap.model.User;
 import com.project.contap.security.jwt.JwtTokenProvider;
-import com.project.contap.service.GithubUserService;
 import com.project.contap.service.KakaoUserService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,12 +16,11 @@ public class UserKakaoController {
 
     private final KakaoUserService kakaoUserService;
     private final JwtTokenProvider jwtTokenProvider;
-    private final GithubUserService githubUserService;
 
-    public UserKakaoController(KakaoUserService kakaoUserService, JwtTokenProvider jwtTokenProvider, GithubUserService githubUserService) {
+
+    public UserKakaoController(KakaoUserService kakaoUserService, JwtTokenProvider jwtTokenProvider ) {
         this.kakaoUserService = kakaoUserService;
         this.jwtTokenProvider = jwtTokenProvider;
-        this.githubUserService = githubUserService;
     }
 
     //카카오
@@ -40,9 +36,5 @@ public class UserKakaoController {
 
         return result;
     }
-
-
-
-
 
 }
