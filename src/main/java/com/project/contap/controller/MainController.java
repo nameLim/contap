@@ -99,4 +99,8 @@ public class MainController {
     }
     // 만에하나 유저정보가 null값일 경우를 대비해 예외처리가 필요함! 유저정보중 특히나 이메일 부분!!!우린 널이면 안된다했는데 혹시~적용이 안될수도 있기 때문.
 
+    @PostMapping("/main/tutorial")
+    public void phoneTutorial(@RequestParam int tutorialNum, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        mainService.tutorial(tutorialNum, userDetails.getUser());
+    }
 }
