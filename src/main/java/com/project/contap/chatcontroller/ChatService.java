@@ -43,17 +43,17 @@ public class ChatService {
             String recieverId = chatroomRepository.getSessionId(message.getReciever());
             if (recieverId == null) {
                 message.setType(2);
-                message.setSessionId(recieverId);
                 chatroomRepository.setAlarm(message.getReciever());
             }
             else {
+                message.setSessionId(recieverId);
                 message.setType(1);
             }
         }
         redisTemplate.convertAndSend(channelTopic.getTopic(), message);
 
 
-        chatroomRepository.newMsg(message.getRoomId(),message.getWriter(),message.getReciever(),message.getType());
+        chatroomRepository.newMsg(message.getRoomId(),message.getWriter(),message.getReciever(),message.getType(),message.getMessage());
         if (chatmessages.size() >= 100)
         {
             saveBulk();
@@ -88,8 +88,8 @@ public class ChatService {
             chatroomRepository.userConnect(userEmail,sessionId);
         }
     }
-    public void userDisConnect(String sessionId) {
-        chatroomRepository.userDisConnect(sessionId);
+    public void userDisConnect(String userName,String sessionId) {
+        chatroomRepository.userDisConnect(userName,sessionId);
     }
 
     public List<ChatMessage> getchatmsg(String roomId) {

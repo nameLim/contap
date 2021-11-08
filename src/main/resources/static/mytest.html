@@ -51,7 +51,7 @@
             var content = JSON.parse(chat.body);
             console.log(content)
             chatBox.append('<li>' + content.writer+" : " + content.message + '</li>')
-        },{"abc":userId});
+        },{"userEmail":userId});
     });
     var chatBox = $('.chat_box');
     var messageInput = $('input[name="message"]');

@@ -2,6 +2,7 @@ package com.project.contap.service;
 
 import com.project.contap.chatcontroller.ChatRoomRepository;
 import com.project.contap.dto.DefaultRsp;
+import com.project.contap.dto.SortedFriendsDto;
 import com.project.contap.dto.TagDto;
 import com.project.contap.dto.UserRequestDto;
 import com.project.contap.model.*;
@@ -13,9 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ContapService {
@@ -119,10 +118,14 @@ public class ContapService {
         }
     }
 
-    public List<UserRequestDto> getMyfriends(User user) {
+    public List<SortedFriendsDto>getMyfriends(User user) {
         int page = 0;
+
+
         List<List<String>> order = chatRoomRepository.getMyFriendsOrderByDate(page,user.getEmail());
+        SortedFriendsDto dtoArrays[] = new SortedFriendsDto[order.get(0).size()];
         QFriend qfriend = QFriend.friend;
+        Map<String, Integer> sortInfo = new HashMap<>();
         List<UserRequestDto> abc = new ArrayList<>();
         if(order.get(0).size() != 0) {
             abc = jpaQueryFactory
@@ -141,9 +144,23 @@ public class ContapService {
                     .where(qfriend.me.id.eq(user.getId())
                             .and(qfriend.roomId.in(order.get(0))))
                     .fetch();
-            abc.get(0).setValues(order);
+            for(int i = 0 ; i < order.get(0).size();i++)
+            {
+                sortInfo.put(order.get(0).get(i),i);
+                dtoArrays[i] = new SortedFriendsDto();
+                dtoArrays[i].setRoomStatus(order.get(1).get(i));
+                dtoArrays[i].setRoomId(order.get(0).get(i));
+            }
+            for(UserRequestDto userDto : abc)
+            {
+                dtoArrays[sortInfo.get(userDto.getRoomId())].setUserId(userDto.getUserId());
+                dtoArrays[sortInfo.get(userDto.getRoomId())].setEmail(userDto.getEmail());
+                dtoArrays[sortInfo.get(userDto.getRoomId())].setUserName(userDto.getUserName());
+                dtoArrays[sortInfo.get(userDto.getRoomId())].setProfile(userDto.getProfile());
+                dtoArrays[sortInfo.get(userDto.getRoomId())].setHashTags(userDto.getHashTags());
+            }
         }
-        return abc;
+        List<SortedFriendsDto> ret = Arrays.asList(dtoArrays);
+        return ret;
     }
-
 }
