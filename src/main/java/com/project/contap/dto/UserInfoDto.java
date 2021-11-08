@@ -13,6 +13,7 @@ public class UserInfoDto {
     private String password;
     private String userName;
     private String profile;
+    private int field;
     private AuthorityEnum authorityEnum;
     private List<BackResponseCardDto> cardDtoList;
 }

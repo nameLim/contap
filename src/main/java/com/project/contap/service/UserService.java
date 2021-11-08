@@ -26,17 +26,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final JPAQueryFactory jpaQueryFactory; // 이건차후에 쓸수도있을것같아서 남겨둠
     private final ChatRoomRepository chatRoomRepository;
-    private final MypageService mypageService;
 
     private static final String ADMIN_TOKEN = "AAABnv/xRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,JPAQueryFactory jpaQueryFactory,ChatRoomRepository chatRoomRepository,MypageService mypageService) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,JPAQueryFactory jpaQueryFactory,ChatRoomRepository chatRoomRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jpaQueryFactory = jpaQueryFactory;
         this.chatRoomRepository =  chatRoomRepository;
-        this.mypageService = mypageService;
     }
 
 //    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JPAQueryFactory jpaQueryFactory, CardRepository cardRepository, HashTagRepositoty hashTagRepositoty) {
@@ -204,7 +202,7 @@ public class UserService {
 
     public String modifyPhoneNumber(String phoneNumber, User requestUser) {
 
-        User user = mypageService.checkUserAuthority(requestUser);
+        User user = checkUserAuthority(requestUser);
 
         //핸드폰번호 정규식 검사
         if(isValidPhoneNumber(phoneNumber)) {
@@ -228,6 +226,17 @@ public class UserService {
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(phoneNumber);
         return m.matches();
+    }
+
+    public User checkUserAuthority(User requestUser) {
+        if(requestUser == null)
+            throw new ContapException(ErrorCode.USER_NOT_FOUND); //회원 정보를 찾을 수 없습니다.
+
+        User user = userRepository.findById(requestUser.getId()).orElse(null);
+        if (user.getEmail()!=null && !user.isWritedBy(requestUser))
+            throw new ContapException(ErrorCode.ACCESS_DENIED); //권한이 없습니다.
+
+        return user;
     }
 }
 
