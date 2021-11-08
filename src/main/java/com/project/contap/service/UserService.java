@@ -7,6 +7,7 @@ import com.project.contap.dto.SignUpRequestDto;
 import com.project.contap.dto.UserRequestDto;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
+import com.project.contap.model.AuthorityEnum;
 import com.project.contap.model.User;
 import com.project.contap.repository.UserRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -205,7 +206,7 @@ public class UserService {
         User user = checkUserAuthority(requestUser);
 
         //핸드폰번호 정규식 검사
-        if(isValidPhoneNumber(phoneNumber)) {
+        if(!isValidPhoneNumber(phoneNumber)) {
             throw new ContapException((ErrorCode.PHONE_FORM_INVALID)); //핸드폰번호 형식이 맞지 않습니다.
         }
 
@@ -214,15 +215,14 @@ public class UserService {
         if (found.isPresent()) {
             throw new ContapException(ErrorCode.PHONE_DUPLICATE); //중복된 핸드폰번호가 존재합니다.
         }
-        user.setPhoneNumber(phoneNumber);
+        user.setPhoneNumber(phoneNumber.replace("-",""));
         userRepository.save(user);
-        return phoneNumber;
+        return phoneNumber.replaceFirst("^([0-9]{4})([0-9]{4})$", "$1-$2");
     }
 
     //핸드폰번호 정규식 검사
     private boolean isValidPhoneNumber(String phoneNumber) {
-        boolean err = false;
-        String regex = "^010-\\d{3,4}-\\d{4}$";
+        String regex = "^010-\\d{4}-\\d{4}$";
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(phoneNumber);
         return m.matches();
@@ -237,6 +237,19 @@ public class UserService {
             throw new ContapException(ErrorCode.ACCESS_DENIED); //권한이 없습니다.
 
         return user;
+    }
+
+    public void changeAlarmState(int alarmState, User requestUser) {
+        User user = checkUserAuthority(requestUser);
+        int authStatus = user.getAuthStatus();
+        if(alarmState==0) {
+            authStatus = authStatus - AuthorityEnum.ALARM.getAuthority();
+        }
+        else if(alarmState==1) {
+            authStatus = authStatus|AuthorityEnum.ALARM.getAuthority();
+        }
+        user.setAuthStatus(authStatus);
+        userRepository.save(user);
     }
 }
 

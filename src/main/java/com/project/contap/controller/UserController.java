@@ -120,4 +120,10 @@ public class UserController {
     public String modifyPhoneNumber(@RequestParam String phoneNumber, @AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
         return userService.modifyPhoneNumber(phoneNumber, userDetails.getUser());
     }
+
+    //알림 받기 여부 변경
+    @PostMapping("/setting/alarm")
+    public void modifyPhoneNumber(@RequestParam int alarmState, @AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
+        userService.changeAlarmState(alarmState, userDetails.getUser());
+    }
 }

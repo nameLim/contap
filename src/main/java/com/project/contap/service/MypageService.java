@@ -50,7 +50,7 @@ public class MypageService {
                 .userName(user.getUserName())
                 .profile(user.getProfile())
                 .field(user.getField())
-                .authorityEnum(user.getAuthorityEnum())
+                .authStatus(user.getAuthStatus())
                 .cardDtoList(cardDtoList).build();
     }
 
@@ -79,19 +79,38 @@ public class MypageService {
 
         String requestTagStr = frontRequestCardDto.getHashTagsStr();
         Set<String> sets = new HashSet<>();
+
         if(requestTagStr.contains(SPLIT_CHAR)) {
             Collections.addAll(sets, requestTagStr.split(SPLIT_CHAR));
         }else if(requestTagStr.length()>0) {
             sets.add(requestTagStr);
         }
 
-        List<HashTag> hashTagList = hashTagRepositoty.findAllByNameIn(sets);
+        List<HashTag> hashTagList = hashTagRepositoty.findAllByNameInOrderByType(sets);
+
+        // HashTag
+        StringBuilder hashTagStrBuilder = new StringBuilder();
+        int stackCnt=1, interestCnt=1;
+        for(HashTag tag: hashTagList) {
+            if(tag.getType() == 0) { // stack
+                if(stackCnt==1)
+                    hashTagStrBuilder.append("@");
+                hashTagStrBuilder.append(tag.getName()+"@");
+                stackCnt++;
+            }
+            else if(tag.getType() == 1) { // interest
+                if(interestCnt==1)
+                    hashTagStrBuilder.append("_@");
+                hashTagStrBuilder.append(tag.getName()+"@");
+                interestCnt++;
+            }
+        }
 
         //user
         user.setProfile(uploadImageUrl);
         user.setUserName(frontRequestCardDto.getUserName());
         user.setTags(hashTagList);
-        user.setHashTagsString(frontRequestCardDto.getHashTagsStr());
+        user.setHashTagsString(hashTagStrBuilder.toString());
         user.setField(frontRequestCardDto.getField());
         user = userRepository.save(user);
 
@@ -123,7 +142,9 @@ public class MypageService {
         card.setLink(backRequestCardDto.getLink());
         card = cardRepository.save(card);
 
-        user.setAuthorityEnum(AuthorityEnum.CAN_OTHER_READ);
+        int authStatus = user.getAuthStatus();
+        authStatus = authStatus|AuthorityEnum.CAN_OTHER_READ.getAuthority();
+        user.setAuthStatus(authStatus);
 
         //response
         return makeBackResponseCardDto(card,user);
@@ -159,7 +180,9 @@ public class MypageService {
 
         cardRepository.delete(card);
         if(user.getCards().size()==1) {
-            user.setAuthorityEnum(AuthorityEnum.CANT_OTHER_READ);
+            int authStatus = user.getAuthStatus();
+            authStatus = authStatus-AuthorityEnum.CAN_OTHER_READ.getAuthority();
+            user.setAuthStatus(authStatus);
         }
 
         //response
@@ -179,15 +202,4 @@ public class MypageService {
                 .build();
     }
 
-    // 사용자 권한 체크
-//    public User checkUserAuthority(User requestUser) {
-//        if(requestUser == null)
-//            throw new ContapException(ErrorCode.USER_NOT_FOUND); //회원 정보를 찾을 수 없습니다.
-//
-//        User user = userRepository.findById(requestUser.getId()).orElse(null);
-//        if (user.getEmail()!=null && !user.isWritedBy(requestUser))
-//            throw new ContapException(ErrorCode.ACCESS_DENIED); //권한이 없습니다.
-//
-//        return user;
-//    }
 }
