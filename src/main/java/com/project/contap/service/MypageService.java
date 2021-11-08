@@ -86,31 +86,26 @@ public class MypageService {
             sets.add(requestTagStr);
         }
 
-        List<HashTag> hashTagList = hashTagRepositoty.findAllByNameInOrderByType(sets);
+        List<HashTag> hashTagList = hashTagRepositoty.findAllByNameIn(sets);
 
         // HashTag
-        StringBuilder hashTagStrBuilder = new StringBuilder();
-        int stackCnt=1, interestCnt=1;
+        StringBuilder retTagStrBuilder = new StringBuilder();
+        StringBuilder intrestTagStrBuilder = new StringBuilder();
         for(HashTag tag: hashTagList) {
             if(tag.getType() == 0) { // stack
-                if(stackCnt==1)
-                    hashTagStrBuilder.append("@");
-                hashTagStrBuilder.append(tag.getName()+"@");
-                stackCnt++;
+                retTagStrBuilder.append("@"+tag.getName());
             }
             else if(tag.getType() == 1) { // interest
-                if(interestCnt==1)
-                    hashTagStrBuilder.append("_@");
-                hashTagStrBuilder.append(tag.getName()+"@");
-                interestCnt++;
+                intrestTagStrBuilder.append(tag.getName()+"@");
             }
         }
-
+        retTagStrBuilder.append("@_@");
+        retTagStrBuilder.append(intrestTagStrBuilder);
         //user
         user.setProfile(uploadImageUrl);
         user.setUserName(frontRequestCardDto.getUserName());
         user.setTags(hashTagList);
-        user.setHashTagsString(hashTagStrBuilder.toString());
+        user.setHashTagsString(retTagStrBuilder.toString());
         user.setField(frontRequestCardDto.getField());
         user = userRepository.save(user);
 
