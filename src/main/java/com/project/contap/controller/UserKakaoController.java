@@ -17,7 +17,8 @@ public class UserKakaoController {
     private final KakaoUserService kakaoUserService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public UserKakaoController(KakaoUserService kakaoUserService, JwtTokenProvider jwtTokenProvider) {
+
+    public UserKakaoController(KakaoUserService kakaoUserService, JwtTokenProvider jwtTokenProvider ) {
         this.kakaoUserService = kakaoUserService;
         this.jwtTokenProvider = jwtTokenProvider;
     }
@@ -28,11 +29,12 @@ public class UserKakaoController {
         User user = kakaoUserService.kakaoLogin(code);
 
         Map<String,String> result =new HashMap<>();
-        result.put("token",jwtTokenProvider.createToken(user.getEmail(), user.getEmail(), user.getUserName())); // "username" : {username}
+        result.put("token",jwtTokenProvider.createToken(user.getEmail(), user.getEmail(), user.getUserName()));
         result.put("email", user.getEmail());
         result.put("userName", user.getUserName());
         result.put("result", "success");
 
         return result;
     }
+
 }

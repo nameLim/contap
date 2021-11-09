@@ -21,6 +21,12 @@ public enum ErrorCode {
     FILESAVE_ERROR(BAD_REQUEST, "파일 저장 실패"),
     NOT_EQUAL_NUMBER(BAD_REQUEST, "인증번호가 일치하지 않습니다."),
 
+
+
+    PHON_DUPLICATE(BAD_REQUEST, "이미 존재하는 휴대폰 번호입니다"),
+    CARD_NOT_FOUND(BAD_REQUEST, "해당 카드를 찾을 수 없습니다."),
+    PHON_FORM_INVALID(BAD_REQUEST,"숫자, -을 포함해 휴대전화 형식에 맞게 입력해주세요. "),
+
     EMAIL_DUPLICATE(BAD_REQUEST, "중복된 email이 존재합니다."),
     USER_NOT_FOUND(BAD_REQUEST, "회원 정보를 찾을 수 없습니다."),
 

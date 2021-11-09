@@ -41,7 +41,6 @@ public class EmailService {
         MimeMessage message = createMessage(validatedEmail, randomNumber);
         try{
             emailSender.send(message);
-            log.info("send authorize code to email.");
 
         }catch(MailException es){
             es.printStackTrace();

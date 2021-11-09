@@ -59,6 +59,8 @@ public class UserController {
     }
 
 
+
+
 //    @PostMapping("/user/image")
 //    public Map<String, String> updateUserProfileImage(
 //            @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -114,6 +116,7 @@ public class UserController {
 
         return result;
     }
+
 
     //핸드폰 번호 변경
     @PostMapping("/setting/modifyPhoneNumber")

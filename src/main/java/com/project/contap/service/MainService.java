@@ -1,9 +1,7 @@
 package com.project.contap.service;
 
-import com.project.contap.dto.DefaultRsp;
-import com.project.contap.dto.QCardDto;
-import com.project.contap.dto.SearchRequestDto;
-import com.project.contap.dto.UserRequestDto;
+import com.project.contap.chatcontroller.ChatRoomRepository;
+import com.project.contap.dto.*;
 import com.project.contap.model.*;
 import com.project.contap.repository.FriendRepository;
 import com.project.contap.repository.HashTagRepositoty;
@@ -18,6 +16,9 @@ import net.nurigo.java_sdk.api.Message;
 import net.nurigo.java_sdk.exceptions.CoolsmsException;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -31,6 +32,9 @@ public class MainService {
     private final TapRepository tapRepository;
     private final FriendRepository friendRepository;
     private final UserService userService;
+    private final ChatRoomRepository chatRoomRepository;
+    private final RedisTemplate redisTemplate;
+    private final ChannelTopic channelTopic;
 
     @Autowired
     public MainService(
@@ -39,7 +43,10 @@ public class MainService {
             UserRepository userRepository,
             TapRepository tapRepository,
             FriendRepository friendRepository,
-            UserService userService)
+            UserService userService,
+            ChatRoomRepository chatRoomRepository,
+            RedisTemplate redisTemplate,
+            ChannelTopic channelTopic)
     {
         this.hashTagRepositoty=hashTagRepositoty;
         this.jpaQueryFactory =jpaQueryFactory;
@@ -47,6 +54,9 @@ public class MainService {
         this.tapRepository = tapRepository;
         this.friendRepository = friendRepository;
         this.userService = userService;
+        this.chatRoomRepository = chatRoomRepository;
+        this.redisTemplate = redisTemplate;
+        this.channelTopic = channelTopic;
     }
 
     public List<HashTag> getHashTag() {
@@ -174,7 +184,7 @@ public class MainService {
 
     @Transactional
     public DefaultRsp dotap(User sendUser, Long otherUserId) {
-        User receiveUser = new User(otherUserId);
+        User receiveUser = userRepository.findById(otherUserId).orElse(null);
         //======================================
         QFriend qFriend = QFriend.friend;
 
@@ -192,7 +202,7 @@ public class MainService {
         //==========================================
         QTap qTap = QTap.tap;
         Tap checkrecievetap = jpaQueryFactory.select(qTap)
-        .from(qTap)
+                .from(qTap)
                 .where(qTap.sendUser.eq(receiveUser)
                         .and(qTap.receiveUser.eq(sendUser))
                         .and(qTap.status.eq(0)))
@@ -223,6 +233,16 @@ public class MainService {
 
         Tap newTap = new Tap(sendUser,receiveUser);
         tapRepository.save(newTap);
+        String receiverssesion = chatRoomRepository.getSessionId(receiveUser.getEmail());
+        if(receiverssesion != null) {
+            ChatMessageDTO msg = new ChatMessageDTO();
+            msg.setType(3);
+            msg.setReciever(receiveUser.getEmail());
+            msg.setWriter(sendUser.getEmail());
+            msg.setMessage("Tap요청이 들어왔어요!");
+            msg.setSessionId(receiverssesion);
+            redisTemplate.convertAndSend(channelTopic.getTopic(), msg);
+        }
         //sendSMS(); // 여기서 상대방번호가 매개변수로 들어가야하지만 일단은 여기까지만
         return new DefaultRsp("정상적으로 처리 되었습니다.");
     }
@@ -235,7 +255,7 @@ public class MainService {
 
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("to", "01040343120");   // 탭요청 알람을 받기위해서 정확하게 기재해주세요
-                                           // ㅎ
+        // ㅎ
         params.put("from", "01066454534"); //사전에 사이트에서 번호를 인증하고 등록하여야 함 // 070 번호하나사고
         params.put("type", "SMS");
         params.put("text", "이승준 님이 탭 요청을 하였습니다..!"); //메시지 내용
@@ -262,4 +282,5 @@ public class MainService {
         user.setAuthStatus(authStatus);
         userRepository.save(user);
     }
+
 }

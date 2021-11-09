@@ -1,13 +1,10 @@
 package com.project.contap.pubsub;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.contap.dto.ChatMessage;
 import com.project.contap.dto.ChatMessageDTO;
+import com.project.contap.model.MsgTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.connection.Message;
-import org.springframework.data.redis.connection.MessageListener;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +21,28 @@ public class RedisSubscriber  {
             // ChatMessage 객채로 맵핑
             ChatMessageDTO chatMessage = objectMapper.readValue(publishMessage, ChatMessageDTO.class);
             // 채팅방을 구독한 클라이언트에게 메시지 발송
-            if(chatMessage.getType() == 1)
+            if(chatMessage.getType() == MsgTypeEnum.CHAT_BOTH.getValue())
+            {
+                messagingTemplate.convertAndSend("/sub/chat/room/" + chatMessage.getRoomId(), chatMessage);
+            }else if(chatMessage.getType() == MsgTypeEnum.CHAT_EITHER_LOGINON.getValue())
+            {
                 messagingTemplate.convertAndSendToUser(chatMessage.getSessionId(),"/sub/user",chatMessage);
-            messagingTemplate.convertAndSend("/sub/chat/room/" + chatMessage.getRoomId(), chatMessage);
+                messagingTemplate.convertAndSend("/sub/chat/room/" + chatMessage.getRoomId(), chatMessage);
+            }else if(chatMessage.getType() == MsgTypeEnum.CHAT_EITHER_LOGOFF.getValue())
+            {
+                messagingTemplate.convertAndSend("/sub/chat/room/" + chatMessage.getRoomId(), chatMessage);
+            }else if(chatMessage.getType() == MsgTypeEnum.SEND_TAP.getValue())
+            {
+                messagingTemplate.convertAndSendToUser(chatMessage.getSessionId(),"/sub/user",chatMessage);
+            }else if(chatMessage.getType() == MsgTypeEnum.ACCEPT_TAP.getValue())
+            {
+                messagingTemplate.convertAndSendToUser(chatMessage.getSessionId(),"/sub/user",chatMessage);
+            }else if(chatMessage.getType() == MsgTypeEnum.REJECT_TAP.getValue())
+            {
+                messagingTemplate.convertAndSendToUser(chatMessage.getSessionId(),"/sub/user",chatMessage);
+            }
+
+
 
 
         } catch (Exception e) {

@@ -32,6 +32,7 @@ public class User extends TimeStamped{
     @Column(unique = true)
     private Long kakaoId;
 
+
     @Column(unique = false) // profile img path
     private String profile;
 
@@ -53,17 +54,22 @@ public class User extends TimeStamped{
     @ManyToMany
     private List<HashTag> tags;
 
+    @Column
+    private Boolean hasRecentAlarm = false;
+
 
     @OneToMany(mappedBy = "me", fetch = FetchType.LAZY)
     private  List<Friend> friends;
 
 
-    public User(String email, String pw, String userName, Long kakaoId) {
-        this.email = email;
-        this.pw = pw;
-        this.userName = userName;
-        this.kakaoId = kakaoId;
-    }
+//    public User(String email, String pw, String userName, Long kakaoId) {
+//        this.email = email;
+//        this.pw = pw;
+//        this.userName = userName;
+//        this.kakaoId = kakaoId;
+//        this.githubId = githubId;
+//        this.authorityEnum = AuthorityEnum.CANT_OTHER_READ;
+//    }
 
     public User(Long id,String email, String pw, String userName, Long kakaoId,String profile) {
         this.id = id;
@@ -78,12 +84,14 @@ public class User extends TimeStamped{
         this.email = email;
         this.pw = pw;
         this.userName = userName;
+//        this.phonNumber = phonNumber;
         this.kakaoId = null;
     }
     public User(String email, String pw, String userName,String profile,int field) {
         this.email = email;
         this.pw = pw;
         this.userName = userName;
+//        this.phonNumber = phonNumber;
         this.kakaoId = null;
         this.profile = profile;
         this.field = field;
@@ -102,6 +110,7 @@ public class User extends TimeStamped{
     }
 
 
+
     public void updatePw(PwUpdateRequestDto requestDto) {
         this.pw = requestDto.getNewPw();
     }
@@ -109,4 +118,6 @@ public class User extends TimeStamped{
     public boolean isWritedBy(User user) {
         return this.email.equals(user.getEmail());
     }
+
+
 }

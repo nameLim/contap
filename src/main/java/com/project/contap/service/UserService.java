@@ -80,6 +80,7 @@ public class UserService {
             throw new ContapException(ErrorCode.NICKNAME_DUPLICATE);
         }
 
+
         //비밀번호확인
         String password = requestDto.getPw();
         String passwordCheck = requestDto.getPwCheck();
@@ -116,6 +117,8 @@ public class UserService {
         }
         return err;
     }
+
+
 
     //로그인
     public User login(UserRequestDto requestDto) throws ContapException {
@@ -252,6 +255,8 @@ public class UserService {
         userRepository.save(user);
     }
 }
+
+
 
 //    @Transactional //table join으로 검색.
 //    public List<UserRequestDto> getuser(List<HashTag> hashTags) {
