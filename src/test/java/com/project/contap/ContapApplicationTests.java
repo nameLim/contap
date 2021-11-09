@@ -2,7 +2,7 @@ package com.project.contap;
 
 
 import com.project.contap.dto.FrontResponseCardDto;
-import com.project.contap.model.testEnum;
+//import com.project.contap.model.testEnum;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -65,20 +65,20 @@ class ContapApplicationTests {
         System.out.println(abc2);
     }
 
-    @Test
-    void contextLoads3() {
-        for(testEnum a : testEnum.values())
-        {
-            System.out.println(a.getValue());
-        }
-        int data = 5;
-        data = data|testEnum.profile.getValue();
-
-        int abc = testEnum.total.getValue() - testEnum.profile.getValue();
-
-        System.out.println(testEnum.phone.getValue());
-        System.out.println(testEnum.profile.getValue());
-        System.out.println(testEnum.phone);
-    }
+//    @Test
+//    void contextLoads3() {
+//        for(testEnum a : testEnum.values())
+//        {
+//            System.out.println(a.getValue());
+//        }
+//        int data = 5;
+//        data = data|testEnum.profile.getValue();
+//
+//        int abc = testEnum.total.getValue() - testEnum.profile.getValue();
+//
+//        System.out.println(testEnum.phone.getValue());
+//        System.out.println(testEnum.profile.getValue());
+//        System.out.println(testEnum.phone);
+//    }
 
 }

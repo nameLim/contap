@@ -2,6 +2,7 @@ package com.project.contap.chatcontroller;
 
 import com.project.contap.dto.ChatMessage;
 import com.project.contap.dto.ChatMessageDTO;
+import com.project.contap.model.MsgTypeEnum;
 import com.project.contap.pubsub.RedisPublisher;
 import com.project.contap.repository.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
@@ -42,12 +43,12 @@ public class ChatService {
         {
             String recieverId = chatroomRepository.getSessionId(message.getReciever());
             if (recieverId == null) {
-                message.setType(2);
+                message.setType(MsgTypeEnum.CHAT_EITHER_LOGOFF.getValue());
                 chatroomRepository.setAlarm(message.getReciever());
             }
             else {
                 message.setSessionId(recieverId);
-                message.setType(1);
+                message.setType(MsgTypeEnum.CHAT_EITHER_LOGINON.getValue());
             }
         }
         redisTemplate.convertAndSend(channelTopic.getTopic(), message);

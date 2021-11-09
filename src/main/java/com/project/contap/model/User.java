@@ -32,8 +32,6 @@ public class User extends TimeStamped{
     @Column(unique = true)
     private Long kakaoId;
 
-    @Column(unique = true)
-    private Long githubId;
 
     @Column(unique = false) // profile img path
     private String profile;
@@ -56,30 +54,29 @@ public class User extends TimeStamped{
     @ManyToMany
     private List<HashTag> tags;
 
+    @Column
+    private Boolean hasRecentAlarm = false;
+
 
     @OneToMany(mappedBy = "me", fetch = FetchType.LAZY)
     private  List<Friend> friends;
 
 
-    public User(String email, String pw, String userName, Long kakaoId,Long githubId) {
-        this.email = email;
-        this.pw = pw;
-        this.userName = userName;
-        this.kakaoId = kakaoId;
-<<<<<<< HEAD
-        this.githubId = githubId;
-        this.authorityEnum = AuthorityEnum.CANT_OTHER_READ;
-=======
->>>>>>> aa2dbf3fbab0d4a64dce02b61f9276f427583e37
-    }
+//    public User(String email, String pw, String userName, Long kakaoId) {
+//        this.email = email;
+//        this.pw = pw;
+//        this.userName = userName;
+//        this.kakaoId = kakaoId;
+//        this.githubId = githubId;
+//        this.authorityEnum = AuthorityEnum.CANT_OTHER_READ;
+//    }
 
-    public User(Long id,String email, String pw, String userName, Long kakaoId,Long githubId,String profile) {
+    public User(Long id,String email, String pw, String userName, Long kakaoId,String profile) {
         this.id = id;
         this.email = email;
         this.pw = pw;
         this.userName = userName;
         this.kakaoId = kakaoId;
-        this.githubId = githubId;
         this.profile = profile;
     }
 
@@ -121,4 +118,6 @@ public class User extends TimeStamped{
     public boolean isWritedBy(User user) {
         return this.email.equals(user.getEmail());
     }
+
+
 }

@@ -138,10 +138,10 @@ public class TestController {
     }
     @GetMapping("/lsj/test3") // dbSet 이라서 그냥 냅둠..
     public String test33() throws ContapException {
-        contapService.tapReject(2L);
-        contapService.tapReject(5L);
-        contapService.rapAccept(1L);
-        contapService.rapAccept(4L);
+//        contapService.tapReject(2L);
+//        contapService.tapReject(5L);
+//        contapService.rapAccept(1L);
+//        contapService.rapAccept(4L);
         return "친구거절및수락완료~";
     }
 

@@ -60,9 +60,6 @@ public class UserService {
         if (requestDto.getUserName() == "") {
             throw new ContapException(ErrorCode.REGISTER_ERROR);
         }
-//        if (requestDto.getPhonNumber() == "") {
-//            throw new ContapException(ErrorCode.REGISTER_ERROR);
-//        }
 
         //가입 email(id) 중복체크
         String email = requestDto.getEmail();
@@ -121,17 +118,6 @@ public class UserService {
         return err;
     }
 
-    //핸드폰번호조건 01x - 3~4자리 - 4자리 '-' 붙이던말던상관x
-    public boolean Phon(String phonNumber) {
-       boolean err2 = false;
-       String regex = "^01([0|1|6|7|8|9])-([0-9]{3,4})-([0-9]{4})$";
-       Pattern p = Pattern.compile(regex);
-       Matcher m = p.matcher(phonNumber);
-       if (m.matches()) {
-           err2 = true;
-       }
-       return err2;
-    }
 
 
     //로그인
@@ -245,8 +231,6 @@ public class UserService {
         return m.matches();
     }
 
-<<<<<<< HEAD
-=======
     public User checkUserAuthority(User requestUser) {
         if(requestUser == null)
             throw new ContapException(ErrorCode.USER_NOT_FOUND); //회원 정보를 찾을 수 없습니다.
@@ -270,7 +254,6 @@ public class UserService {
         user.setAuthStatus(authStatus);
         userRepository.save(user);
     }
->>>>>>> aa2dbf3fbab0d4a64dce02b61f9276f427583e37
 }
 
 

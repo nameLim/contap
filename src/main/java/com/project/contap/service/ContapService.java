@@ -1,16 +1,15 @@
 package com.project.contap.service;
 
 import com.project.contap.chatcontroller.ChatRoomRepository;
-import com.project.contap.dto.DefaultRsp;
-import com.project.contap.dto.SortedFriendsDto;
-import com.project.contap.dto.TagDto;
-import com.project.contap.dto.UserRequestDto;
+import com.project.contap.dto.*;
 import com.project.contap.model.*;
 import com.project.contap.repository.FriendRepository;
 import com.project.contap.repository.TapRepository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -23,18 +22,24 @@ public class ContapService {
     private final JPAQueryFactory jpaQueryFactory;
     private final FriendRepository friendRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final RedisTemplate redisTemplate;
+    private final ChannelTopic channelTopic;
     @Autowired
     public  ContapService(
             TapRepository tapRepository,
             JPAQueryFactory jpaQueryFactory,
             FriendRepository friendRepository,
-            ChatRoomRepository chatRoomRepository
+            ChatRoomRepository chatRoomRepository,
+            RedisTemplate redisTemplate,
+            ChannelTopic channelTopic
     )
     {
         this.tapRepository = tapRepository;
         this.jpaQueryFactory =jpaQueryFactory;
         this.friendRepository = friendRepository;
         this.chatRoomRepository= chatRoomRepository;
+        this.redisTemplate = redisTemplate;
+        this.channelTopic = channelTopic;
     }
 
     public List<UserRequestDto> getMydoTap(User user) {
@@ -46,7 +51,7 @@ public class ContapService {
                                 qtap.receiveUser.id,
                                 qtap.receiveUser.email,
                                 qtap.receiveUser.profile,
-//                                qtap.receiveUser.snsId,
+                                qtap.receiveUser.kakaoId,
                                 qtap.receiveUser.userName,
                                 qtap.receiveUser.pw,
                                 qtap.receiveUser.hashTagsString,
@@ -67,7 +72,7 @@ public class ContapService {
                                 qtap.sendUser.id,
                                 qtap.sendUser.email,
                                 qtap.sendUser.profile,
-//                                qtap.sendUser.kakaoId,
+                                qtap.sendUser.kakaoId,
                                 qtap.sendUser.userName,
                                 qtap.sendUser.pw,
                                 qtap.sendUser.hashTagsString,
@@ -79,25 +84,41 @@ public class ContapService {
         return abc;
     }
 
-    public DefaultRsp tapReject(Long tagId) {
+    public DefaultRsp tapReject(Long tagId,String receiveUserEmail) {
         Tap tap = tapRepository.findById(tagId).orElse(null);
+        User sendUser = tap.getSendUser();
         if (tap != null)
         {
             if (tap.getStatus() !=0)
                 return new DefaultRsp("이미 처리된 Tap 입니다.");
             tap.setStatus(1);
             tapRepository.save(tap);
+            String receiverssesion = chatRoomRepository.getSessionId(sendUser.getEmail());
+            if(receiverssesion != null) {
+                ChatMessageDTO msg = new ChatMessageDTO();
+                msg.setType(MsgTypeEnum.REJECT_TAP.getValue());
+                msg.setReciever(receiveUserEmail);
+                msg.setWriter(sendUser.getEmail());
+                msg.setMessage("Tap요청이 거절되었어요!");
+                msg.setSessionId(receiverssesion);
+                //receiveUser
+                redisTemplate.convertAndSend(channelTopic.getTopic(), msg);
+            }else{
+                System.out.println("로그아웃 상태에서 알람을따로 줘야하면 여기에 구현해주세요 ㅎ");
+            }
             return new DefaultRsp("정상적으로 처리 되었습니다.");
         }
         else
         {
             return new DefaultRsp("해당 tab이 존재하지 않습니다 TabID를 다시확인해주세요..");
         }
+
     }
 
     @Transactional
-    public DefaultRsp rapAccept(Long tagId) {
+    public DefaultRsp rapAccept(Long tagId,String receiveUserEmail) {
         Tap tap = tapRepository.findById(tagId).orElse(null);
+        User sendUser = tap.getSendUser();
         if (tap != null)
         {
             if (tap.getStatus() !=0)
@@ -110,6 +131,20 @@ public class ContapService {
             friendRepository.save(fir);
             friendRepository.save(sec);
             chatRoomRepository.whenMakeFriend(roomId,tap.getSendUser().getEmail(),tap.getReceiveUser().getEmail());
+
+            String receiverssesion = chatRoomRepository.getSessionId(sendUser.getEmail());
+            if(receiverssesion != null) {
+                ChatMessageDTO msg = new ChatMessageDTO();
+                msg.setType(MsgTypeEnum.ACCEPT_TAP.getValue());
+                msg.setReciever(receiveUserEmail);
+                msg.setWriter(sendUser.getEmail());
+                msg.setMessage("Tap요청이 수락되었어요!");
+                msg.setSessionId(receiverssesion);
+                //sendUser.getEmail(),receiveUserEmail,MsgTypeEnum.SEND_TAP.getValue(),receiverssesion
+                redisTemplate.convertAndSend(channelTopic.getTopic(), msg);
+            } else{
+                System.out.println("로그아웃 상태에서 알람을따로 줘야하면 여기에 구현해주세요 ㅎ");
+            }
             return new DefaultRsp("정상적으로 처리 되었습니다.");
         }
         else
@@ -134,7 +169,7 @@ public class ContapService {
                                     qfriend.you.id,
                                     qfriend.you.email,
                                     qfriend.you.profile,
-//                                    qfriend.you.kakaoId,
+                                    qfriend.you.kakaoId,
                                     qfriend.you.userName,
                                     qfriend.you.pw,
                                     qfriend.you.hashTagsString,

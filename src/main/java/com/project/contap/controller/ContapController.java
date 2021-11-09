@@ -42,13 +42,13 @@ public class ContapController {
     public DefaultRsp tapreject(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody(required = false) TagDto tagId) {
-        return contapService.tapReject(tagId.getTagId());
+        return contapService.tapReject(tagId.getTagId(),userDetails.getUser().getEmail());
     }
     @PostMapping("/contap/accept")
     public DefaultRsp acreject(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody(required = false)  TagDto tagId) {
-        return contapService.rapAccept(tagId.getTagId());
+        return contapService.rapAccept(tagId.getTagId(),userDetails.getUser().getEmail());
     }
 
 }
