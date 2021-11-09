@@ -10,7 +10,6 @@ public enum AuthorityEnum {
     PROFILE_TUTORIAL(Authority.PROFILE_TUTORIAL),
     CAN_OTHER_READ(Authority.CAN_OTHER_READ),
     ALARM(Authority.ALARM),
-    DEFAULT_AUTHORITY(Authority.DEFAULT_AUTHORITY),
     ALL_AUTHORITY(Authority.ALL_AUTHORITY);
 
     int authority;
@@ -29,7 +28,6 @@ public enum AuthorityEnum {
         public static final int PROFILE_TUTORIAL = 0b0010;
         public static final int CAN_OTHER_READ = 0b0100;
         public static final int ALARM = 0b1000;
-        public static final int DEFAULT_AUTHORITY = 0b0000;
         public static final int ALL_AUTHORITY = 0b1111;
     }
 

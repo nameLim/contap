@@ -48,7 +48,7 @@ public class User extends TimeStamped{
     @Column
     private int authStatus;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Card> cards;
 
     @ManyToMany
