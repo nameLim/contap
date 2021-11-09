@@ -1,6 +1,5 @@
 package com.project.contap.dto;
 
-import com.project.contap.model.AuthorityEnum;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -13,6 +12,7 @@ public class UserInfoDto {
     private String password;
     private String userName;
     private String profile;
-    private AuthorityEnum authorityEnum;
+    private int field;
+    private int authStatus;
     private List<BackResponseCardDto> cardDtoList;
 }

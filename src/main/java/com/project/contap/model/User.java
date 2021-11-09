@@ -47,8 +47,8 @@ public class User extends TimeStamped{
     @Column(unique = true)
     private String phoneNumber;
 
-    @Column(nullable = false)
-    private AuthorityEnum authorityEnum;
+    @Column
+    private int authStatus;
 
     @OneToMany(mappedBy = "user")
     private List<Card> cards;
@@ -66,8 +66,11 @@ public class User extends TimeStamped{
         this.pw = pw;
         this.userName = userName;
         this.kakaoId = kakaoId;
+<<<<<<< HEAD
         this.githubId = githubId;
         this.authorityEnum = AuthorityEnum.CANT_OTHER_READ;
+=======
+>>>>>>> aa2dbf3fbab0d4a64dce02b61f9276f427583e37
     }
 
     public User(Long id,String email, String pw, String userName, Long kakaoId,Long githubId,String profile) {
@@ -78,7 +81,6 @@ public class User extends TimeStamped{
         this.kakaoId = kakaoId;
         this.githubId = githubId;
         this.profile = profile;
-        this.authorityEnum = AuthorityEnum.CANT_OTHER_READ;
     }
 
     public User(String email, String pw, String userName) {
@@ -87,7 +89,6 @@ public class User extends TimeStamped{
         this.userName = userName;
 //        this.phonNumber = phonNumber;
         this.kakaoId = null;
-        this.authorityEnum = AuthorityEnum.CANT_OTHER_READ;
     }
     public User(String email, String pw, String userName,String profile,int field) {
         this.email = email;
@@ -95,7 +96,6 @@ public class User extends TimeStamped{
         this.userName = userName;
 //        this.phonNumber = phonNumber;
         this.kakaoId = null;
-        this.authorityEnum = AuthorityEnum.CANT_OTHER_READ;
         this.profile = profile;
         this.field = field;
     }

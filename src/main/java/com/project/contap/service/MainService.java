@@ -14,7 +14,6 @@ import com.project.contap.util.GetRandom;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import net.nurigo.java_sdk.Coolsms;
 import net.nurigo.java_sdk.api.Message;
 import net.nurigo.java_sdk.exceptions.CoolsmsException;
 import org.json.simple.JSONObject;
@@ -31,6 +30,7 @@ public class MainService {
     private final JPAQueryFactory jpaQueryFactory;
     private final TapRepository tapRepository;
     private final FriendRepository friendRepository;
+    private final UserService userService;
 
     @Autowired
     public MainService(
@@ -38,13 +38,15 @@ public class MainService {
             JPAQueryFactory jpaQueryFactory,
             UserRepository userRepository,
             TapRepository tapRepository,
-            FriendRepository friendRepository)
+            FriendRepository friendRepository,
+            UserService userService)
     {
         this.hashTagRepositoty=hashTagRepositoty;
         this.jpaQueryFactory =jpaQueryFactory;
         this.userRepository = userRepository;
         this.tapRepository = tapRepository;
         this.friendRepository = friendRepository;
+        this.userService = userService;
     }
 
     public List<HashTag> getHashTag() {
@@ -245,5 +247,19 @@ public class MainService {
             System.out.println(e.getMessage());
             System.out.println(e.getCode());
         }
+    }
+
+    public void tutorial(int tutorialNum, User requestUser) {
+        User user = userService.checkUserAuthority(requestUser);
+
+        int authStatus = user.getAuthStatus();
+        if(tutorialNum == 0) { //phone
+            authStatus = authStatus|AuthorityEnum.PHONE_TUTORIAL.getAuthority();
+        }
+        else if(tutorialNum == 1) { // profile
+            authStatus = authStatus|AuthorityEnum.PROFILE_TUTORIAL.getAuthority();
+        }
+        user.setAuthStatus(authStatus);
+        userRepository.save(user);
     }
 }

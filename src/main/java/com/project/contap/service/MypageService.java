@@ -1,6 +1,5 @@
 package com.project.contap.service;
 
-import com.google.common.collect.Sets;
 import com.project.contap.dto.*;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
@@ -30,17 +29,18 @@ public class MypageService {
     private final CardRepository cardRepository;
     private final HashTagRepositoty hashTagRepositoty;
     private final ImageService imageService;
+    private final UserService userService;
 
     // 회원 정보 가져오기
     // 가져오는 값 : 기본 회원정보(앞면카드), 모든 뒷면카드
     public UserInfoDto getMyInfo(User requestUser) {
 
-        User user = checkUserAuthority(requestUser);
+        User user = userService.checkUserAuthority(requestUser);
         List<Card> userCards = user.getCards();
         List<BackResponseCardDto> cardDtoList = new ArrayList<>();
 
         for(Card card: userCards) {
-            BackResponseCardDto cardDto = makeBackResponseCardDto(card,user);
+            BackResponseCardDto cardDto = makeBackResponseCardDto(card, user);
             cardDtoList.add(cardDto);
         }
 
@@ -49,14 +49,15 @@ public class MypageService {
                 .password(user.getPw())
                 .userName(user.getUserName())
                 .profile(user.getProfile())
-                .authorityEnum(user.getAuthorityEnum())
+                .field(user.getField())
+                .authStatus(user.getAuthStatus())
                 .cardDtoList(cardDtoList).build();
     }
 
     //앞카드 수정
     @Transactional
     public FrontResponseCardDto modifyFrontCard(FrontRequestCardDto frontRequestCardDto, User requestUser) throws IOException {
-        User user = checkUserAuthority(requestUser);
+        User user = userService.checkUserAuthority(requestUser);
 
         // nickname 변경했을 경우 중복체크
         if(!user.getUserName().equals(frontRequestCardDto.getUserName())) {
@@ -77,18 +78,34 @@ public class MypageService {
         }
 
         String requestTagStr = frontRequestCardDto.getHashTagsStr();
-        Set<String> sets = null;
+        Set<String> sets = new HashSet<>();
+
         if(requestTagStr.contains(SPLIT_CHAR)) {
-            sets = new HashSet<>(Sets.newHashSet(requestTagStr.split(SPLIT_CHAR)));
+            Collections.addAll(sets, requestTagStr.split(SPLIT_CHAR));
+        }else if(requestTagStr.length()>0) {
+            sets.add(requestTagStr);
         }
 
         List<HashTag> hashTagList = hashTagRepositoty.findAllByNameIn(sets);
 
+        // HashTag
+        StringBuilder retTagStrBuilder = new StringBuilder();
+        StringBuilder intrestTagStrBuilder = new StringBuilder();
+        for(HashTag tag: hashTagList) {
+            if(tag.getType() == 0) { // stack
+                retTagStrBuilder.append("@"+tag.getName());
+            }
+            else if(tag.getType() == 1) { // interest
+                intrestTagStrBuilder.append(tag.getName()+"@");
+            }
+        }
+        retTagStrBuilder.append("@_@");
+        retTagStrBuilder.append(intrestTagStrBuilder);
         //user
         user.setProfile(uploadImageUrl);
         user.setUserName(frontRequestCardDto.getUserName());
         user.setTags(hashTagList);
-        user.setHashTagsString(frontRequestCardDto.getHashTagsStr());
+        user.setHashTagsString(retTagStrBuilder.toString());
         user.setField(frontRequestCardDto.getField());
         user = userRepository.save(user);
 
@@ -104,7 +121,7 @@ public class MypageService {
     @Transactional
     public BackResponseCardDto createBackCard(BackRequestCardDto backRequestCardDto, User requestUser) {
 
-        User user = checkUserAuthority(requestUser);
+        User user = userService.checkUserAuthority(requestUser);
 
         int cardSize = user.getCards().size();
         if( cardSize >= 10 )
@@ -120,8 +137,9 @@ public class MypageService {
         card.setLink(backRequestCardDto.getLink());
         card = cardRepository.save(card);
 
-        //다른 user 뒷면 볼 수 있는 권한
-        user.setAuthorityEnum(AuthorityEnum.CAN_OTHER_READ);
+        int authStatus = user.getAuthStatus();
+        authStatus = authStatus|AuthorityEnum.CAN_OTHER_READ.getAuthority();
+        user.setAuthStatus(authStatus);
 
         //response
         return makeBackResponseCardDto(card,user);
@@ -131,7 +149,7 @@ public class MypageService {
     @Transactional
     public BackResponseCardDto modifyBackCard(Long cardId, BackRequestCardDto backRequestCardDto, User requestUser) {
 
-        User user = checkUserAuthority(requestUser);
+        User user = userService.checkUserAuthority(requestUser);
         Card card = cardRepository.findById(cardId).orElse(null);
         if(card == null)
             throw new ContapException(ErrorCode.NOT_FOUND_CARD); //해당 카드를 찾을 수 없습니다.
@@ -148,7 +166,7 @@ public class MypageService {
     @Transactional
     public BackResponseCardDto deleteBackCard(Long cardId, User requestUser) {
 
-        User user = checkUserAuthority(requestUser);
+        User user = userService.checkUserAuthority(requestUser);
         Card card = cardRepository.findById(cardId).orElse(null);
         if(card == null)
             throw new ContapException(ErrorCode.NOT_FOUND_CARD); //해당 카드를 찾을 수 없습니다.
@@ -157,7 +175,9 @@ public class MypageService {
 
         cardRepository.delete(card);
         if(user.getCards().size()==1) {
-            user.setAuthorityEnum(AuthorityEnum.CANT_OTHER_READ);
+            int authStatus = user.getAuthStatus();
+            authStatus = authStatus-AuthorityEnum.CAN_OTHER_READ.getAuthority();
+            user.setAuthStatus(authStatus);
         }
 
         //response
@@ -177,15 +197,4 @@ public class MypageService {
                 .build();
     }
 
-    // 사용자 권한 체크
-    public User checkUserAuthority(User requestUser) {
-        if(requestUser == null)
-            throw new ContapException(ErrorCode.USER_NOT_FOUND); //회원 정보를 찾을 수 없습니다.
-
-        User user = userRepository.findById(requestUser.getId()).orElse(null);
-        if (user.getEmail()!=null && !user.isWritedBy(requestUser))
-            throw new ContapException(ErrorCode.ACCESS_DENIED); //권한이 없습니다.
-
-        return user;
-    }
 }

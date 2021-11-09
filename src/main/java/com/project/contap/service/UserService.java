@@ -7,6 +7,7 @@ import com.project.contap.dto.SignUpRequestDto;
 import com.project.contap.dto.UserRequestDto;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
+import com.project.contap.model.AuthorityEnum;
 import com.project.contap.model.User;
 import com.project.contap.repository.UserRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -26,17 +27,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final JPAQueryFactory jpaQueryFactory; // 이건차후에 쓸수도있을것같아서 남겨둠
     private final ChatRoomRepository chatRoomRepository;
-    private final MypageService mypageService;
 
     private static final String ADMIN_TOKEN = "AAABnv/xRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,JPAQueryFactory jpaQueryFactory,ChatRoomRepository chatRoomRepository,MypageService mypageService) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,JPAQueryFactory jpaQueryFactory,ChatRoomRepository chatRoomRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jpaQueryFactory = jpaQueryFactory;
         this.chatRoomRepository =  chatRoomRepository;
-        this.mypageService = mypageService;
     }
 
 //    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JPAQueryFactory jpaQueryFactory, CardRepository cardRepository, HashTagRepositoty hashTagRepositoty) {
@@ -221,10 +220,10 @@ public class UserService {
 
     public String modifyPhoneNumber(String phoneNumber, User requestUser) {
 
-        User user = mypageService.checkUserAuthority(requestUser);
+        User user = checkUserAuthority(requestUser);
 
         //핸드폰번호 정규식 검사
-        if(isValidPhoneNumber(phoneNumber)) {
+        if(!isValidPhoneNumber(phoneNumber)) {
             throw new ContapException((ErrorCode.PHONE_FORM_INVALID)); //핸드폰번호 형식이 맞지 않습니다.
         }
 
@@ -233,20 +232,45 @@ public class UserService {
         if (found.isPresent()) {
             throw new ContapException(ErrorCode.PHONE_DUPLICATE); //중복된 핸드폰번호가 존재합니다.
         }
-        user.setPhoneNumber(phoneNumber);
+        user.setPhoneNumber(phoneNumber.replace("-",""));
         userRepository.save(user);
-        return phoneNumber;
+        return phoneNumber.replaceFirst("^([0-9]{4})([0-9]{4})$", "$1-$2");
     }
 
     //핸드폰번호 정규식 검사
     private boolean isValidPhoneNumber(String phoneNumber) {
-        boolean err = false;
-        String regex = "^010-\\d{3,4}-\\d{4}$";
+        String regex = "^010-\\d{4}-\\d{4}$";
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(phoneNumber);
         return m.matches();
     }
 
+<<<<<<< HEAD
+=======
+    public User checkUserAuthority(User requestUser) {
+        if(requestUser == null)
+            throw new ContapException(ErrorCode.USER_NOT_FOUND); //회원 정보를 찾을 수 없습니다.
+
+        User user = userRepository.findById(requestUser.getId()).orElse(null);
+        if (user.getEmail()!=null && !user.isWritedBy(requestUser))
+            throw new ContapException(ErrorCode.ACCESS_DENIED); //권한이 없습니다.
+
+        return user;
+    }
+
+    public void changeAlarmState(int alarmState, User requestUser) {
+        User user = checkUserAuthority(requestUser);
+        int authStatus = user.getAuthStatus();
+        if(alarmState==0) {
+            authStatus = authStatus - AuthorityEnum.ALARM.getAuthority();
+        }
+        else if(alarmState==1) {
+            authStatus = authStatus|AuthorityEnum.ALARM.getAuthority();
+        }
+        user.setAuthStatus(authStatus);
+        userRepository.save(user);
+    }
+>>>>>>> aa2dbf3fbab0d4a64dce02b61f9276f427583e37
 }
 
 
