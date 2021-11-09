@@ -20,7 +20,7 @@ public class MypageController {
         return mypageService.getMyInfo(userDetails.getUser());
     }
 
-    //카드 앞면
+    //카드 앞면 수정
     @PostMapping("/frontCard")
     public FrontResponseCardDto modifyFrontCard(
             @ModelAttribute FrontRequestCardDto frontRequestCardDto,
@@ -29,7 +29,7 @@ public class MypageController {
         return mypageService.modifyFrontCard(frontRequestCardDto, userDetails.getUser());
     }
 
-    //카드 뒷면
+    //카드 뒷면 생성
     @PostMapping("/backCard")
     public BackResponseCardDto createBackCard(@RequestBody BackRequestCardDto backRequestCardDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return mypageService.createBackCard(
