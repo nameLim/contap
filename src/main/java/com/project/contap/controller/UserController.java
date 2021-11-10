@@ -13,6 +13,7 @@ import com.project.contap.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@Tag(name = "User Controller Api V1")
 public class UserController {
 
     private final UserService userService;
@@ -32,7 +34,7 @@ public class UserController {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    //가입 요청 처리
+    @Operation(summary = "회원가입")
     @PostMapping("/user/signup")
     public Map<String, String> registerUser(@RequestBody SignUpRequestDto requestDto) throws ContapException {
         User user = userService.registerUser(requestDto);
@@ -46,7 +48,7 @@ public class UserController {
     }
 
 
-    // 로그인
+    @Operation(summary = "로그인")
     @PostMapping("/user/login")
     public Map<String, String> login(@RequestBody UserRequestDto requestDto) throws ContapException {
         User user = userService.login(requestDto);
@@ -62,26 +64,7 @@ public class UserController {
     }
 
 
-
-
-//    @PostMapping("/user/image")
-//    public Map<String, String> updateUserProfileImage(
-//            @AuthenticationPrincipal UserDetailsImpl userDetails,
-//            @RequestBody ProfileRequestDto requestDto) throws ContapException {
-//        if (userDetails == null) {
-//            throw new AuthenticationServiceException("로그인이 필요합니다.");
-//        }
-//        User user = userService.updateUserProfileImage(requestDto.getProfile(), userDetails.getUser().getEmail());
-//        Map<String, String> result = new HashMap<>();
-//
-//        result.put("profile", user.getProfile());
-//        result.put("email", user.getEmail());
-//        result.put("result", "success");
-//
-//        return result;
-//    }
-
-    //회원탈퇴
+    @Operation(summary = "회원탈퇴")
     @DeleteMapping("/setting/withdrawal")
     public Map<String, String> deleteUser(@RequestBody PwRequestDto requestDto,@AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
 
@@ -95,7 +78,7 @@ public class UserController {
 
     }
 
-    //비밀번호 변경
+    @Operation(summary = "비밀번호 변경")
     @PostMapping("/setting/password")
     public Map<String,String> updateMyPageInfoPassword(@RequestBody PwUpdateRequestDto requestDto ,@AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
         userService.updatePassword(requestDto,userDetails.getUsername());
@@ -106,7 +89,7 @@ public class UserController {
         return result;
     }
 
-
+    @Operation(summary = "토큰만료")
     @GetMapping("/auth")
     public Map<String, String> loginCheck(@AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
         if (userDetails == null) {

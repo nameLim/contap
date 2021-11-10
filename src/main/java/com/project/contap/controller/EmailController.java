@@ -3,6 +3,8 @@ package com.project.contap.controller;
 import com.project.contap.dto.EmailRequestDto;
 import com.project.contap.exception.ContapException;
 import com.project.contap.service.EmailService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,6 +19,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Email Controller Api V1")
 public class EmailController {
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -27,7 +30,7 @@ public class EmailController {
     private final EmailService emailService;
 
 
-    //인증보내기
+    @Operation(summary = "인증번호 전송")
     @PostMapping("/email/send")
     public Map<String,String> sendEmail(@RequestBody EmailRequestDto requestDto) throws UnsupportedEncodingException, MessagingException{
         emailService.sendEmail(requestDto.getEmail());
@@ -37,7 +40,7 @@ public class EmailController {
         return result;
     }
 
-    //인증확인
+    @Operation(summary = "인증번호 일치 확인")
     @PostMapping("/email/confirm")
     public Map<String,String>  emailVerification(@RequestBody EmailRequestDto requestDto) throws ContapException{
         emailService.verifyEmail(requestDto);
@@ -46,10 +49,4 @@ public class EmailController {
         return result;
     }
 
-//    //비번찾기 인증번호
-//    @PostMapping("/email/send/reset")
-//    public ResponseEntity<String> sendEmailToChangePw(@RequestBody EmailRequestDto requestDto) throws UnsupportedEncodingException, MessagingException {
-//        emailService.sendEmailToChangePw(requestDto.getEmail());
-//        return ResponseEntity.ok("ok");
-//    }
 }

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.project.contap.model.User;
 import com.project.contap.security.jwt.JwtTokenProvider;
 import com.project.contap.service.KakaoUserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@Tag(name = "UserKakao Controller Api V1")
 public class UserKakaoController {
 
     private final KakaoUserService kakaoUserService;
@@ -22,7 +25,7 @@ public class UserKakaoController {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    //카카오
+    @Operation(summary = "Kakao Login")
     @GetMapping("/user/kakao")
     public Map<String,String> kakaoLogin(@RequestParam String code) throws JsonProcessingException {
         User user = kakaoUserService.kakaoLogin(code);

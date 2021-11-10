@@ -2,6 +2,7 @@ package com.project.contap.dto;
 
 import com.project.contap.model.Card;
 import com.project.contap.model.HashTag;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,12 +13,20 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@Schema(name = "User RequestDto")
 public class UserRequestDto {
+
+    @Schema(description = "userId")
     private Long userId; // 차후에 쓰일것같아서 변수들 좀 추가했음 LSJ
+    @Schema(description = "Email")
     private String email;
+    @Schema(description = "비밀번호")
     private String pw;
+    @Schema(description = "userName")
     private String userName;
+    @Schema(description = "kakaoId")
     private Long kakaoId;
+    @Schema(description = "프로필사진")
     private String profile;
     private List<HashTag> tags; // 1:스프링,2리엑트
     private String hashTags;
