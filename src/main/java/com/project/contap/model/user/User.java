@@ -80,6 +80,8 @@ public class User extends TimeStamped {
     @Schema(description = "그랩관계")
     private  List<Friend> friends;
 
+    public static Long userCount = 0L;
+
 
 //    public User(String email, String pw, String userName, Long kakaoId) {
 //        this.email = email;
