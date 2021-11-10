@@ -51,6 +51,7 @@ public class MypageService {
                 .profile(user.getProfile())
                 .field(user.getField())
                 .authStatus(user.getAuthStatus())
+                .hashTagsString(user.getHashTagsString())
                 .cardDtoList(cardDtoList).build();
     }
 
@@ -137,8 +138,7 @@ public class MypageService {
         card.setLink(backRequestCardDto.getLink());
         card = cardRepository.save(card);
 
-        int authStatus = user.getAuthStatus();
-        authStatus = authStatus|AuthorityEnum.CAN_OTHER_READ.getAuthority();
+        int authStatus = user.getAuthStatus()|AuthorityEnum.CAN_OTHER_READ.getAuthority();
         user.setAuthStatus(authStatus);
 
         //response
@@ -175,8 +175,7 @@ public class MypageService {
 
         cardRepository.delete(card);
         if(user.getCards().size()==1) {
-            int authStatus = user.getAuthStatus();
-            authStatus = authStatus-AuthorityEnum.CAN_OTHER_READ.getAuthority();
+            int authStatus = user.getAuthStatus()-AuthorityEnum.CAN_OTHER_READ.getAuthority();
             user.setAuthStatus(authStatus);
         }
 

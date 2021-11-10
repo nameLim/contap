@@ -70,9 +70,8 @@ public class ImageService {
     //S3로 파일 업로드 및 로컬 위치 파일 삭제
     private String uploadToS3(File file, String dirName) {
         String uploadImageUrl = "";
-        String fileName = "";
         try {
-             fileName =  "" +UUID.randomUUID() + System.currentTimeMillis() + file.getName();
+            String fileName =  "" +UUID.randomUUID() + System.currentTimeMillis() + file.getName();
              uploadImageUrl = putToS3(file, dirName + "/" + fileName);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
