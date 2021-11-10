@@ -10,6 +10,9 @@ import com.project.contap.model.User;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.security.jwt.JwtTokenProvider;
 import com.project.contap.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -118,15 +121,19 @@ public class UserController {
     }
 
 
-    //핸드폰 번호 변경
+    @Operation(summary = "핸드폰 번호 변경")
     @PostMapping("/setting/modifyPhoneNumber")
-    public String modifyPhoneNumber(@RequestParam String phoneNumber, @AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
+    public String modifyPhoneNumber(
+            @Parameter(name = "phoneNumber", in = ParameterIn.QUERY, description = "핸드폰 번호") @RequestParam String phoneNumber
+            , @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
         return userService.modifyPhoneNumber(phoneNumber, userDetails.getUser());
     }
 
-    //알림 받기 여부 변경
+    @Operation(summary = "알림 받기 여부 변경")
     @PostMapping("/setting/alarm")
-    public void modifyPhoneNumber(@RequestParam int alarmState, @AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
+    public void modifyPhoneNumber(
+            @Parameter(name = "alarmState", in = ParameterIn.QUERY, description = "알람 받기 여부(0:취소, 1:받기)")@RequestParam int alarmState
+            , @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
         userService.changeAlarmState(alarmState, userDetails.getUser());
     }
 }
