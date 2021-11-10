@@ -17,8 +17,7 @@ public class UserKakaoController {
     private final KakaoUserService kakaoUserService;
     private final JwtTokenProvider jwtTokenProvider;
 
-
-    public UserKakaoController(KakaoUserService kakaoUserService, JwtTokenProvider jwtTokenProvider ) {
+    public UserKakaoController(KakaoUserService kakaoUserService, JwtTokenProvider jwtTokenProvider) {
         this.kakaoUserService = kakaoUserService;
         this.jwtTokenProvider = jwtTokenProvider;
     }
