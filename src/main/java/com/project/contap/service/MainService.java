@@ -18,7 +18,6 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -133,7 +132,8 @@ public class MainService {
                                 hu.content,
                                 hu.tagsString,
                                 hu.user.id,
-                                hu.user.field
+                                hu.user.field,
+                                hu.link
                         )
                 )
                 .from(hu)
