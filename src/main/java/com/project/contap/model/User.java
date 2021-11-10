@@ -57,7 +57,6 @@ public class User extends TimeStamped{
     @Column
     private Boolean hasRecentAlarm = false;
 
-
     @OneToMany(mappedBy = "me", fetch = FetchType.LAZY)
     private  List<Friend> friends;
 
@@ -115,7 +114,7 @@ public class User extends TimeStamped{
         this.pw = requestDto.getNewPw();
     }
 
-    public boolean isWritedBy(User user) {
+    public boolean isWrittenBy(User user) {
         return this.email.equals(user.getEmail());
     }
 

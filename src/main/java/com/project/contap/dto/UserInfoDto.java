@@ -14,5 +14,6 @@ public class UserInfoDto {
     private String profile;
     private int field;
     private int authStatus;
+    private String hashTagsString;
     private List<BackResponseCardDto> cardDtoList;
 }

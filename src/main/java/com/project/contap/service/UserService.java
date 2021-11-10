@@ -236,7 +236,7 @@ public class UserService {
             throw new ContapException(ErrorCode.USER_NOT_FOUND); //회원 정보를 찾을 수 없습니다.
 
         User user = userRepository.findById(requestUser.getId()).orElse(null);
-        if (user.getEmail()!=null && !user.isWritedBy(requestUser))
+        if (user.getEmail()!=null && !user.isWrittenBy(requestUser))
             throw new ContapException(ErrorCode.ACCESS_DENIED); //권한이 없습니다.
 
         return user;
