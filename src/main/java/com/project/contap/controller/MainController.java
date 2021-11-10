@@ -56,11 +56,6 @@ public class MainController {
             ) throws ContapException {
         return mainService.searchuser(tagsandtype);
     }
-    @GetMapping("/main/search2") //@RequestBody List<HashTag> hashTags
-    public List<UserRequestDto> search2(
-    ) throws ContapException {
-        return mainService.fortestsearchuser();
-    }
 
     @Operation(summary = "뒷면카드 조회")
     @GetMapping("/main/{userId}")

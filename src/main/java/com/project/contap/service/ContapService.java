@@ -87,7 +87,7 @@ public class ContapService {
             tap.setStatus(2);
             tapRepository.save(tap);
 
-            makeChatRoom(tap.getSendUser(),tap.getReceiveUser());
+            common.makeChatRoom(tap.getSendUser(),tap.getReceiveUser());
 
             common.sendAlarmIfneeded(MsgTypeEnum.ACCEPT_TAP,sendUser.getEmail(),receiveUserEmail);
 
@@ -112,14 +112,7 @@ public class ContapService {
     }
 
 
-    private void makeChatRoom(User sendUser, User receiveUser) {
-        String roomId = UUID.randomUUID().toString();
-        Friend fir = new Friend(sendUser,receiveUser,roomId);
-        Friend sec = new Friend(receiveUser,sendUser,roomId);
-        friendRepository.save(fir);
-        friendRepository.save(sec);
-        chatRoomRepository.whenMakeFriend(roomId,sendUser.getEmail(),receiveUser.getEmail());
-    }
+
 
 
     private List<SortedFriendsDto> sortFriendList
