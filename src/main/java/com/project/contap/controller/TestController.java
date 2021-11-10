@@ -1,15 +1,15 @@
 package com.project.contap.controller;
 
 import com.project.contap.exception.ContapException;
-import com.project.contap.model.Card;
-import com.project.contap.model.HashTag;
-import com.project.contap.model.User;
-import com.project.contap.repository.CardRepository;
-import com.project.contap.repository.HashTagRepositoty;
-import com.project.contap.repository.UserRepository;
+import com.project.contap.model.card.Card;
+import com.project.contap.model.hashtag.HashTag;
+import com.project.contap.model.user.User;
+import com.project.contap.model.card.CardRepository;
+import com.project.contap.model.hashtag.HashTagRepositoty;
+import com.project.contap.model.user.UserRepository;
 import com.project.contap.service.ContapService;
 import com.project.contap.service.MainService;
-import com.project.contap.util.GetRandom;
+import com.project.contap.common.util.RandomNumberGeneration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,11 +53,11 @@ public class TestController {
         for(long i = 1 ; i< 305 ;i++)// 1~5007번까지 있오
         {
             User user = userRepository.findById(i).orElse(null);
-            HashTag has1 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
-            HashTag has2 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
-            HashTag has3 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
-            HashTag has4 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
-            HashTag has5 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
+            HashTag has1 = hashTagRepositoty.findById(new Long(RandomNumberGeneration.randomRange(1,10))).orElse(null);
+            HashTag has2 = hashTagRepositoty.findById(new Long(RandomNumberGeneration.randomRange(1,10))).orElse(null);
+            HashTag has3 = hashTagRepositoty.findById(new Long(RandomNumberGeneration.randomRange(1,10))).orElse(null);
+            HashTag has4 = hashTagRepositoty.findById(new Long(RandomNumberGeneration.randomRange(1,10))).orElse(null);
+            HashTag has5 = hashTagRepositoty.findById(new Long(RandomNumberGeneration.randomRange(1,10))).orElse(null);
             List<HashTag> ENSENS = new ArrayList<>();
             ENSENS.add(has1);
             ENSENS.add(has2);
@@ -90,11 +90,11 @@ public class TestController {
         for(long i = 1 ; i< 2000 ;i++)// 1~300
         {
             Card user = cardRepository.findById(i).orElse(null);
-            HashTag has1 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
-            HashTag has2 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
-            HashTag has3 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
-            HashTag has4 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
-            HashTag has5 = hashTagRepositoty.findById(new Long(GetRandom.randomRange(1,10))).orElse(null);
+            HashTag has1 = hashTagRepositoty.findById(new Long(RandomNumberGeneration.randomRange(1,10))).orElse(null);
+            HashTag has2 = hashTagRepositoty.findById(new Long(RandomNumberGeneration.randomRange(1,10))).orElse(null);
+            HashTag has3 = hashTagRepositoty.findById(new Long(RandomNumberGeneration.randomRange(1,10))).orElse(null);
+            HashTag has4 = hashTagRepositoty.findById(new Long(RandomNumberGeneration.randomRange(1,10))).orElse(null);
+            HashTag has5 = hashTagRepositoty.findById(new Long(RandomNumberGeneration.randomRange(1,10))).orElse(null);
             List<HashTag> ENSENS = new ArrayList<>();
             ENSENS.add(has1);
             ENSENS.add(has2);
@@ -181,7 +181,7 @@ public class TestController {
 
     @GetMapping("/test3")
     void getTest1123RunTime() throws ContapException {
-        int num = GetRandom.randomRange(5000,80000);
+        int num = RandomNumberGeneration.randomRange(5000,80000);
         List<String> ls = new ArrayList<String>();
         HashMap<String, Boolean> map = new HashMap<String,Boolean>();
         String abc = "";

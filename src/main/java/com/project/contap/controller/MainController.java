@@ -1,11 +1,11 @@
 package com.project.contap.controller;
 
-import com.project.contap.dto.DefaultRsp;
-import com.project.contap.dto.QCardDto;
-import com.project.contap.dto.SearchRequestDto;
-import com.project.contap.dto.UserRequestDto;
+import com.project.contap.common.DefaultRsp;
+import com.project.contap.model.card.dto.QCardDto;
+import com.project.contap.common.SearchRequestDto;
+import com.project.contap.model.user.dto.UserRequestDto;
 import com.project.contap.exception.ContapException;
-import com.project.contap.model.HashTag;
+import com.project.contap.model.hashtag.HashTag;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.service.MainService;
 import io.swagger.v3.oas.annotations.Operation;

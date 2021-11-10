@@ -1,7 +1,7 @@
 package com.project.contap.exception;
 
 
-import com.project.contap.util.AddLog;
+import com.project.contap.common.util.AddLog;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

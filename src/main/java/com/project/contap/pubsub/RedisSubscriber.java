@@ -1,8 +1,8 @@
 package com.project.contap.pubsub;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.contap.dto.ChatMessageDTO;
-import com.project.contap.model.MsgTypeEnum;
+import com.project.contap.chat.ChatMessageDTO;
+import com.project.contap.common.enumlist.MsgTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;

@@ -1,12 +1,12 @@
 package com.project.contap.controller;
 
-import com.project.contap.dto.PwRequestDto;
-import com.project.contap.dto.PwUpdateRequestDto;
-import com.project.contap.dto.SignUpRequestDto;
-import com.project.contap.dto.UserRequestDto;
+import com.project.contap.model.user.dto.PwRequestDto;
+import com.project.contap.model.user.dto.PwUpdateRequestDto;
+import com.project.contap.model.user.dto.SignUpRequestDto;
+import com.project.contap.model.user.dto.UserRequestDto;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
-import com.project.contap.model.User;
+import com.project.contap.model.user.User;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.security.jwt.JwtTokenProvider;
 import com.project.contap.service.UserService;
