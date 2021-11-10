@@ -1,15 +1,15 @@
 package com.project.contap.service;
 
-import com.project.contap.chatcontroller.ChatRoomRepository;
-import com.project.contap.dto.PwRequestDto;
-import com.project.contap.dto.PwUpdateRequestDto;
-import com.project.contap.dto.SignUpRequestDto;
-import com.project.contap.dto.UserRequestDto;
+import com.project.contap.chat.ChatRoomRepository;
+import com.project.contap.model.user.dto.PwRequestDto;
+import com.project.contap.model.user.dto.PwUpdateRequestDto;
+import com.project.contap.model.user.dto.SignUpRequestDto;
+import com.project.contap.model.user.dto.UserRequestDto;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
-import com.project.contap.model.AuthorityEnum;
-import com.project.contap.model.User;
-import com.project.contap.repository.UserRepository;
+import com.project.contap.common.enumlist.AuthorityEnum;
+import com.project.contap.model.user.User;
+import com.project.contap.model.user.UserRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

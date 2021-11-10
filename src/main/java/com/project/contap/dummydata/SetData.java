@@ -1,11 +1,11 @@
 package com.project.contap.dummydata;
 
-import com.project.contap.model.Card;
-import com.project.contap.model.HashTag;
-import com.project.contap.model.User;
-import com.project.contap.repository.CardRepository;
-import com.project.contap.repository.HashTagRepositoty;
-import com.project.contap.repository.UserRepository;
+import com.project.contap.model.card.Card;
+import com.project.contap.model.hashtag.HashTag;
+import com.project.contap.model.user.User;
+import com.project.contap.model.card.CardRepository;
+import com.project.contap.model.hashtag.HashTagRepositoty;
+import com.project.contap.model.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

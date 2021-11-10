@@ -1,7 +1,7 @@
 package com.project.contap.security;
 
-import com.project.contap.model.User;
-import com.project.contap.repository.UserRepository;
+import com.project.contap.model.user.User;
+import com.project.contap.model.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

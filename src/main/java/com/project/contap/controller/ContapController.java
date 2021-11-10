@@ -1,9 +1,9 @@
 package com.project.contap.controller;
 
-import com.project.contap.dto.DefaultRsp;
-import com.project.contap.dto.SortedFriendsDto;
-import com.project.contap.dto.TagDto;
-import com.project.contap.dto.UserRequestDto;
+import com.project.contap.common.DefaultRsp;
+import com.project.contap.model.friend.SortedFriendsDto;
+import com.project.contap.model.hashtag.TagDto;
+import com.project.contap.model.user.dto.UserRequestDto;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.service.ContapService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class ContapController {
