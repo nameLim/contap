@@ -8,6 +8,8 @@ import com.project.contap.exception.ContapException;
 import com.project.contap.model.HashTag;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.service.MainService;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -100,7 +102,9 @@ public class MainController {
     // 만에하나 유저정보가 null값일 경우를 대비해 예외처리가 필요함! 유저정보중 특히나 이메일 부분!!!우린 널이면 안된다했는데 혹시~적용이 안될수도 있기 때문.
 
     @PostMapping("/main/tutorial")
-    public void phoneTutorial(@RequestParam int tutorialNum, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public void phoneTutorial(
+            @Parameter(name = "tutorialNum", in = ParameterIn.QUERY, description = "튜터리얼 번호(0:핸드폰,1:프로필)") @RequestParam int tutorialNum
+            , @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
         mainService.tutorial(tutorialNum, userDetails.getUser());
     }
 }
