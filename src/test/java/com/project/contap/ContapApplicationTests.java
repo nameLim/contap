@@ -1,7 +1,6 @@
 package com.project.contap;
 
 
-import com.project.contap.dto.FrontResponseCardDto;
 //import com.project.contap.model.testEnum;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

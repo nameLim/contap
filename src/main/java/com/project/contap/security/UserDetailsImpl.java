@@ -1,6 +1,6 @@
 package com.project.contap.security;
 
-import com.project.contap.model.User;
+import com.project.contap.model.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

@@ -1,27 +1,15 @@
 package com.project.contap.config.handler;
 
 
-import com.project.contap.chatcontroller.ChatRoomRepository;
-import com.project.contap.chatcontroller.ChatService;
-import com.project.contap.dto.ChatMessage;
-import com.project.contap.security.jwt.JwtTokenProvider;
+import com.project.contap.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.event.EventListener;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.WebSocketSession;
-import org.springframework.web.socket.handler.TextWebSocketHandler;
-import org.springframework.web.socket.messaging.SessionConnectedEvent;
-
-import java.security.Principal;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @RequiredArgsConstructor

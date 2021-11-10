@@ -1,6 +1,6 @@
 package com.project.contap.config.handler;
 
-import com.project.contap.util.StompPrincipal;
+import com.project.contap.common.util.StompPrincipal;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;

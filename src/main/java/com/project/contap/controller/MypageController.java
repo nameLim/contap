@@ -1,8 +1,12 @@
 package com.project.contap.controller;
 
-import com.project.contap.dto.*;
+import com.project.contap.model.card.dto.BackRequestCardDto;
+import com.project.contap.model.card.dto.BackResponseCardDto;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.service.MypageService;
+import com.project.contap.model.user.dto.FrontRequestCardDto;
+import com.project.contap.model.user.dto.FrontResponseCardDto;
+import com.project.contap.model.user.dto.UserInfoDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;

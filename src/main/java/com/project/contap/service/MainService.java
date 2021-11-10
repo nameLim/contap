@@ -1,14 +1,26 @@
 package com.project.contap.service;
 
-import com.project.contap.chatcontroller.ChatRoomRepository;
-import com.project.contap.dto.*;
-import com.project.contap.model.*;
-import com.project.contap.repository.FriendRepository;
-import com.project.contap.repository.HashTagRepositoty;
-import com.project.contap.repository.TapRepository;
-import com.project.contap.repository.UserRepository;
+import com.project.contap.model.card.QCard;
+import com.project.contap.model.card.dto.QCardDto;
+import com.project.contap.chat.ChatRoomRepository;
+import com.project.contap.chat.ChatMessageDTO;
+import com.project.contap.common.DefaultRsp;
+import com.project.contap.common.SearchRequestDto;
+import com.project.contap.common.enumlist.AuthorityEnum;
+import com.project.contap.model.friend.Friend;
+import com.project.contap.model.friend.QFriend;
+import com.project.contap.model.hashtag.HashTag;
+import com.project.contap.model.friend.FriendRepository;
+import com.project.contap.model.hashtag.HashTagRepositoty;
+import com.project.contap.model.tap.QTap;
+import com.project.contap.model.tap.Tap;
+import com.project.contap.model.tap.TapRepository;
+import com.project.contap.model.user.QUser;
+import com.project.contap.model.user.User;
+import com.project.contap.model.user.UserRepository;
 import com.project.contap.security.UserDetailsImpl;
-import com.project.contap.util.GetRandom;
+import com.project.contap.model.user.dto.UserRequestDto;
+import com.project.contap.common.util.RandomNumberGeneration;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -18,7 +30,6 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -65,7 +76,7 @@ public class MainService {
 
     public List<UserRequestDto> fortestsearchuser() {
         QUser hu = QUser.user;
-        List<Long> ids2 = Arrays.asList(new Long(GetRandom.randomRange(1,10)),new Long(GetRandom.randomRange(1,10)),new Long(GetRandom.randomRange(1,10)));
+        List<Long> ids2 = Arrays.asList(new Long(RandomNumberGeneration.randomRange(1,10)),new Long(RandomNumberGeneration.randomRange(1,10)),new Long(RandomNumberGeneration.randomRange(1,10)));
         List<UserRequestDto> abc;
         abc = jpaQueryFactory
                 .select(
@@ -274,7 +285,7 @@ public class MainService {
 
         int authStatus = user.getAuthStatus();
         if(tutorialNum == 0) { //phone
-            authStatus = authStatus|AuthorityEnum.PHONE_TUTORIAL.getAuthority();
+            authStatus = authStatus| AuthorityEnum.PHONE_TUTORIAL.getAuthority();
         }
         else if(tutorialNum == 1) { // profile
             authStatus = authStatus|AuthorityEnum.PROFILE_TUTORIAL.getAuthority();

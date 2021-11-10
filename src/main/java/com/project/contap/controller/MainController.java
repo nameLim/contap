@@ -1,15 +1,17 @@
 package com.project.contap.controller;
 
-import com.project.contap.dto.DefaultRsp;
-import com.project.contap.dto.QCardDto;
-import com.project.contap.dto.SearchRequestDto;
-import com.project.contap.dto.UserRequestDto;
+import com.project.contap.common.DefaultRsp;
+import com.project.contap.model.card.dto.QCardDto;
+import com.project.contap.common.SearchRequestDto;
+import com.project.contap.model.user.dto.UserRequestDto;
 import com.project.contap.exception.ContapException;
-import com.project.contap.model.HashTag;
+import com.project.contap.model.hashtag.HashTag;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.service.MainService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -27,6 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+@Tag(name = "Main Controller Api V1")
 @RestController
 public class MainController {
     private final MainService mainService;
@@ -39,7 +43,7 @@ public class MainController {
         this.mainService = mainService;
     }
 
-    // 해시태그
+    @Operation(summary = "HashTag")
     @GetMapping("/main/hashtag")
     public List<HashTag> getHashag() throws ContapException {
         return mainService.getHashTag();
@@ -58,13 +62,13 @@ public class MainController {
         return mainService.fortestsearchuser();
     }
 
-    //카드 뒷면
+    @Operation(summary = "뒷면카드 조회")
     @GetMapping("/main/{userId}")
     public List<QCardDto> getCards(@PathVariable Long userId) throws Exception {
         return mainService.getCards(userId);
     }
 
-    //카드 앞면
+    @Operation(summary = "앞면카드 조회")
     @GetMapping("/main")
     public Map<String, Object> getUserDtoList(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         Map<String, Object> result = new HashMap<>();

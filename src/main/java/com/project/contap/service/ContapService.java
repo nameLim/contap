@@ -1,10 +1,18 @@
 package com.project.contap.service;
 
-import com.project.contap.chatcontroller.ChatRoomRepository;
-import com.project.contap.dto.*;
-import com.project.contap.model.*;
-import com.project.contap.repository.FriendRepository;
-import com.project.contap.repository.TapRepository;
+import com.project.contap.chat.ChatRoomRepository;
+import com.project.contap.chat.ChatMessageDTO;
+import com.project.contap.common.DefaultRsp;
+import com.project.contap.common.enumlist.MsgTypeEnum;
+import com.project.contap.model.friend.Friend;
+import com.project.contap.model.friend.QFriend;
+import com.project.contap.model.friend.SortedFriendsDto;
+import com.project.contap.model.friend.FriendRepository;
+import com.project.contap.model.tap.QTap;
+import com.project.contap.model.tap.Tap;
+import com.project.contap.model.tap.TapRepository;
+import com.project.contap.model.user.User;
+import com.project.contap.model.user.dto.UserRequestDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +92,7 @@ public class ContapService {
         return abc;
     }
 
-    public DefaultRsp tapReject(Long tagId,String receiveUserEmail) {
+    public DefaultRsp tapReject(Long tagId, String receiveUserEmail) {
         Tap tap = tapRepository.findById(tagId).orElse(null);
         User sendUser = tap.getSendUser();
         if (tap != null)
