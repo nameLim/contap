@@ -25,15 +25,18 @@ public class ContapController {
     }
 
     @GetMapping("/contap/dotap")
-    public List<UserRequestDto> getMydoTap(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public List<UserRequestDto> getMydoTap(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return contapService.getMydoTap(userDetails.getUser());
     }
     @GetMapping("/contap/gettap")
-    public List<UserRequestDto> getMyTap(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public List<UserRequestDto> getMyTap(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return contapService.getMyTap(userDetails.getUser());
     }
     @GetMapping("/contap/getothers")
-    public List<SortedFriendsDto> getMyfriends(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public List<SortedFriendsDto> getMyfriends(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return contapService.getMyfriends(userDetails.getUser());
     }
 

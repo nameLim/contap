@@ -21,23 +21,12 @@ public class StompHandler implements ChannelInterceptor  {
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-        if (StompCommand.CONNECT == accessor.getCommand()) { // websocket 연결요청
-            System.out.println("connect");
-        } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) { // 채팅룸 구독요청
-            System.out.println("================SUBSCRIBE======================");
-            System.out.println("URL - " + accessor.getDestination());
-            System.out.println("(roomId아님)userName - " + accessor.getUser().getName());
+        if (StompCommand.SUBSCRIBE == accessor.getCommand()) { // 채팅룸 구독요청
             if(accessor.getNativeHeader("userEmail") != null) {
-                System.out.println("userEmail - " + accessor.getNativeHeader("userEmail").get(0));
                 chatService.userConnect(accessor.getDestination(), accessor.getUser().getName(), accessor.getNativeHeader("userEmail").get(0), accessor.getSessionId());
             }
         } else if (StompCommand.DISCONNECT == accessor.getCommand()) { // Websocket 연결 종료
-            System.out.println("================DISCONNECT======================");
-            System.out.println("(roomId아님)userName - " + accessor.getUser().getName());
             chatService.userDisConnect(accessor.getUser().getName(), accessor.getSessionId());
-        }
-        else if (StompCommand.UNSUBSCRIBE == accessor.getCommand()) { // Websocket 연결 종료
-            System.out.println(accessor);
         }
         return message;
     }
