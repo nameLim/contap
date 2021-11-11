@@ -6,19 +6,18 @@ import com.project.contap.model.hashtag.HashTag;
 import com.project.contap.model.user.dto.PwUpdateRequestDto;
 import com.project.contap.common.util.TimeStamped;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode
+@Builder
 @Schema(name = "사용자 정보", description = "")
 public class User extends TimeStamped {
     // ID가 자동으로 생성 및 증가합니다.
@@ -81,56 +80,6 @@ public class User extends TimeStamped {
     private  List<Friend> friends;
 
     public static Long userCount = 0L;
-
-
-//    public User(String email, String pw, String userName, Long kakaoId) {
-//        this.email = email;
-//        this.pw = pw;
-//        this.userName = userName;
-//        this.kakaoId = kakaoId;
-//        this.githubId = githubId;
-//        this.authorityEnum = AuthorityEnum.CANT_OTHER_READ;
-//    }
-
-    public User(Long id,String email, String pw, String userName, Long kakaoId,String profile) {
-        this.id = id;
-        this.email = email;
-        this.pw = pw;
-        this.userName = userName;
-        this.kakaoId = kakaoId;
-        this.profile = profile;
-    }
-
-    public User(String email, String pw, String userName) {
-        this.email = email;
-        this.pw = pw;
-        this.userName = userName;
-//        this.phonNumber = phonNumber;
-        this.kakaoId = null;
-    }
-    public User(String email, String pw, String userName,String profile,int field) {
-        this.email = email;
-        this.pw = pw;
-        this.userName = userName;
-//        this.phonNumber = phonNumber;
-        this.kakaoId = null;
-        this.profile = profile;
-        this.field = field;
-    }
-
-    public User(Long id, String userName, String profile,String hashTagsString) {
-        this.id=id;
-        this.userName = userName;
-        this.profile = profile;
-        this.hashTagsString = hashTagsString;
-    }
-
-
-    public User(Long id) {
-        this.id = id;
-    }
-
-
 
     public void updatePw(PwUpdateRequestDto requestDto) {
         this.pw = requestDto.getNewPw();

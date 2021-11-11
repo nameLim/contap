@@ -67,8 +67,8 @@ public class MypageService {
 
         // nickname 변경했을 경우 중복체크
         if(!user.getUserName().equals(frontRequestCardDto.getUserName())) {
-            Optional<User> found = userRepository.existUserByUserName(frontRequestCardDto.getUserName());
-            if (found.isPresent())
+            Boolean found = userRepository.existUserByUserName(frontRequestCardDto.getUserName());
+            if (found)
                 throw new ContapException(ErrorCode.NICKNAME_DUPLICATE);
         }
 
@@ -126,22 +126,18 @@ public class MypageService {
 
         int cardSize = user.getCards().size();
         if( cardSize >= 10 )
-            throw new ContapException(ErrorCode.EXCESS_CARD_MAX); //카드 최대 가능 수를 초과하였습니다.
-
-        //card
-        Card card = new Card();
-        card.setCardOrder(Long.valueOf(cardSize +1));
-        card.setUser(user);
-        card.setTitle(backRequestCardDto.getTitle());
-        card.setContent(backRequestCardDto.getContent());
-        card.setTagsString(backRequestCardDto.getTagsStr());
-        card.setLink(backRequestCardDto.getLink());
+            throw new ContapException(ErrorCode.EXCESS_CARD_MAX);
+        Card card = Card.builder()
+                .cardOrder(Long.valueOf(cardSize +1))
+                .user(user)
+                .title(backRequestCardDto.getTitle())
+                .content(backRequestCardDto.getContent())
+                .tagsString(backRequestCardDto.getTagsStr())
+                .link(backRequestCardDto.getLink())
+                .build();
         card = cardRepository.save(card);
-
         int authStatus = user.getAuthStatus()|AuthorityEnum.CAN_OTHER_READ.getAuthority();
         user.setAuthStatus(authStatus);
-
-        //response
         return makeBackResponseCardDto(card,user);
     }
 

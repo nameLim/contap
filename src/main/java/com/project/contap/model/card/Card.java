@@ -5,9 +5,7 @@ import com.project.contap.model.card.dto.BackRequestCardDto;
 import com.project.contap.model.hashtag.HashTag;
 import com.project.contap.common.util.TimeStamped;
 import com.project.contap.model.user.User;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -16,6 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
+@Builder
 public class Card extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -45,21 +45,21 @@ public class Card extends TimeStamped {
 
     @ManyToMany
     private List<HashTag> tags;
-
-    public Card(User user, Long cardOrder, String title, String content){
-        this.user = user;
-        this.cardOrder = cardOrder;
-        this.title = title;
-        this.content = content;
-    }
-
-    public Card(User user, Long cardOrder, String title, String content,List<HashTag> tags) {
-        this.user = user;
-        this.cardOrder = cardOrder;
-        this.title = title;
-        this.content = content;
-        this.tags = tags;
-    }
+//
+//    public Card(User user, Long cardOrder, String title, String content){
+//        this.user = user;
+//        this.cardOrder = cardOrder;
+//        this.title = title;
+//        this.content = content;
+//    }
+//
+//    public Card(User user, Long cardOrder, String title, String content,List<HashTag> tags) {
+//        this.user = user;
+//        this.cardOrder = cardOrder;
+//        this.title = title;
+//        this.content = content;
+//        this.tags = tags;
+//    }
 
     public boolean isWritedBy(User user) {
         return this.user.equals(user);

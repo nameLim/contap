@@ -146,6 +146,24 @@ public class UserRepositoryImpl implements CostomUserRepository{
         //귀찮.. 다음에 페이징처리하자
     }
 
+    @Override
+    public Boolean existUserByUserName(String userName)
+    {
+
+        QUser qUser = QUser.user;
+        return  queryFactory.from(qUser)
+                .where(qUser.userName.eq(userName))
+                .fetchFirst() != null;
+    }
+    @Override
+    public Boolean existUserByPhoneNumber(String phoneNumber)
+    {
+        QUser qUser = QUser.user;
+        return  queryFactory.from(qUser)
+                .where(qUser.phoneNumber.eq(phoneNumber))
+                .fetchFirst() != null;
+    }
+
 
 
 }

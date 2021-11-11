@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="DEBUG">
-
     <Properties>
         <Property name="Log_Exception">Log_Exception</Property>
         <Property name="Log_APIUseTime">Log_APIUseTime</Property>
         <Property name="consoleLayout">%style{%d{ISO8601}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{bright,yellow}: %msg%n%throwable</Property>
         <Property name="fileLayout">%d [%t] %-5level %c(%M:%L) - %m%n</Property>
     </Properties>
-
     <Appenders>
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="${consoleLayout}" />

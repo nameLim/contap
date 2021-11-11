@@ -62,8 +62,16 @@ public class Common {
 
     public void makeChatRoom(User sendUser, User receiveUser) {
         String roomId = UUID.randomUUID().toString();
-        Friend fir = new Friend(sendUser,receiveUser,roomId);
-        Friend sec = new Friend(receiveUser,sendUser,roomId);
+        Friend fir = Friend.builder()
+                .roomId(roomId)
+                .me(receiveUser)
+                .you(sendUser)
+                .build();
+        Friend sec = Friend.builder()
+                .roomId(roomId)
+                .me(sendUser)
+                .you(receiveUser)
+                .build();
         friendRepository.save(fir);
         friendRepository.save(sec);
         chatRoomRepository.whenMakeFriend(roomId,sendUser.getEmail(),receiveUser.getEmail());
