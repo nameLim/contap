@@ -21,8 +21,6 @@ public class ChatRoomRepository {
     public static final String LOGIN_INFO = "LOGIN_INFO";
     public static final String ROOM_INFO = "ROOM_INFO";
     public static final String REVERSE_LOGIN_INFO = "REVERSE_LOGIN_INFO";
-    public static final String NEW_MSG = "NEW_MSG";
-
 
     @Resource(name = "redisTemplate")
     private ZSetOperations<String, String> zSetforchatdate; // 이건 친구관계가있으면 사라지지 않는다
@@ -57,10 +55,6 @@ public class ChatRoomRepository {
     private HashOperations<String, String, String> hashOpsRoomInfo; //이건 사라진다.
     // disconnection 시 방 인원 줄일려고 만듬
 
-    @Resource(name = "redisTemplate")
-    private HashOperations<String, String, String> hashOpsNewMsg; // 로그인 했을시 알람 울릴 목적
-
-    // Login User Info
     public void userConnect(String userEmail, String sessionId) {
         hashOpsLoginInfo.put(LOGIN_INFO,userEmail,sessionId);
         hashOpsReverseLoginInfo.put(REVERSE_LOGIN_INFO,sessionId,userEmail);
@@ -86,7 +80,7 @@ public class ChatRoomRepository {
     }
     //
 
-    public int getChatUserCnt(String roomId) // null이면 처리해주자
+    public int getChatUserCnt(String roomId) // null일 일은 없어야하지만 .. null이면 처리해주자 나중에
     {
         int userCnt = Integer.parseInt(listOpsforRoomstatus.index(roomId,-1).split("/")[1]);
         return userCnt;
@@ -103,7 +97,7 @@ public class ChatRoomRepository {
         newStatus.append("/");
         newStatus.append(splitStatus[2]);
         listOpsforRoomstatus.rightPush(roomId,newStatus.toString());
-        hashOpsRoomInfo.put(ROOM_INFO,sessionId,roomId);
+        hashOpsRoomInfo.put(ROOM_INFO,sessionId,roomId); // 사실 이건 아래의 leaveRoom에서 delete하는게 맞는것같은데 일단은 disconnect에다가 넣어두자.
     }
     public void leaveRoom(String roomId) // null이면 처리해주자
     {
@@ -142,13 +136,14 @@ public class ChatRoomRepository {
     public void whenMakeFriend(String roomId,String me,String you)
     {
         double date = Double.parseDouble(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmSS")));
-
         listOpsforRoomstatus.rightPush(roomId,"@@/0/개발자용 새MSG (이건 채팅방만들어지고 따로대화가없었던것임..)"); // [0] = 보낸사람 , [1] = 채팅방 인원수
         zSetforchatdate.add(me,roomId,date);
         zSetforchatdate.add(you,roomId,date);
     }
 
-
+    // 유저가 로그아웃 상태동안에 메시지를 받을경우
+    // 해당 유저가 다음 로그인시 알람을 받을수있도록
+    // 하는 그런 함수..
     public void setAlarm(String userEmail)
     {
         hashOpsAlarmInfo.put(ALARM_INFO,userEmail,"1");
@@ -164,8 +159,9 @@ public class ChatRoomRepository {
 
     public List<List<String>> getMyFriendsOrderByDate(int page,String userName)
     {
-        int start = 9*page;
-//        java.util.Set<ZSetOperations.TypedTuple<String>> ret = zSetforchatdate.reverseRangeWithScores(userName,start,start+8);
+        //int start = 9*page;
+        //java.util.Set<ZSetOperations.TypedTuple<String>> ret = zSetforchatdate.reverseRangeWithScores(userName,start,start+8);
+        // 사실은 페이지형식으로 클라이언트에게 주려고했으나 전체 다 주는걸로 변경되어서 필요없어짐 하지만 차후에 어케될지모르니 남겨둠..
         java.util.Set<ZSetOperations.TypedTuple<String>> ret = zSetforchatdate.reverseRangeWithScores(userName,0,-1);
         List<List<String>> values = new ArrayList<>();
         List<String> rooms = new ArrayList<>();

@@ -102,6 +102,7 @@ public class UserService {
         String pw = passwordEncoder.encode(requestDto.getPw());
 
         //회원정보 저장
+        User.userCount = User.userCount+1;
         User user = new User(email, pw, userName);
         return userRepository.save(user);
     }
@@ -149,6 +150,7 @@ public class UserService {
     public void deleteUser(PwRequestDto requestDto, User user) throws ContapException {
         if (passwordEncoder.matches(requestDto.getPw(), user.getPw())) {
             userRepository.delete(user);
+            User.userCount = User.userCount-1;
         }
         else {
             throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
