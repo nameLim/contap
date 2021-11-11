@@ -66,7 +66,7 @@ public class UserController {
 
     @Operation(summary = "회원탈퇴")
     @DeleteMapping("/setting/withdrawal")
-    public Map<String, String> deleteUser(@RequestBody PwRequestDto requestDto,@AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
+    public Map<String, String> deleteUser(@RequestBody PwRequestDto requestDto,@Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
 
 
         userService.deleteUser(requestDto,userDetails.getUser());
@@ -80,7 +80,7 @@ public class UserController {
 
     @Operation(summary = "비밀번호 변경")
     @PostMapping("/setting/password")
-    public Map<String,String> updateMyPageInfoPassword(@RequestBody PwUpdateRequestDto requestDto ,@AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
+    public Map<String,String> updateMyPageInfoPassword(@RequestBody PwUpdateRequestDto requestDto ,@Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
         userService.updatePassword(requestDto,userDetails.getUsername());
 
         Map<String,String> result = new HashMap<>();
@@ -91,7 +91,7 @@ public class UserController {
 
     @Operation(summary = "토큰만료")
     @GetMapping("/auth")
-    public Map<String, String> loginCheck(@AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
+    public Map<String, String> loginCheck(@Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
         if (userDetails == null) {
             throw new ContapException(ErrorCode.LOGIN_TOKEN_EXPIRE);
         }
