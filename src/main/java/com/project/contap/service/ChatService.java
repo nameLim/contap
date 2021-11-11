@@ -22,21 +22,19 @@ public class ChatService {
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatroomRepository;
     private final ChannelTopic channelTopic;
-    private String a = "";
-
-
     private List<String> updateRoomList = new ArrayList<>(); //  check new msg
     private List<ChatMessage> chatmessages= new ArrayList<>(); // for bulk insert
+    //msg저장 방식에대해서 조금더 생각해보자 완전 바껴야할수도있을것같음.
+    private String subPrefix = "/sub";
+    private int subPrefixlen = 15;
+
 
     public void publish(ChatMessageDTO message,String senderName) {
         ChatMessage newmsg = new ChatMessage(message);
         message.setWriterSessionId(senderName);
         chatmessages.add(newmsg);
         if(!updateRoomList.contains(newmsg.getRoomId()))
-        {
             updateRoomList.add(newmsg.getRoomId());
-        }
-
         int inRoomUserCnt = chatroomRepository.getChatUserCnt(message.getRoomId());
         if(inRoomUserCnt == 1)
         {
@@ -51,42 +49,28 @@ public class ChatService {
             }
         }
         redisTemplate.convertAndSend(channelTopic.getTopic(), message);
-
-
         chatroomRepository.newMsg(message.getRoomId(),message.getWriter(),message.getReciever(),message.getType(),message.getMessage());
         if (chatmessages.size() >= 100)
-        {
             saveBulk();
-            updateRoomList.clear();
-            chatmessages.clear();
-        }
     }
 
     @Transactional
     public void saveBulk() {
         chatMessageRepository.saveAll(chatmessages);
-    }
-
-    public void test() {
-        System.out.println("test");
+        updateRoomList.clear();
+        chatmessages.clear();
     }
 
     public void userConnect(String dest,String sessionId,String userEmail,String sessionId2) {
 
-        if (dest.startsWith("/sub/chat/room/")) {
-            dest = dest.substring(15);
-            chatroomRepository.enterRoom(dest,userEmail,sessionId2);
-            if(updateRoomList.contains(dest))
-            {
+        if (dest.startsWith(subPrefix)) {
+            String roomId =  dest.substring(subPrefixlen);
+            chatroomRepository.enterRoom(roomId,userEmail,sessionId2);
+            if(updateRoomList.contains(roomId))
                 saveBulk();
-                updateRoomList.clear();
-                chatmessages.clear();
-            }
         }
         else
-        {
             chatroomRepository.userConnect(userEmail,sessionId);
-        }
     }
     public void userDisConnect(String userName,String sessionId) {
         chatroomRepository.userDisConnect(userName,sessionId);
