@@ -28,8 +28,6 @@ public class UserService {
     private final JPAQueryFactory jpaQueryFactory; // 이건차후에 쓸수도있을것같아서 남겨둠
     private final ChatRoomRepository chatRoomRepository;
 
-    private static final String ADMIN_TOKEN = "AAABnv/xRVklrnYxKZ0aHgTBcXukeZygoC";
-
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,JPAQueryFactory jpaQueryFactory,ChatRoomRepository chatRoomRepository) {
         this.userRepository = userRepository;
@@ -44,7 +42,12 @@ public class UserService {
         // 패스워드 암호화
         String pw = passwordEncoder.encode(requestDto.getPw());
         User.userCount = User.userCount+1;
-        User user = new User(requestDto.getEmail(), pw, requestDto.getUserName());
+
+        User user = User.builder()
+                .email(requestDto.getEmail())
+                .pw(pw)
+                .userName(requestDto.getUserName())
+                .build();
         return userRepository.save(user);
     }
 
@@ -96,8 +99,8 @@ public class UserService {
         }
 
         //휴대폰번호 중복 확인
-        Optional<User> found = userRepository.existUserByPhoneNumber(phoneNumber);
-        if (found.isPresent()) {
+        Boolean found = userRepository.existUserByPhoneNumber(phoneNumber);
+        if (found) {
             throw new ContapException(ErrorCode.PHONE_DUPLICATE); //중복된 핸드폰번호가 존재합니다.
         }
         user.setPhoneNumber(phoneNumber.replace("-",""));

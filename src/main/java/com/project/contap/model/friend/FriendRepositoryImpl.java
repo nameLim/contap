@@ -14,7 +14,6 @@ public class FriendRepositoryImpl implements CustomFriendRepository {
     public Boolean checkFriend(User me, User you)
     {
         QFriend qFriend = QFriend.friend;
-
         return  queryFactory.from(qFriend)
                 .where(qFriend.me.eq(me)
                         .and(qFriend.you.eq(you)))

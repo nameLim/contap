@@ -123,7 +123,10 @@ public class MainService {
         if (checksendtap)
             return new DefaultRsp("이미 상대에게 요청을 보낸 상태입니다.");
 
-        Tap newTap = new Tap(sendUser,receiveUser);
+        Tap newTap = Tap.builder()
+                .sendUser(sendUser)
+                .receiveUser(receiveUser)
+                .build();
         tapRepository.save(newTap);
         common.sendAlarmIfneeded(MsgTypeEnum.SEND_TAP,sendUser.getEmail(),receiveUser.getEmail());
         return new DefaultRsp("정상적으로 처리 되었습니다.");

@@ -1,9 +1,7 @@
 package com.project.contap.model.friend;
 
 import com.project.contap.model.user.User;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -11,6 +9,8 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Friend {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -24,12 +24,5 @@ public class Friend {
 
     @Column
     private String roomId;
-
-    public Friend(User me , User you, String roomId)
-    {
-        this.me = me;
-        this.you = you;
-        this.roomId = roomId;
-    }
 }
 

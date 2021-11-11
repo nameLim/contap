@@ -2,9 +2,7 @@ package com.project.contap.model.hashtag;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.contap.model.user.User;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -13,6 +11,8 @@ import java.util.List;
 @Entity
 @Setter
 @Getter
+@Builder
+@AllArgsConstructor
 public class HashTag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -28,13 +28,4 @@ public class HashTag {
     @JsonIgnore
     private List<User> users;
 
-    public HashTag(String name, int type)
-    {
-        this.name=  name;
-        this.type = type;
-    }
-    public HashTag(Long id)
-    {
-        this.id = id;
-    }
 }
