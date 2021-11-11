@@ -18,6 +18,7 @@ import com.project.contap.common.util.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
@@ -72,24 +73,17 @@ public class MypageService {
         }
 
         // profile 변경외에는 null
-        String uploadImageUrl = "";
-        if(frontRequestCardDto.getProfile()!=null){
-            // profile 업로드
-            uploadImageUrl = ImageService.upload(imageService, frontRequestCardDto.getProfile(), "static", user.getProfile());
-        }
-        else{
-            // null이기 때문에 사용자의 기존 profile 가져오기
-            uploadImageUrl = user.getProfile();
-        }
+        String uploadImageUrl = getImgPath(frontRequestCardDto.getProfile(),user.getProfile());
+
 
         String requestTagStr = frontRequestCardDto.getHashTagsStr();
         Set<String> sets = new HashSet<>();
 
-        if(requestTagStr.contains(SPLIT_CHAR)) {
+        if(requestTagStr.contains(SPLIT_CHAR))
             Collections.addAll(sets, requestTagStr.split(SPLIT_CHAR));
-        }else if(requestTagStr.length()>0) {
+        else if(requestTagStr.length()>0)
             sets.add(requestTagStr);
-        }
+
 
         List<HashTag> hashTagList = hashTagRepositoty.findAllByNameIn(sets);
 
@@ -121,6 +115,8 @@ public class MypageService {
                 .hashTagsString(user.getHashTagsString())
                 .field(user.getField()).build();
     }
+
+
 
     //뒷카드 추가
     @Transactional
@@ -198,6 +194,15 @@ public class MypageService {
                 .link(card.getLink())
                 .field(user.getField())
                 .build();
+    }
+
+    private String getImgPath(MultipartFile profile, String profile1) throws IOException {
+        if(profile!=null)
+            // profile 업로드
+            return ImageService.upload(imageService, profile, "static", profile1);
+        else
+            // null이기 때문에 사용자의 기존 profile 가져오기
+            return profile1;
     }
 
 }
