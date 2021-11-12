@@ -1,5 +1,6 @@
 package com.project.contap.chat;
 
+import com.project.contap.common.enumlist.AlarmEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.*;
@@ -128,15 +129,15 @@ public class ChatRoomRepository {
             listOpsforRoomstatus.rightPop(roomId);
             listOpsforRoomstatus.rightPush(roomId, roomStatus);
         }
-        double date = Double.parseDouble(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmSS")));
+        double date = Double.parseDouble(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss")));
         zSetforchatdate.add(Sender,roomId,date);
         zSetforchatdate.add(reciever,roomId,date);
     }
 
     public void whenMakeFriend(String roomId,String me,String you)
     {
-        double date = Double.parseDouble(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmSS")));
-        listOpsforRoomstatus.rightPush(roomId,"@@/0/개발자용 새MSG (이건 채팅방만들어지고 따로대화가없었던것임..)"); // [0] = 보낸사람 , [1] = 채팅방 인원수
+        double date = Double.parseDouble(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss")));
+        listOpsforRoomstatus.rightPush(roomId,"@@/0/_test용_"); // [0] = 보낸사람 , [1] = 채팅방 인원수
         zSetforchatdate.add(me,roomId,date);
         zSetforchatdate.add(you,roomId,date);
     }
@@ -144,20 +145,35 @@ public class ChatRoomRepository {
     // 유저가 로그아웃 상태동안에 메시지를 받을경우
     // 해당 유저가 다음 로그인시 알람을 받을수있도록
     // 하는 그런 함수..
-    public void setAlarm(String userEmail)
-    {
-        hashOpsAlarmInfo.put(ALARM_INFO,userEmail,"1");
-    }
-    public Boolean readAlarm(String userEmail)
+    public void setAlarm(String userEmail, AlarmEnum type)
     {
         String forCheck = hashOpsAlarmInfo.get(ALARM_INFO,userEmail);
+        int ntype = type.getValue()*2;
+        if(forCheck == null) {
+            StringBuffer sb = new StringBuffer("0,0,0,0");
+            sb.replace(ntype,ntype+1,"1");
+            hashOpsAlarmInfo.put(ALARM_INFO,userEmail,sb.toString());
+        }
+        else {
+            String[] alarmSplit = forCheck.split(",");
+            alarmSplit[type.getValue()] =  Integer.toString(Integer.parseInt(alarmSplit[type.getValue()])+1);
+            forCheck = String.join(",",alarmSplit);
+            hashOpsAlarmInfo.put(ALARM_INFO,userEmail,forCheck);
+        }
+
+    }
+    public String[] readAlarm(String userEmail)
+    {
+        String forCheck = hashOpsAlarmInfo.get(ALARM_INFO,userEmail);
+        String[] ret ={"0","0","0","0"};
         if (forCheck == null)
-            return false;
+            return  ret;
+        ret = forCheck.split(",");
         hashOpsAlarmInfo.delete(ALARM_INFO,userEmail,forCheck);
-        return true;
+        return ret;
     }
 
-    public List<List<String>> getMyFriendsOrderByDate(int page,String userName)
+    public List<List<String>> getMyFriendsOrderByDate(int page,String userName,int type)
     {
         //int start = 9*page;
         //java.util.Set<ZSetOperations.TypedTuple<String>> ret = zSetforchatdate.reverseRangeWithScores(userName,start,start+8);
@@ -168,8 +184,27 @@ public class ChatRoomRepository {
         List<String> newMsg = new ArrayList<>();
         for (Iterator<ZSetOperations.TypedTuple<String>> iterator = ret.iterator(); iterator.hasNext();) {
             ZSetOperations.TypedTuple<String> typedTuple = iterator.next();
-            rooms.add(typedTuple.getValue());
-            newMsg.add(listOpsforRoomstatus.index(typedTuple.getValue(),-1));
+            String roomStatus = listOpsforRoomstatus.index(typedTuple.getValue(), -1);
+            if(type==0) {
+                rooms.add(typedTuple.getValue());
+                newMsg.add(roomStatus);
+            }
+            else if (type == 1)
+            {
+                if(!listOpsforRoomstatus.index(typedTuple.getValue(), -1).endsWith("/_test용_"))
+                {
+                    rooms.add(typedTuple.getValue());
+                    newMsg.add(roomStatus);
+                }
+            }
+            else
+            {
+                if(listOpsforRoomstatus.index(typedTuple.getValue(), -1).endsWith("/_test용_"))
+                {
+                    rooms.add(typedTuple.getValue());
+                    newMsg.add(roomStatus);
+                }
+            }
         }
         values.add(rooms);
         values.add(newMsg);

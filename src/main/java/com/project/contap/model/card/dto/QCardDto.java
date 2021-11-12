@@ -19,6 +19,25 @@ public class QCardDto {
     private int field;
     private String link;
 
+
+    public QCardDto(
+            Long cardId,
+            String title,
+            String content,
+            String hashTags,
+            Long userId,
+            int field
+
+    ) {
+        this.cardId = cardId;
+        this.title = title;
+        this.content = content;
+        this.hashTags = hashTags;
+        this.userId = userId;
+        this.field = field;
+    }
+
+
     public QCardDto(
             Long cardId,
             String title,

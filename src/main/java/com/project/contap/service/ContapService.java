@@ -27,15 +27,15 @@ public class ContapService {
     private final UserRepository userRepository;
     private final Common common;
 
-    public List<UserRequestDto> getMydoTap(User user) {
-        List<UserRequestDto> mySendTapUserDto = userRepository.findMysendORreceiveTapUserInfo(user.getId(),0);
+    public List<UserRequestDto> getMydoTap(User user,int page) {
+        List<UserRequestDto> mySendTapUserDto = userRepository.findMysendORreceiveTapUserInfo(user.getId(),0,page);
         return mySendTapUserDto;
     }
 
     @Transactional
-    public List<UserRequestDto> getMyTap(User user) {
+    public List<UserRequestDto> getMyTap(User user,int page) {
 
-        List<UserRequestDto> myReceiveTapUserDto = userRepository.findMysendORreceiveTapUserInfo(user.getId(),1);;
+        List<UserRequestDto> myReceiveTapUserDto = userRepository.findMysendORreceiveTapUserInfo(user.getId(),1,page);;
         return myReceiveTapUserDto;
     }
 
@@ -45,11 +45,8 @@ public class ContapService {
         {
             if (tap.getStatus() !=0)
                 return new DefaultRsp("이미 처리된 Tap 입니다.");
-            tap.setStatus(1);
-            tapRepository.save(tap);
-
             common.sendAlarmIfneeded(MsgTypeEnum.REJECT_TAP,tap.getSendUser().getEmail(),receiveUserEmail);
-
+            tapRepository.delete(tap);
             return new DefaultRsp("정상적으로 처리 되었습니다.");
         }
         return new DefaultRsp("해당 tab이 존재하지 않습니다 TabID를 다시확인해주세요..");
@@ -63,20 +60,16 @@ public class ContapService {
         {
             if (tap.getStatus() !=0)
                 return new DefaultRsp("이미 처리된 Tap 입니다.");
-            tap.setStatus(2);
-            tapRepository.save(tap);
-
             common.makeChatRoom(tap.getSendUser(),tap.getReceiveUser());
-
             common.sendAlarmIfneeded(MsgTypeEnum.ACCEPT_TAP,sendUser.getEmail(),receiveUserEmail);
-
+            tapRepository.delete(tap);
             return new DefaultRsp("정상적으로 처리 되었습니다.");
         }
         return new DefaultRsp("해당 tab이 존재하지 않습니다 TabID를 다시확인해주세요..");
     }
 
-    public List<SortedFriendsDto>getMyfriends(User user) {
-        List<List<String>> order = chatRoomRepository.getMyFriendsOrderByDate(0,user.getEmail());
+    public List<SortedFriendsDto>getMyfriends(User user,int type) {
+        List<List<String>> order = chatRoomRepository.getMyFriendsOrderByDate(0,user.getEmail(),type);
         List<UserRequestDto> myFriendsUserDto = new ArrayList<>();
         List<SortedFriendsDto> ret = new ArrayList<>();
 
@@ -101,6 +94,7 @@ public class ContapService {
             dtoArrays[i].setRoomStatus(order.get(1).get(i));
             dtoArrays[i].setRoomId(order.get(0).get(i));
         }
+
         for(UserRequestDto userDto : myFriendsUserDto)
         {
             dtoArrays[sortInfo.get(userDto.getRoomId())].setUserId(userDto.getUserId());

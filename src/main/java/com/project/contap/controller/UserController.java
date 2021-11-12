@@ -1,5 +1,6 @@
 package com.project.contap.controller;
 
+import com.project.contap.common.enumlist.AlarmEnum;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
 import com.project.contap.model.user.User;
@@ -52,7 +53,11 @@ public class UserController {
         result.put("email", user.getEmail());
         result.put("userName", user.getUserName());
         result.put("result", "success");
-        result.put("alarm", userService.getAlarm(user.getEmail()));
+        String[] alarm = userService.getAlarm(user.getEmail());
+        result.put("TAP_RECEIVE", alarm[AlarmEnum.TAP_RECEIVE.getValue()]);
+        result.put("REJECT_TAP", alarm[AlarmEnum.REJECT_TAP.getValue()]);
+        result.put("ACCEPT_TAP", alarm[AlarmEnum.ACCEPT_TAP.getValue()]);
+        result.put("CHAT", alarm[AlarmEnum.CHAT.getValue()]);
 
         return result;
     }

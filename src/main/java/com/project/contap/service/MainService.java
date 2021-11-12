@@ -69,9 +69,10 @@ public class MainService {
 
 
     @Transactional
-    public DefaultRsp dotap(User sendUser, Long otherUserId) {
+    public DefaultRsp dotap(User sendUser, Long otherUserId,String msg) {
+        if(sendUser.getId().equals(otherUserId))
+            return new DefaultRsp("자신한테 탭요청하지못해요");
         User receiveUser = userRepository.findById(otherUserId).orElse(null);
-
         Boolean checkFriend = friendRepository.checkFriend(sendUser,receiveUser);
         if (checkFriend)
             return new DefaultRsp("이미 친구 관계입니다.");
@@ -80,8 +81,7 @@ public class MainService {
         if (checkrecievetap != null)
         {
             common.makeChatRoom(sendUser,receiveUser);
-            checkrecievetap.setStatus(2);
-            tapRepository.save(checkrecievetap);
+            tapRepository.delete(checkrecievetap);
             return new DefaultRsp("상대방의 요청을 수락 하였습니다.");
         }
 
@@ -92,6 +92,7 @@ public class MainService {
         Tap newTap = Tap.builder()
                 .sendUser(sendUser)
                 .receiveUser(receiveUser)
+                .msg(msg)
                 .build();
         tapRepository.save(newTap);
         common.sendAlarmIfneeded(MsgTypeEnum.SEND_TAP,sendUser.getEmail(),receiveUser.getEmail());
