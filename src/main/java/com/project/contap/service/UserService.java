@@ -87,9 +87,9 @@ public class UserService {
         user.updatePw(requestDto);
     }
 
-    public String getAlarm(String email) {
-        Boolean bAlarm = chatRoomRepository.readAlarm(email);
-        return bAlarm.toString();
+    public String[] getAlarm(String email) {
+        String[] alarms = chatRoomRepository.readAlarm(email);
+        return alarms;
     }
 
     public String modifyPhoneNumber(String phoneNumber, User requestUser) {

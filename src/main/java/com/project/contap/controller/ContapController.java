@@ -8,10 +8,7 @@ import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.service.ContapService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,20 +21,23 @@ public class ContapController {
         this.contapService= contapService;
     }
 
-    @GetMapping("/contap/dotap")
+    @GetMapping("/contap/dotap/{page}")
     public List<UserRequestDto> getMydoTap(
+            @PathVariable int page,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return contapService.getMydoTap(userDetails.getUser());
+        return contapService.getMydoTap(userDetails.getUser(),page);
     }
-    @GetMapping("/contap/gettap")
+    @GetMapping("/contap/gettap/{page}")
     public List<UserRequestDto> getMyTap(
+            @PathVariable int page,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return contapService.getMyTap(userDetails.getUser());
+        return contapService.getMyTap(userDetails.getUser(),page);
     }
-    @GetMapping("/contap/getothers")
+    @GetMapping("/contap/getothers/{type}")
     public List<SortedFriendsDto> getMyfriends(
+            @PathVariable int type,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return contapService.getMyfriends(userDetails.getUser());
+        return contapService.getMyfriends(userDetails.getUser(),type);
     }
 
     @PostMapping("/contap/reject")

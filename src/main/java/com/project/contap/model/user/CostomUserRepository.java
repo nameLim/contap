@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CostomUserRepository {
-    List<UserRequestDto> findMysendORreceiveTapUserInfo(Long userId,int type);
+    List<UserRequestDto> findMysendORreceiveTapUserInfo(Long userId,int type,int page);
     List<UserRequestDto> findMyFriendsById(Long userId,List<String> orderList);
     List<UserRequestDto> findAllByTag(SearchRequestDto tagsandtype);
     List<UserRequestDto> getRandomUser(Long usercnt);

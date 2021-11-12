@@ -58,9 +58,8 @@ public class MainController {
     public DefaultRsp tap(
             @RequestBody(required = false)  UserRequestDto userid,
             @AuthenticationPrincipal UserDetailsImpl userDetails
-
     ) {
-        return mainService.dotap(userDetails.getUser(),userid.getUserId());
+        return mainService.dotap(userDetails.getUser(),userid.getUserId(),userid.getMsg());
     }
 
     @PostMapping("/main/tutorial")

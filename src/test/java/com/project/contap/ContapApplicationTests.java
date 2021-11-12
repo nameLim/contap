@@ -53,15 +53,6 @@ class ContapApplicationTests {
 
     @Test
     void contextLoads2() {
-        HashOperations<String, String, String> hashOpsAlarmInfo = redisTemplate.opsForHash();
-        hashOpsAlarmInfo.put("ALARM_INFO","userEmail1","true");
-        hashOpsAlarmInfo.put("ALARM_INFO","userEmail2","true");
-        hashOpsAlarmInfo.put("ALARM_INFO","userEmail3","true");
-        hashOpsAlarmInfo.put("ALARM_INFO","userEmail4","true");
-        String abc = hashOpsAlarmInfo.get("ALARM_INFO","userEmail4"); // "true"
-        String abc2 = hashOpsAlarmInfo.get("ALARM_INFO","userEmail5");// null
-        System.out.println(abc);
-        System.out.println(abc2);
     }
 
 //    @Test

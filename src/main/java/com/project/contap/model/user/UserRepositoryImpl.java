@@ -1,6 +1,7 @@
 package com.project.contap.model.user;
 
 import com.project.contap.common.SearchRequestDto;
+import com.project.contap.common.util.RandomNumberGeneration;
 import com.project.contap.model.friend.QFriend;
 import com.project.contap.model.tap.QTap;
 import com.project.contap.model.user.dto.UserRequestDto;
@@ -20,8 +21,9 @@ public class UserRepositoryImpl implements CostomUserRepository{
     }
 
     @Override
-    public List<UserRequestDto> findMysendORreceiveTapUserInfo(Long userId,int type)
+    public List<UserRequestDto> findMysendORreceiveTapUserInfo(Long userId,int type,int page)
     {
+        page = 6*page;
         QTap qtap = QTap.tap;
         if (type == 0)
             return queryFactory
@@ -34,10 +36,13 @@ public class UserRepositoryImpl implements CostomUserRepository{
                                     qtap.receiveUser.userName,
                                     qtap.receiveUser.pw,
                                     qtap.receiveUser.hashTagsString,
-                                    qtap.id
-                            )).distinct()
+                                    qtap.id,
+                                    qtap.msg
+                            ))
                     .from(qtap)
                     .where(qtap.sendUser.id.eq(userId))
+                    .orderBy(qtap.insertDt.desc())
+                    .offset(page).limit(6)
                     .fetch();
         else
             return queryFactory
@@ -50,10 +55,13 @@ public class UserRepositoryImpl implements CostomUserRepository{
                                     qtap.sendUser.userName,
                                     qtap.sendUser.pw,
                                     qtap.sendUser.hashTagsString,
-                                    qtap.id
-                            )).distinct()
+                                    qtap.id,
+                                    qtap.msg
+                            ))
                     .from(qtap)
                     .where(qtap.sendUser.id.eq(userId))
+                    .orderBy(qtap.insertDt.desc())
+                    .offset(page).limit(6)
                     .fetch();
 
     }
@@ -121,12 +129,13 @@ public class UserRepositoryImpl implements CostomUserRepository{
     @Override
     public List<UserRequestDto> getRandomUser(Long usercnt)
     {
-        Long check1 = usercnt/9;
-        Long check2 = usercnt%9;
-        Long page = check1;
-        if(check2.equals(0L))
-            page = page - 1L;
-        Random random = new Random();
+//        Long check1 = usercnt/9;
+//        Long check2 = usercnt%9;
+//        Long page = check1;
+//        if(check2.equals(0L))
+//            page = page - 1L;
+//        Random random = new Random();
+        int page = RandomNumberGeneration.randomRange(1,30);
         QUser hu = QUser.user;
         return queryFactory
                 .select(
@@ -141,7 +150,7 @@ public class UserRepositoryImpl implements CostomUserRepository{
                                 hu.field
                         )).distinct()
                 .from(hu)
-                .offset(0).limit(9)
+                .offset(page).limit(9)
                 .fetch();
         //귀찮.. 다음에 페이징처리하자
     }
@@ -149,7 +158,6 @@ public class UserRepositoryImpl implements CostomUserRepository{
     @Override
     public Boolean existUserByUserName(String userName)
     {
-
         QUser qUser = QUser.user;
         return  queryFactory.from(qUser)
                 .where(qUser.userName.eq(userName))

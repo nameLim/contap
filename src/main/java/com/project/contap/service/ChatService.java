@@ -3,6 +3,7 @@ package com.project.contap.service;
 import com.project.contap.chat.ChatMessage;
 import com.project.contap.chat.ChatMessageDTO;
 import com.project.contap.chat.ChatRoomRepository;
+import com.project.contap.common.enumlist.AlarmEnum;
 import com.project.contap.common.enumlist.MsgTypeEnum;
 import com.project.contap.chat.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,7 @@ public class ChatService {
             String recieverId = chatroomRepository.getSessionId(message.getReciever());
             if (recieverId == null) {
                 message.setType(MsgTypeEnum.CHAT_EITHER_LOGOFF.getValue());
-                chatroomRepository.setAlarm(message.getReciever());
+                chatroomRepository.setAlarm(message.getReciever(), AlarmEnum.CHAT);
             }
             else {
                 message.setSessionId(recieverId);
