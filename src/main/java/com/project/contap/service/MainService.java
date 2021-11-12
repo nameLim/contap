@@ -1,44 +1,29 @@
 package com.project.contap.service;
 
 import com.project.contap.common.Common;
-import com.project.contap.common.enumlist.MsgTypeEnum;
-import com.project.contap.model.card.CardRepository;
-import com.project.contap.model.card.QCard;
-import com.project.contap.model.card.dto.QCardDto;
-import com.project.contap.chat.ChatRoomRepository;
-import com.project.contap.chat.ChatMessageDTO;
 import com.project.contap.common.DefaultRsp;
 import com.project.contap.common.SearchRequestDto;
 import com.project.contap.common.enumlist.AuthorityEnum;
-import com.project.contap.model.friend.Friend;
-import com.project.contap.model.friend.QFriend;
-import com.project.contap.model.hashtag.HashTag;
+import com.project.contap.common.enumlist.MsgTypeEnum;
+import com.project.contap.model.card.CardRepository;
+import com.project.contap.model.card.dto.QCardDto;
 import com.project.contap.model.friend.FriendRepository;
+import com.project.contap.model.hashtag.HashTag;
 import com.project.contap.model.hashtag.HashTagRepositoty;
-import com.project.contap.model.tap.QTap;
 import com.project.contap.model.tap.Tap;
 import com.project.contap.model.tap.TapRepository;
-import com.project.contap.model.user.QUser;
 import com.project.contap.model.user.User;
 import com.project.contap.model.user.UserRepository;
-import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.model.user.dto.UserRequestDto;
-import com.project.contap.common.util.RandomNumberGeneration;
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import net.nurigo.java_sdk.api.Message;
-import net.nurigo.java_sdk.exceptions.CoolsmsException;
-import org.json.simple.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
+import com.project.contap.security.UserDetailsImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class MainService {
     private final HashTagRepositoty hashTagRepositoty;
     private final UserRepository userRepository;
@@ -47,25 +32,6 @@ public class MainService {
     private final CardRepository cardRepository;
     private final UserService userService;
     private final Common common;
-
-    @Autowired
-    public MainService(
-            HashTagRepositoty hashTagRepositoty,
-            UserRepository userRepository,
-            TapRepository tapRepository,
-            FriendRepository friendRepository,
-            UserService userService,
-            CardRepository cardRepository,
-            Common common)
-    {
-        this.hashTagRepositoty=hashTagRepositoty;
-        this.userRepository = userRepository;
-        this.tapRepository = tapRepository;
-        this.friendRepository = friendRepository;
-        this.userService = userService;
-        this.cardRepository=cardRepository;
-        this.common=common;
-    }
 
     public List<HashTag> getHashTag() {
         return hashTagRepositoty.findAll();

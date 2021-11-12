@@ -1,6 +1,7 @@
 package com.project.contap.model.card.dto;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class QCardDto {
     private String hashTags;
     private Long userId;
     private int field;
-
+    private String link;
 
     public QCardDto(
             Long cardId,
@@ -24,7 +25,8 @@ public class QCardDto {
             String content,
             String hashTags,
             Long userId,
-            int field
+            int field,
+            String link
 
     ) {
         this.cardId = cardId;
@@ -33,5 +35,6 @@ public class QCardDto {
         this.hashTags = hashTags;
         this.userId = userId;
         this.field = field;
+        this.link = link;
     }
 }

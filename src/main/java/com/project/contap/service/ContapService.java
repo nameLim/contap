@@ -1,31 +1,24 @@
 package com.project.contap.service;
 
 import com.project.contap.chat.ChatRoomRepository;
-import com.project.contap.chat.ChatMessageDTO;
 import com.project.contap.common.Common;
 import com.project.contap.common.DefaultRsp;
 import com.project.contap.common.enumlist.MsgTypeEnum;
-import com.project.contap.model.friend.Friend;
-import com.project.contap.model.friend.QFriend;
-import com.project.contap.model.friend.SortedFriendsDto;
 import com.project.contap.model.friend.FriendRepository;
-import com.project.contap.model.tap.QTap;
+import com.project.contap.model.friend.SortedFriendsDto;
 import com.project.contap.model.tap.Tap;
 import com.project.contap.model.tap.TapRepository;
 import com.project.contap.model.user.User;
 import com.project.contap.model.user.UserRepository;
 import com.project.contap.model.user.dto.UserRequestDto;
-import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class ContapService {
 
     private final TapRepository tapRepository;
@@ -33,27 +26,13 @@ public class ContapService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
     private final Common common;
-    @Autowired
-    public  ContapService(
-            TapRepository tapRepository,
-            FriendRepository friendRepository,
-            ChatRoomRepository chatRoomRepository,
-            UserRepository userRepository,
-            Common common
-    )
-    {
-        this.tapRepository = tapRepository;
-        this.friendRepository = friendRepository;
-        this.chatRoomRepository= chatRoomRepository;
-        this.userRepository = userRepository;
-        this.common = common;
-    }
 
     public List<UserRequestDto> getMydoTap(User user) {
         List<UserRequestDto> mySendTapUserDto = userRepository.findMysendORreceiveTapUserInfo(user.getId(),0);
         return mySendTapUserDto;
     }
 
+    @Transactional
     public List<UserRequestDto> getMyTap(User user) {
 
         List<UserRequestDto> myReceiveTapUserDto = userRepository.findMysendORreceiveTapUserInfo(user.getId(),1);;
@@ -96,8 +75,6 @@ public class ContapService {
         return new DefaultRsp("해당 tab이 존재하지 않습니다 TabID를 다시확인해주세요..");
     }
 
-
-
     public List<SortedFriendsDto>getMyfriends(User user) {
         List<List<String>> order = chatRoomRepository.getMyFriendsOrderByDate(0,user.getEmail());
         List<UserRequestDto> myFriendsUserDto = new ArrayList<>();
@@ -110,10 +87,6 @@ public class ContapService {
 
         return ret;
     }
-
-
-
-
 
     private List<SortedFriendsDto> sortFriendList
             (List<List<String>> order,
