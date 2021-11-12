@@ -136,6 +136,14 @@ public class KakaoUserService {
 // email: kakao email
             String email = kakaoUserInfo.getEmail();
 
+            kakaoUser = User.builder()
+                    .email(email)
+                    .kakaoId(kakaoId)
+                    .pw(encodedPassword)
+                    .userName(nickname)
+                    .build();
+            userRepository.save(kakaoUser);
+
         }
         return kakaoUser;
     }
