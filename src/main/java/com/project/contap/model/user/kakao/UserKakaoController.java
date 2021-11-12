@@ -33,6 +33,7 @@ public class UserKakaoController {
         result.put("token",jwtTokenProvider.createToken(user.getEmail(), user.getEmail(), user.getUserName()));
         result.put("email", user.getEmail());
         result.put("userName", user.getUserName());
+        result.put("profile", user.getProfile());
         result.put("result", "success");
 
         return result;

@@ -15,5 +15,6 @@ public class KakaoUserInfoDto {
     private String nickname;
     @Schema(description = "Email")
     private String email;
+    private String profile;
 
 }

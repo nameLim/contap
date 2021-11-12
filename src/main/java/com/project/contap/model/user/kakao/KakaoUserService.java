@@ -105,8 +105,10 @@ public class KakaoUserService {
                 .get("nickname").asText();
         String email = jsonNode.get("kakao_account")
                 .get("email").asText();
+        String profile = jsonNode.get("properties")
+                .get("profile_image").asText();
 
-        return new KakaoUserInfoDto(id, nickname, email);
+        return new KakaoUserInfoDto(id, nickname, email,profile);
     }
 
     private User registerKakaoOrUpdateKakao(KakaoUserInfoDto kakaoUserInfo) {
@@ -135,12 +137,13 @@ public class KakaoUserService {
 
 // email: kakao email
             String email = kakaoUserInfo.getEmail();
-
+            String profile = kakaoUserInfo.getProfile();
             kakaoUser = User.builder()
                     .email(email)
                     .kakaoId(kakaoId)
                     .pw(encodedPassword)
                     .userName(nickname)
+                    .profile(profile)
                     .build();
             userRepository.save(kakaoUser);
 
