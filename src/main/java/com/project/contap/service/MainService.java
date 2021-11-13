@@ -14,7 +14,7 @@ import com.project.contap.model.tap.Tap;
 import com.project.contap.model.tap.TapRepository;
 import com.project.contap.model.user.User;
 import com.project.contap.model.user.UserRepository;
-import com.project.contap.model.user.dto.UserRequestDto;
+import com.project.contap.model.user.dto.UserMainDto;
 import com.project.contap.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,8 +37,8 @@ public class MainService {
         return hashTagRepositoty.findAll();
     }
 
-    public List<UserRequestDto> searchuser(SearchRequestDto tagsandtype) {
-        List<UserRequestDto> ret = userRepository.findAllByTag(tagsandtype);
+    public List<UserMainDto> searchuser(SearchRequestDto tagsandtype) {
+        List<UserMainDto> ret = userRepository.findAllByTag(tagsandtype);
         return ret;
     }
 
@@ -47,8 +47,8 @@ public class MainService {
         return ret;
     }
 
-    public List<UserRequestDto> getUserDtoList(UserDetailsImpl userDetails) {
-        List<UserRequestDto> ret = userRepository.getRandomUser(User.userCount);
+    public List<UserMainDto> getUserDtoList(UserDetailsImpl userDetails) {
+        List<UserMainDto> ret = userRepository.getRandomUser(User.userCount);
 
 //        if(userDetails != null) {
 //            QFriend qfriend = QFriend.friend;
@@ -59,7 +59,6 @@ public class MainService {
 //                    .from(qfriend)
 //                    .where(qfriend.me.id.eq(userDetails.getUser().getId()))
 //                    .fetch();
-//            for (UserRequestDto checkid : abc){
 //                checkid.setIsFriend(listFriendId.contains(checkid.getUserId()));
 //            }
 //        } // 이구문은 프론트한테 한번 문의해보자

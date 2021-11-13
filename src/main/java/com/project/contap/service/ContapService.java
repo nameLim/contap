@@ -10,7 +10,7 @@ import com.project.contap.model.tap.Tap;
 import com.project.contap.model.tap.TapRepository;
 import com.project.contap.model.user.User;
 import com.project.contap.model.user.UserRepository;
-import com.project.contap.model.user.dto.UserRequestDto;
+import com.project.contap.model.user.dto.UserTapDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,15 +27,15 @@ public class ContapService {
     private final UserRepository userRepository;
     private final Common common;
 
-    public List<UserRequestDto> getMydoTap(User user,int page) {
-        List<UserRequestDto> mySendTapUserDto = userRepository.findMysendORreceiveTapUserInfo(user.getId(),0,page);
+    public List<UserTapDto> getMydoTap(User user,int page) {
+        List<UserTapDto> mySendTapUserDto = userRepository.findMysendORreceiveTapUserInfo(user.getId(),0,page);
         return mySendTapUserDto;
     }
 
     @Transactional
-    public List<UserRequestDto> getMyTap(User user,int page) {
+    public List<UserTapDto> getMyTap(User user,int page) {
 
-        List<UserRequestDto> myReceiveTapUserDto = userRepository.findMysendORreceiveTapUserInfo(user.getId(),1,page);;
+        List<UserTapDto> myReceiveTapUserDto = userRepository.findMysendORreceiveTapUserInfo(user.getId(),1,page);;
         return myReceiveTapUserDto;
     }
 
@@ -70,7 +70,7 @@ public class ContapService {
 
     public List<SortedFriendsDto>getMyfriends(User user,int type) {
         List<List<String>> order = chatRoomRepository.getMyFriendsOrderByDate(0,user.getEmail(),type);
-        List<UserRequestDto> myFriendsUserDto = new ArrayList<>();
+        List<UserTapDto> myFriendsUserDto = new ArrayList<>();
         List<SortedFriendsDto> ret = new ArrayList<>();
 
         if(order.get(0).size() != 0) {
@@ -83,7 +83,7 @@ public class ContapService {
 
     private List<SortedFriendsDto> sortFriendList
             (List<List<String>> order,
-             List<UserRequestDto> myFriendsUserDto) {
+             List<UserTapDto> myFriendsUserDto) {
         SortedFriendsDto dtoArrays[] = new SortedFriendsDto[order.get(0).size()];
         Map<String, Integer> sortInfo = new HashMap<>();
 
@@ -95,7 +95,7 @@ public class ContapService {
             dtoArrays[i].setRoomId(order.get(0).get(i));
         }
 
-        for(UserRequestDto userDto : myFriendsUserDto)
+        for(UserTapDto userDto : myFriendsUserDto)
         {
             dtoArrays[sortInfo.get(userDto.getRoomId())].setUserId(userDto.getUserId());
             dtoArrays[sortInfo.get(userDto.getRoomId())].setEmail(userDto.getEmail());

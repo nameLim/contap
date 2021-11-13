@@ -1,0 +1,61 @@
+package com.project.contap.model.user.dto;
+
+import com.project.contap.model.hashtag.HashTag;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@Schema(name = "User RequestDto")
+public class UserTapDto {
+    private Long userId;
+    private String email;
+    private String userName;
+    private String profile;
+    private String hashTags;
+    private Long tapId;
+    private String roomId;
+    private int field;
+    private String msg;
+
+    public UserTapDto(Long id,
+                      String email,
+                      String profile,
+                      String userName,
+                      String hashTagsString,
+                      Long tapId,
+                      String msg,
+                      int field) {
+        this.userId = id;
+        this.email = email;
+        this.userName = userName;
+        this.profile = profile;
+        this.hashTags=hashTagsString;
+        this.tapId = tapId;
+        this.msg = msg;
+        this.field = field;
+    }
+
+    public UserTapDto(Long id,
+                      String email,
+                      String profile,
+                      String userName,
+                      String hashTagsString,
+                      int field,
+                      String roomId) {
+        this.userId = id;
+        this.email = email;
+        this.userName = userName;
+        this.profile = profile;
+        this.hashTags=hashTagsString;
+        this.field = field;
+        this.roomId = roomId;
+    }
+
+}

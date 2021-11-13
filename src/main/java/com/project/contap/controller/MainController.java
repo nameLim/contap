@@ -5,7 +5,8 @@ import com.project.contap.common.SearchRequestDto;
 import com.project.contap.exception.ContapException;
 import com.project.contap.model.card.dto.QCardDto;
 import com.project.contap.model.hashtag.HashTag;
-import com.project.contap.model.user.dto.UserRequestDto;
+import com.project.contap.model.tap.DoTapDto;
+import com.project.contap.model.user.dto.UserMainDto;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.service.MainService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +35,7 @@ public class MainController {
     }
 
     @PostMapping("/main/search") //@RequestBody List<HashTag> hashTags
-    public List<UserRequestDto> search(
+    public List<UserMainDto> search(
             @RequestBody SearchRequestDto tagsandtype
             ) throws ContapException {
         return mainService.searchuser(tagsandtype);
@@ -50,16 +51,16 @@ public class MainController {
     @GetMapping("/main")
     public Map<String, Object> getUserDtoList(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         Map<String, Object> result = new HashMap<>();
-        List<UserRequestDto> users = mainService.getUserDtoList(userDetails);
+        List<UserMainDto> users = mainService.getUserDtoList(userDetails);
         result.put("users", users);
         return result;
     }
     @PostMapping("/main/posttap")
     public DefaultRsp tap(
-            @RequestBody(required = false)  UserRequestDto userid,
+            @RequestBody(required = false) DoTapDto tapDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return mainService.dotap(userDetails.getUser(),userid.getUserId(),userid.getMsg());
+        return mainService.dotap(userDetails.getUser(),tapDto.getUserId(),tapDto.getMsg());
     }
 
     @PostMapping("/main/tutorial")
