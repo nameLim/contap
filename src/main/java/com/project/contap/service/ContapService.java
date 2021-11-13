@@ -1,31 +1,24 @@
 package com.project.contap.service;
 
 import com.project.contap.chat.ChatRoomRepository;
-import com.project.contap.chat.ChatMessageDTO;
 import com.project.contap.common.Common;
 import com.project.contap.common.DefaultRsp;
 import com.project.contap.common.enumlist.MsgTypeEnum;
-import com.project.contap.model.friend.Friend;
-import com.project.contap.model.friend.QFriend;
-import com.project.contap.model.friend.SortedFriendsDto;
 import com.project.contap.model.friend.FriendRepository;
-import com.project.contap.model.tap.QTap;
+import com.project.contap.model.friend.SortedFriendsDto;
 import com.project.contap.model.tap.Tap;
 import com.project.contap.model.tap.TapRepository;
 import com.project.contap.model.user.User;
 import com.project.contap.model.user.UserRepository;
 import com.project.contap.model.user.dto.UserRequestDto;
-import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class ContapService {
 
     private final TapRepository tapRepository;
@@ -33,30 +26,16 @@ public class ContapService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
     private final Common common;
-    @Autowired
-    public  ContapService(
-            TapRepository tapRepository,
-            FriendRepository friendRepository,
-            ChatRoomRepository chatRoomRepository,
-            UserRepository userRepository,
-            Common common
-    )
-    {
-        this.tapRepository = tapRepository;
-        this.friendRepository = friendRepository;
-        this.chatRoomRepository= chatRoomRepository;
-        this.userRepository = userRepository;
-        this.common = common;
-    }
 
-    public List<UserRequestDto> getMydoTap(User user) {
-        List<UserRequestDto> mySendTapUserDto = userRepository.findMysendORreceiveTapUserInfo(user.getId(),0);
+    public List<UserRequestDto> getMydoTap(User user,int page) {
+        List<UserRequestDto> mySendTapUserDto = userRepository.findMysendORreceiveTapUserInfo(user.getId(),0,page);
         return mySendTapUserDto;
     }
 
-    public List<UserRequestDto> getMyTap(User user) {
+    @Transactional
+    public List<UserRequestDto> getMyTap(User user,int page) {
 
-        List<UserRequestDto> myReceiveTapUserDto = userRepository.findMysendORreceiveTapUserInfo(user.getId(),1);;
+        List<UserRequestDto> myReceiveTapUserDto = userRepository.findMysendORreceiveTapUserInfo(user.getId(),1,page);;
         return myReceiveTapUserDto;
     }
 
@@ -66,11 +45,8 @@ public class ContapService {
         {
             if (tap.getStatus() !=0)
                 return new DefaultRsp("이미 처리된 Tap 입니다.");
-            tap.setStatus(1);
-            tapRepository.save(tap);
-
             common.sendAlarmIfneeded(MsgTypeEnum.REJECT_TAP,tap.getSendUser().getEmail(),receiveUserEmail);
-
+            tapRepository.delete(tap);
             return new DefaultRsp("정상적으로 처리 되었습니다.");
         }
         return new DefaultRsp("해당 tab이 존재하지 않습니다 TabID를 다시확인해주세요..");
@@ -84,22 +60,16 @@ public class ContapService {
         {
             if (tap.getStatus() !=0)
                 return new DefaultRsp("이미 처리된 Tap 입니다.");
-            tap.setStatus(2);
-            tapRepository.save(tap);
-
             common.makeChatRoom(tap.getSendUser(),tap.getReceiveUser());
-
             common.sendAlarmIfneeded(MsgTypeEnum.ACCEPT_TAP,sendUser.getEmail(),receiveUserEmail);
-
+            tapRepository.delete(tap);
             return new DefaultRsp("정상적으로 처리 되었습니다.");
         }
         return new DefaultRsp("해당 tab이 존재하지 않습니다 TabID를 다시확인해주세요..");
     }
 
-
-
-    public List<SortedFriendsDto>getMyfriends(User user) {
-        List<List<String>> order = chatRoomRepository.getMyFriendsOrderByDate(0,user.getEmail());
+    public List<SortedFriendsDto>getMyfriends(User user,int type) {
+        List<List<String>> order = chatRoomRepository.getMyFriendsOrderByDate(0,user.getEmail(),type);
         List<UserRequestDto> myFriendsUserDto = new ArrayList<>();
         List<SortedFriendsDto> ret = new ArrayList<>();
 
@@ -110,10 +80,6 @@ public class ContapService {
 
         return ret;
     }
-
-
-
-
 
     private List<SortedFriendsDto> sortFriendList
             (List<List<String>> order,
@@ -128,6 +94,7 @@ public class ContapService {
             dtoArrays[i].setRoomStatus(order.get(1).get(i));
             dtoArrays[i].setRoomId(order.get(0).get(i));
         }
+
         for(UserRequestDto userDto : myFriendsUserDto)
         {
             dtoArrays[sortInfo.get(userDto.getRoomId())].setUserId(userDto.getUserId());

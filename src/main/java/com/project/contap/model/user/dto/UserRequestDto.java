@@ -36,6 +36,7 @@ public class UserRequestDto {
     private String roomId;
     private int field;
     List<List<String>> values = new ArrayList<>();
+    private String msg;
 
     public UserRequestDto(Long id,String email,String profile, Long kakaoId, String userName, String pw,String hashTagsString, int field) {
         this.userId = id;
@@ -64,6 +65,25 @@ public class UserRequestDto {
         this.profile = profile;
         this.hashTags=hashTagsString;
         this.tapId = tapId;
+    }
+    public UserRequestDto(Long id,
+                          String email,
+                          String profile,
+                          Long kakaoId,
+                          String userName,
+                          String pw,
+                          String hashTagsString,
+                          Long tapId,
+                          String msg) {
+        this.userId = id;
+        this.email = email;
+        this.pw = pw;
+        this.userName = userName;
+        this.kakaoId = kakaoId;
+        this.profile = profile;
+        this.hashTags=hashTagsString;
+        this.tapId = tapId;
+        this.msg = msg;
     }
 
     public UserRequestDto(Long id,

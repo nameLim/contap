@@ -1,5 +1,6 @@
 package com.project.contap.model.tap;
 
+import com.project.contap.common.util.TimeStamped;
 import com.project.contap.model.user.User;
 import lombok.*;
 
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @Setter
 @AllArgsConstructor
 @Builder
-public class Tap {
+public class Tap extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
@@ -24,4 +25,7 @@ public class Tap {
 
     @Column
     private int status;//0 : 대기 - 1 : 거절 - 2 : 수락
+
+    @Column
+    private String msg;//0 : 대기 - 1 : 거절 - 2 : 수락
 }

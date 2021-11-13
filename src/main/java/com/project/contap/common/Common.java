@@ -53,11 +53,11 @@ public class Common {
             ChatMessageDTO msg = setChatMessageDTO(type,tapReceiver,tapSender,receiverssesion);
             redisTemplate.convertAndSend(channelTopic.getTopic(), msg);
         }
-        //else{
+        else{
+            chatRoomRepository.setAlarm(tapReceiver,type.getAlarmEnum());
 //            if(type.equals(MsgTypeEnum.SEND_TAP))
 //                sendSMS();
-            //로그아웃 상태에서 알람을따로 줘야하면 여기에 구현해주세요 ㅎ
-        //}
+        }
     }
 
     public void makeChatRoom(User sendUser, User receiveUser) {

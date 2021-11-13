@@ -1,17 +1,16 @@
 package com.project.contap.service;
 
 import com.project.contap.chat.ChatRoomRepository;
-import com.project.contap.model.user.dto.PwRequestDto;
+import com.project.contap.common.enumlist.AuthorityEnum;
+import com.project.contap.exception.ContapException;
+import com.project.contap.exception.ErrorCode;
+import com.project.contap.model.user.User;
+import com.project.contap.model.user.UserRepository;
 import com.project.contap.model.user.dto.PwUpdateRequestDto;
 import com.project.contap.model.user.dto.SignUpRequestDto;
 import com.project.contap.model.user.dto.UserRequestDto;
-import com.project.contap.exception.ContapException;
-import com.project.contap.exception.ErrorCode;
-import com.project.contap.common.enumlist.AuthorityEnum;
-import com.project.contap.model.user.User;
-import com.project.contap.model.user.UserRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,19 +21,12 @@ import java.util.regex.Pattern;
 
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final JPAQueryFactory jpaQueryFactory; // 이건차후에 쓸수도있을것같아서 남겨둠
     private final ChatRoomRepository chatRoomRepository;
-
-    @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,JPAQueryFactory jpaQueryFactory,ChatRoomRepository chatRoomRepository) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jpaQueryFactory = jpaQueryFactory;
-        this.chatRoomRepository =  chatRoomRepository;
-    }
 
     public User registerUser(SignUpRequestDto requestDto) throws ContapException {
 
@@ -63,9 +55,20 @@ public class UserService {
         return user;
     }
 
+//    @Transactional
+//    public void deleteUser(PwRequestDto requestDto, User user) throws ContapException {
+//        if (passwordEncoder.matches(requestDto.getPw(), user.getPw())) {
+//            userRepository.delete(user);
+//            User.userCount = User.userCount-1;
+//        }
+//        else {
+//            throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
+//        }
+//    }
+
     @Transactional
-    public void deleteUser(PwRequestDto requestDto, User user) throws ContapException {
-        if (passwordEncoder.matches(requestDto.getPw(), user.getPw())) {
+    public void deleteUser(String password, User user) throws ContapException {
+        if (passwordEncoder.matches(password, user.getPw())) {
             userRepository.delete(user);
             User.userCount = User.userCount-1;
         }
@@ -84,9 +87,9 @@ public class UserService {
         user.updatePw(requestDto);
     }
 
-    public String getAlarm(String email) {
-        Boolean bAlarm = chatRoomRepository.readAlarm(email);
-        return bAlarm.toString();
+    public String[] getAlarm(String email) {
+        String[] alarms = chatRoomRepository.readAlarm(email);
+        return alarms;
     }
 
     public String modifyPhoneNumber(String phoneNumber, User requestUser) {
