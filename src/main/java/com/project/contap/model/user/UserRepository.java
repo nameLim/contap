@@ -16,4 +16,6 @@ public interface UserRepository extends JpaRepository<User, Long>,CostomUserRepo
     boolean existsByEmail(String email);
 
     Page<User> findAll(Pageable pageable);
+
+    Optional<User> findByGithubId(Long githubId);
 }

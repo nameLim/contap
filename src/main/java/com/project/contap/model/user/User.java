@@ -34,13 +34,16 @@ public class User extends TimeStamped {
     @Schema(description = "사용자 비밀번호")
     private String pw;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     @Schema(description = "사용자 이름(닉네임)")
     private String userName;
 
     @Column(unique = true)
     @Schema(description = "카카오 아이디")
     private Long kakaoId;
+
+    @Column(unique = true)
+    private Long githubId;
 
 
     @Column(unique = false) // profile img path
