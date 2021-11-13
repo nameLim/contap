@@ -1,4 +1,4 @@
-package com.project.contap.model.user.kakao;
+package com.project.contap.model.user.sns;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @Schema(name = "KakaoUser RequestDto",description = "Id,nickname,Email")
-public class KakaoUserInfoDto {
+public class SnsUserInfoDto {
 
     @Schema(description = "Id")
     private Long id;

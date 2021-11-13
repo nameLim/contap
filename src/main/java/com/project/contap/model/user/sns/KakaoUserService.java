@@ -1,4 +1,4 @@
-package com.project.contap.model.user.github;
+package com.project.contap.model.user.sns;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -25,53 +25,52 @@ import org.springframework.web.client.RestTemplate;
 import java.util.UUID;
 
 @Service
-public class GithubUserService {
+public class KakaoUserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
     @Autowired
-    public GithubUserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public KakaoUserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User githubLogin(String code) throws JsonProcessingException {
+    public User kakaoLogin(String code) throws JsonProcessingException {
 // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
 
 // 2. "액세스 토큰"으로 "카카오 사용자 정보" 가져오기
-       GithubUserInfoDto GithubUserInfo = getGithubUserInfo(accessToken);
+        SnsUserInfoDto snsUserInfoDto = getKakaoUserInfo(accessToken);
 
-// 3. "카카오 사용자 정보"로 필요시 회원가입  및 이미 같은 이메일이 있으면 기존회원으로 로그인-
-        User GithubUser = registerGithubOrUpdateGithub(GithubUserInfo);
+// 3. "카카오 사용자 정보"로 필요시 회원가입  및 이미 같은 이메일이 있으면 기존회원으로 로그인
+        User kakaoUser = registerKakaoOrUpdateKakao(snsUserInfoDto);
 
 // 4. 강제 로그인 처리
-        forceLogin(GithubUser);
+        forceLogin(kakaoUser);
 
-        return GithubUser;
+        return kakaoUser;
     }
 
     private String getAccessToken(String code) throws JsonProcessingException {
 // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
-        headers.add("Accept", "application/json");
 
 // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("client_secret", "4f0e51148be204784876a50f544598c325a503b9");
-        body.add("client_id", "ec87ecda94ea612cbe6c");
+        body.add("grant_type", "authorization_code");
+        body.add("client_id", "61715e223e40655da05bb6ce100f455c");
         body.add("redirect_uri", "http://localhost:3000/login");
         body.add("code", code);
 
 // HTTP 요청 보내기
-        HttpEntity<MultiValueMap<String, String>> githubTokenRequest =
+        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
                 new HttpEntity<>(body, headers);
         RestTemplate rt = new RestTemplate();
         ResponseEntity<String> response = rt.exchange(
-                "https://github.com/login/oauth/access_token",
+                "https://kauth.kakao.com/oauth/token",
                 HttpMethod.POST,
-                githubTokenRequest,
+                kakaoTokenRequest,
                 String.class
         );
 
@@ -82,19 +81,19 @@ public class GithubUserService {
         return jsonNode.get("access_token").asText();
     }
 
-    private GithubUserInfoDto getGithubUserInfo(String accessToken) throws JsonProcessingException {
+    private SnsUserInfoDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
 // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
 // HTTP 요청 보내기
-        HttpEntity<MultiValueMap<String, String>> githubUserInfoRequest = new HttpEntity<>(headers);
+        HttpEntity<MultiValueMap<String, String>> kakaoUserInfoRequest = new HttpEntity<>(headers);
         RestTemplate rt = new RestTemplate();
         ResponseEntity<String> response = rt.exchange(
-                "https://api.github.com/user",
-                HttpMethod.GET,
-                githubUserInfoRequest,
+                "https://kapi.kakao.com/v2/user/me",
+                HttpMethod.POST,
+                kakaoUserInfoRequest,
                 String.class
         );
 
@@ -102,64 +101,67 @@ public class GithubUserService {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
         Long id = jsonNode.get("id").asLong();
-        String email = jsonNode.get("login").asText();
-        String name = jsonNode.get("name").asText();
-        String profile = jsonNode.get("avatar_url").asText();
+        String nickname = jsonNode.get("properties")
+                .get("nickname").asText();
+        String email = jsonNode.get("kakao_account")
+                .get("email").asText();
+        String profile = jsonNode.get("properties")
+                .get("profile_image").asText();
 
-
-
-        return new GithubUserInfoDto(id, email,name,profile);
+        return new SnsUserInfoDto(id, nickname, email,profile);
     }
 
-    private User registerGithubOrUpdateGithub(GithubUserInfoDto githubUserInfo) {
-        User sameUser = userRepository.findByEmail(githubUserInfo.getEmail()).orElse(null);
+    private User registerKakaoOrUpdateKakao(SnsUserInfoDto snsUserInfoDto) {
+        User sameUser = userRepository.findByEmail(snsUserInfoDto.getEmail()).orElse(null);
 
         if (sameUser == null) {
-            return registerGithubUserIfNeeded(githubUserInfo);
+            return registerKakaoUserIfNeeded(snsUserInfoDto);
         } else {
-            return updateGithubUser(sameUser, githubUserInfo);
+            return updateKakaoUser(sameUser, snsUserInfoDto);
         }
     }
 
-    private User registerGithubUserIfNeeded(GithubUserInfoDto githubUserInfo) {
-// DB 에 중복된 github Id 가 있는지 확인
-        Long githubId = githubUserInfo.getId();
-        User githubUser = userRepository.findByGithubId(githubId)
+    private User registerKakaoUserIfNeeded(SnsUserInfoDto snsUserInfoDto) {
+// DB 에 중복된 Kakao Id 가 있는지 확인
+        Long kakaoId = snsUserInfoDto.getId();
+        User kakaoUser = userRepository.findByKakaoId(kakaoId)
                 .orElse(null);
-        if (githubUser == null) {
-
-            String name = githubUserInfo.getName();
+        if (kakaoUser == null) {
+// 회원가입
+// username: kakao nickname
+            String nickname = snsUserInfoDto.getNickname();
 
 // password: random UUID
             String password = UUID.randomUUID().toString();
             String encodedPassword = passwordEncoder.encode(password);
 
-
-            String email = githubUserInfo.getEmail();
-            String profile = githubUserInfo.getProfile();
-            githubUser = User.builder()
-                    .email(name + "@github.com")
-                    .githubId(githubId)
+// email: kakao email
+            String email = snsUserInfoDto.getEmail();
+            String profile = snsUserInfoDto.getProfile();
+            kakaoUser = User.builder()
+                    .email(email)
+                    .kakaoId(kakaoId)
                     .pw(encodedPassword)
-                    .userName(name)
+                    .userName(nickname)
                     .profile(profile)
                     .build();
-            userRepository.save(githubUser);
+            userRepository.save(kakaoUser);
 
         }
-        return githubUser;
+        return kakaoUser;
     }
 
-    private User updateGithubUser(User sameUser, GithubUserInfoDto githubUserInfo) {
-        if (sameUser.getGithubId() == null) {
-            sameUser.setGithubId(githubUserInfo.getId());
+    private User updateKakaoUser(User sameUser, SnsUserInfoDto snsUserInfoDto) {
+        if (sameUser.getKakaoId() == null) {
+            System.out.println("중복");
+            sameUser.setKakaoId(snsUserInfoDto.getId());
             userRepository.save(sameUser);
         }
         return sameUser;
     }
 
-    private void forceLogin(User githubUser) {
-        UserDetails userDetails = new UserDetailsImpl(githubUser);
+    private void forceLogin(User kakaoUser) {
+        UserDetails userDetails = new UserDetailsImpl(kakaoUser);
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
