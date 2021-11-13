@@ -8,7 +8,7 @@ import com.project.contap.model.user.User;
 import com.project.contap.model.user.UserRepository;
 import com.project.contap.model.user.dto.PwUpdateRequestDto;
 import com.project.contap.model.user.dto.SignUpRequestDto;
-import com.project.contap.model.user.dto.UserRequestDto;
+import com.project.contap.model.user.dto.UserLoginDto;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -43,7 +43,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User login(UserRequestDto requestDto) throws ContapException {
+    public User login(UserLoginDto requestDto) throws ContapException {
         User user = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(
                 () -> new ContapException(ErrorCode.USER_NOT_FOUND)
         );

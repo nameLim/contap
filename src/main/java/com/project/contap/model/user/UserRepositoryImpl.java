@@ -4,7 +4,8 @@ import com.project.contap.common.SearchRequestDto;
 import com.project.contap.common.util.RandomNumberGeneration;
 import com.project.contap.model.friend.QFriend;
 import com.project.contap.model.tap.QTap;
-import com.project.contap.model.user.dto.UserRequestDto;
+import com.project.contap.model.user.dto.UserMainDto;
+import com.project.contap.model.user.dto.UserTapDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -21,23 +22,22 @@ public class UserRepositoryImpl implements CostomUserRepository{
     }
 
     @Override
-    public List<UserRequestDto> findMysendORreceiveTapUserInfo(Long userId,int type,int page)
+    public List<UserTapDto> findMysendORreceiveTapUserInfo(Long userId, int type, int page)
     {
         page = 6*page;
         QTap qtap = QTap.tap;
         if (type == 0)
             return queryFactory
                     .select(
-                            Projections.constructor(UserRequestDto.class,
+                            Projections.constructor(UserTapDto.class,
                                     qtap.receiveUser.id,
                                     qtap.receiveUser.email,
                                     qtap.receiveUser.profile,
-                                    qtap.receiveUser.kakaoId,
                                     qtap.receiveUser.userName,
-                                    qtap.receiveUser.pw,
                                     qtap.receiveUser.hashTagsString,
                                     qtap.id,
-                                    qtap.msg
+                                    qtap.msg,
+                                    qtap.receiveUser.field
                             ))
                     .from(qtap)
                     .where(qtap.sendUser.id.eq(userId))
@@ -47,16 +47,15 @@ public class UserRepositoryImpl implements CostomUserRepository{
         else
             return queryFactory
                     .select(
-                            Projections.constructor(UserRequestDto.class,
-                                    qtap.sendUser.id,
-                                    qtap.sendUser.email,
-                                    qtap.sendUser.profile,
-                                    qtap.sendUser.kakaoId,
-                                    qtap.sendUser.userName,
-                                    qtap.sendUser.pw,
-                                    qtap.sendUser.hashTagsString,
+                            Projections.constructor(UserTapDto.class,
+                                    qtap.receiveUser.id,
+                                    qtap.receiveUser.email,
+                                    qtap.receiveUser.profile,
+                                    qtap.receiveUser.userName,
+                                    qtap.receiveUser.hashTagsString,
                                     qtap.id,
-                                    qtap.msg
+                                    qtap.msg,
+                                    qtap.receiveUser.field
                             ))
                     .from(qtap)
                     .where(qtap.sendUser.id.eq(userId))
@@ -70,19 +69,18 @@ public class UserRepositoryImpl implements CostomUserRepository{
     //지금은 페이지가 아니라 다 불러오는거로 바뀌엇으니까. 차후에 수정할필요가있다.
     //하지만 어찌될지몰라서 남겨둠.
     @Override
-    public List<UserRequestDto> findMyFriendsById(Long userId,List<String> orderList)
+    public List<UserTapDto> findMyFriendsById(Long userId,List<String> orderList)
     {
         QFriend qfriend = QFriend.friend;
         return queryFactory
                 .select(
-                        Projections.constructor(UserRequestDto.class,
+                        Projections.constructor(UserTapDto.class,
                                 qfriend.you.id,
                                 qfriend.you.email,
                                 qfriend.you.profile,
-                                qfriend.you.kakaoId,
                                 qfriend.you.userName,
-                                qfriend.you.pw,
                                 qfriend.you.hashTagsString,
+                                qfriend.you.field,
                                 qfriend.roomId
                         )).distinct()
                 .from(qfriend)
@@ -91,7 +89,7 @@ public class UserRepositoryImpl implements CostomUserRepository{
                 .fetch();
     }
     @Override
-    public List<UserRequestDto> findAllByTag(SearchRequestDto tagsandtype)
+    public List<UserMainDto> findAllByTag(SearchRequestDto tagsandtype)
     {
         BooleanBuilder builder = new BooleanBuilder();
         int page = 9*tagsandtype.getPage();
@@ -111,13 +109,11 @@ public class UserRepositoryImpl implements CostomUserRepository{
         }
         return queryFactory
                 .select(
-                        Projections.constructor(UserRequestDto.class,
+                        Projections.constructor(UserMainDto.class,
                                 hu.id,
                                 hu.email,
                                 hu.profile,
-                                hu.kakaoId,
                                 hu.userName,
-                                hu.pw,
                                 hu.hashTagsString,
                                 hu.field
                         )).distinct()
@@ -127,7 +123,7 @@ public class UserRepositoryImpl implements CostomUserRepository{
                 .fetch();
     }
     @Override
-    public List<UserRequestDto> getRandomUser(Long usercnt)
+    public List<UserMainDto> getRandomUser(Long usercnt)
     {
 //        Long check1 = usercnt/9;
 //        Long check2 = usercnt%9;
@@ -139,13 +135,11 @@ public class UserRepositoryImpl implements CostomUserRepository{
         QUser hu = QUser.user;
         return queryFactory
                 .select(
-                        Projections.constructor(UserRequestDto.class,
+                        Projections.constructor(UserMainDto.class,
                                 hu.id,
                                 hu.email,
                                 hu.profile,
-                                hu.kakaoId,
                                 hu.userName,
-                                hu.pw,
                                 hu.hashTagsString,
                                 hu.field
                         )).distinct()

@@ -6,7 +6,7 @@ import com.project.contap.exception.ErrorCode;
 import com.project.contap.model.user.User;
 import com.project.contap.model.user.dto.PwUpdateRequestDto;
 import com.project.contap.model.user.dto.SignUpRequestDto;
-import com.project.contap.model.user.dto.UserRequestDto;
+import com.project.contap.model.user.dto.UserLoginDto;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.security.jwt.JwtTokenProvider;
 import com.project.contap.service.UserService;
@@ -45,7 +45,7 @@ public class UserController {
 
     @Operation(summary = "로그인")
     @PostMapping("/user/login")
-    public Map<String, String> login(@RequestBody UserRequestDto requestDto) throws ContapException {
+    public Map<String, String> login(@RequestBody UserLoginDto requestDto) throws ContapException {
         User user = userService.login(requestDto);
 
         Map<String, String> result = new HashMap<>();

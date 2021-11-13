@@ -3,7 +3,7 @@ package com.project.contap.controller;
 import com.project.contap.common.DefaultRsp;
 import com.project.contap.model.friend.SortedFriendsDto;
 import com.project.contap.model.hashtag.TagDto;
-import com.project.contap.model.user.dto.UserRequestDto;
+import com.project.contap.model.user.dto.UserTapDto;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.service.ContapService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,20 +22,20 @@ public class ContapController {
     }
 
     @GetMapping("/contap/dotap/{page}")
-    public List<UserRequestDto> getMydoTap(
+    public List<UserTapDto> getMydoTap(
             @PathVariable int page,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return contapService.getMydoTap(userDetails.getUser(),page);
     }
     @GetMapping("/contap/gettap/{page}")
-    public List<UserRequestDto> getMyTap(
+    public List<UserTapDto> getMyTap(
             @PathVariable int page,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return contapService.getMyTap(userDetails.getUser(),page);
     }
     @GetMapping("/contap/getothers/{type}")
     public List<SortedFriendsDto> getMyfriends(
-            @PathVariable int type,
+            @PathVariable(required = false) int type,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return contapService.getMyfriends(userDetails.getUser(),type);
     }
