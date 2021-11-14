@@ -63,27 +63,12 @@ public class UserController {
     }
 
 
-//    @Operation(summary = "회원탈퇴")
-//    @DeleteMapping("/setting/withdrawal")
-//    public Map<String, String> deleteUser(@RequestBody PwRequestDto requestDto,@Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
-//
-//
-//        userService.deleteUser(requestDto,userDetails.getUser());
-//
-//        Map<String, String> result = new HashMap<>();
-//        result.put("result", "success");
-//
-//        return result;
-//
-//    }
-
     @Operation(summary = "회원탈퇴")
     @DeleteMapping("/setting/withdrawal")
-    public Map<String, String> deleteUser(@RequestParam String password, @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
+    public Map<String, String> deleteUser(@RequestBody UserLoginDto requestDto,@Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
 
-//        userService.deleteUser(requestDto,userDetails.getUser());
 
-        userService.deleteUser(password,userDetails.getUser());
+        userService.deleteUser(requestDto,userDetails.getUser());
 
         Map<String, String> result = new HashMap<>();
         result.put("result", "success");
@@ -91,6 +76,8 @@ public class UserController {
         return result;
 
     }
+
+
 
     @Operation(summary = "비밀번호 변경")
     @PostMapping("/setting/password")

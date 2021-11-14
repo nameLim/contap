@@ -2,8 +2,8 @@ package com.project.contap.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.project.contap.model.user.User;
-import com.project.contap.model.user.sns.GithubUserService;
-import com.project.contap.model.user.sns.KakaoUserService;
+import com.project.contap.service.GithubUserService;
+import com.project.contap.service.KakaoUserService;
 import com.project.contap.security.jwt.JwtTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
