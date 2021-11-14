@@ -39,10 +39,7 @@ public class TestController {
     List<Card> forclient1(
             @PathVariable Long id
     ) throws ContapException {
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null)
-            return null;
-        return cardRepository.findAllByUser(user);
+        return null;
     }
 
     @GetMapping("/forclient2/{id}") // 한유저가쓴 카드 모두조회

@@ -24,6 +24,8 @@ public class UserRepositoryImpl implements CostomUserRepository{
     @Override
     public List<UserTapDto> findMysendORreceiveTapUserInfo(Long userId, int type, int page)
     {
+        // 0 - 내가보낸
+        // 1 - 내가받은
         page = 6*page;
         QTap qtap = QTap.tap;
         if (type == 0)
@@ -48,17 +50,17 @@ public class UserRepositoryImpl implements CostomUserRepository{
             return queryFactory
                     .select(
                             Projections.constructor(UserTapDto.class,
-                                    qtap.receiveUser.id,
-                                    qtap.receiveUser.email,
-                                    qtap.receiveUser.profile,
-                                    qtap.receiveUser.userName,
-                                    qtap.receiveUser.hashTagsString,
+                                    qtap.sendUser.id,
+                                    qtap.sendUser.email,
+                                    qtap.sendUser.profile,
+                                    qtap.sendUser.userName,
+                                    qtap.sendUser.hashTagsString,
                                     qtap.id,
                                     qtap.msg,
-                                    qtap.receiveUser.field
+                                    qtap.sendUser.field
                             ))
                     .from(qtap)
-                    .where(qtap.sendUser.id.eq(userId))
+                    .where(qtap.receiveUser.id.eq(userId))
                     .orderBy(qtap.insertDt.desc())
                     .offset(page).limit(6)
                     .fetch();

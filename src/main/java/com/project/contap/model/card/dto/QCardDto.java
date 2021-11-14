@@ -1,6 +1,7 @@
 package com.project.contap.model.card.dto;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class QCardDto {
     private Long cardId;
     private String title;

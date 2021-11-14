@@ -35,7 +35,7 @@ public class ContapService {
     @Transactional
     public List<UserTapDto> getMyTap(User user,int page) {
 
-        List<UserTapDto> myReceiveTapUserDto = userRepository.findMysendORreceiveTapUserInfo(user.getId(),1,page);;
+        List<UserTapDto> myReceiveTapUserDto = userRepository.findMysendORreceiveTapUserInfo(user.getId(),1,page);
         return myReceiveTapUserDto;
     }
 
