@@ -1,10 +1,11 @@
-package com.project.contap.model.user.sns;
+package com.project.contap.service;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.contap.model.user.User;
+import com.project.contap.model.user.dto.SnsUserInfoDto;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.model.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,52 +26,53 @@ import org.springframework.web.client.RestTemplate;
 import java.util.UUID;
 
 @Service
-public class KakaoUserService {
+public class GithubUserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
     @Autowired
-    public KakaoUserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public GithubUserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User kakaoLogin(String code) throws JsonProcessingException {
+    public User githubLogin(String code) throws JsonProcessingException {
 // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
 
 // 2. "액세스 토큰"으로 "카카오 사용자 정보" 가져오기
-        SnsUserInfoDto snsUserInfoDto = getKakaoUserInfo(accessToken);
+       SnsUserInfoDto snsUserInfoDto = getGithubUserInfo(accessToken);
 
-// 3. "카카오 사용자 정보"로 필요시 회원가입  및 이미 같은 이메일이 있으면 기존회원으로 로그인
-        User kakaoUser = registerKakaoOrUpdateKakao(snsUserInfoDto);
+// 3. "카카오 사용자 정보"로 필요시 회원가입  및 이미 같은 이메일이 있으면 기존회원으로 로그인-
+        User GithubUser = registerGithubOrUpdateGithub(snsUserInfoDto);
 
 // 4. 강제 로그인 처리
-        forceLogin(kakaoUser);
+        forceLogin(GithubUser);
 
-        return kakaoUser;
+        return GithubUser;
     }
 
     private String getAccessToken(String code) throws JsonProcessingException {
 // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        headers.add("Accept", "application/json");
 
 // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code");
-        body.add("client_id", "61715e223e40655da05bb6ce100f455c");
+        body.add("client_secret", "4f0e51148be204784876a50f544598c325a503b9");
+        body.add("client_id", "ec87ecda94ea612cbe6c");
         body.add("redirect_uri", "http://localhost:3000/login");
         body.add("code", code);
 
 // HTTP 요청 보내기
-        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
+        HttpEntity<MultiValueMap<String, String>> githubTokenRequest =
                 new HttpEntity<>(body, headers);
         RestTemplate rt = new RestTemplate();
         ResponseEntity<String> response = rt.exchange(
-                "https://kauth.kakao.com/oauth/token",
+                "https://github.com/login/oauth/access_token",
                 HttpMethod.POST,
-                kakaoTokenRequest,
+                githubTokenRequest,
                 String.class
         );
 
@@ -81,19 +83,19 @@ public class KakaoUserService {
         return jsonNode.get("access_token").asText();
     }
 
-    private SnsUserInfoDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
+    private SnsUserInfoDto getGithubUserInfo(String accessToken) throws JsonProcessingException {
 // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
 // HTTP 요청 보내기
-        HttpEntity<MultiValueMap<String, String>> kakaoUserInfoRequest = new HttpEntity<>(headers);
+        HttpEntity<MultiValueMap<String, String>> githubUserInfoRequest = new HttpEntity<>(headers);
         RestTemplate rt = new RestTemplate();
         ResponseEntity<String> response = rt.exchange(
-                "https://kapi.kakao.com/v2/user/me",
-                HttpMethod.POST,
-                kakaoUserInfoRequest,
+                "https://api.github.com/user",
+                HttpMethod.GET,
+                githubUserInfoRequest,
                 String.class
         );
 
@@ -101,67 +103,64 @@ public class KakaoUserService {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
         Long id = jsonNode.get("id").asLong();
-        String nickname = jsonNode.get("properties")
-                .get("nickname").asText();
-        String email = jsonNode.get("kakao_account")
-                .get("email").asText();
-        String profile = jsonNode.get("properties")
-                .get("profile_image").asText();
+        String email = jsonNode.get("login").asText();
+        String name = jsonNode.get("name").asText();
+        String profile = jsonNode.get("avatar_url").asText();
 
-        return new SnsUserInfoDto(id, nickname, email,profile);
+
+
+        return new SnsUserInfoDto(id, email,name,profile);
     }
 
-    private User registerKakaoOrUpdateKakao(SnsUserInfoDto snsUserInfoDto) {
+    private User registerGithubOrUpdateGithub(SnsUserInfoDto snsUserInfoDto) {
         User sameUser = userRepository.findByEmail(snsUserInfoDto.getEmail()).orElse(null);
 
         if (sameUser == null) {
-            return registerKakaoUserIfNeeded(snsUserInfoDto);
+            return registerGithubUserIfNeeded(snsUserInfoDto);
         } else {
-            return updateKakaoUser(sameUser, snsUserInfoDto);
+            return updateGithubUser(sameUser, snsUserInfoDto);
         }
     }
 
-    private User registerKakaoUserIfNeeded(SnsUserInfoDto snsUserInfoDto) {
-// DB 에 중복된 Kakao Id 가 있는지 확인
-        Long kakaoId = snsUserInfoDto.getId();
-        User kakaoUser = userRepository.findByKakaoId(kakaoId)
+    private User registerGithubUserIfNeeded(SnsUserInfoDto snsUserInfoDto) {
+// DB 에 중복된 github Id 가 있는지 확인
+        Long githubId = snsUserInfoDto.getId();
+        User githubUser = userRepository.findByGithubId(githubId)
                 .orElse(null);
-        if (kakaoUser == null) {
-// 회원가입
-// username: kakao nickname
-            String nickname = snsUserInfoDto.getNickname();
+        if (githubUser == null) {
+
+            String name = snsUserInfoDto.getNickname();
 
 // password: random UUID
             String password = UUID.randomUUID().toString();
             String encodedPassword = passwordEncoder.encode(password);
 
-// email: kakao email
+
             String email = snsUserInfoDto.getEmail();
             String profile = snsUserInfoDto.getProfile();
-            kakaoUser = User.builder()
-                    .email(email)
-                    .kakaoId(kakaoId)
+            githubUser = User.builder()
+                    .email(name + "@github.com")
+                    .githubId(githubId)
                     .pw(encodedPassword)
-                    .userName(nickname)
+                    .userName(name)
                     .profile(profile)
                     .build();
-            userRepository.save(kakaoUser);
+            userRepository.save(githubUser);
 
         }
-        return kakaoUser;
+        return githubUser;
     }
 
-    private User updateKakaoUser(User sameUser, SnsUserInfoDto snsUserInfoDto) {
-        if (sameUser.getKakaoId() == null) {
-            System.out.println("중복");
-            sameUser.setKakaoId(snsUserInfoDto.getId());
+    private User updateGithubUser(User sameUser, SnsUserInfoDto snsUserInfoDto) {
+        if (sameUser.getGithubId() == null) {
+            sameUser.setGithubId(snsUserInfoDto.getId());
             userRepository.save(sameUser);
         }
         return sameUser;
     }
 
-    private void forceLogin(User kakaoUser) {
-        UserDetails userDetails = new UserDetailsImpl(kakaoUser);
+    private void forceLogin(User githubUser) {
+        UserDetails userDetails = new UserDetailsImpl(githubUser);
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }

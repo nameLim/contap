@@ -55,20 +55,9 @@ public class UserService {
         return user;
     }
 
-//    @Transactional
-//    public void deleteUser(PwRequestDto requestDto, User user) throws ContapException {
-//        if (passwordEncoder.matches(requestDto.getPw(), user.getPw())) {
-//            userRepository.delete(user);
-//            User.userCount = User.userCount-1;
-//        }
-//        else {
-//            throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
-//        }
-//    }
-
     @Transactional
-    public void deleteUser(String password, User user) throws ContapException {
-        if (passwordEncoder.matches(password, user.getPw())) {
+    public void deleteUser(UserLoginDto requestDto, User user) throws ContapException {
+        if (passwordEncoder.matches(requestDto.getPw(), user.getPw())) {
             userRepository.delete(user);
             User.userCount = User.userCount-1;
         }
@@ -76,6 +65,8 @@ public class UserService {
             throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
         }
     }
+
+
 
     @Transactional
     public void updatePassword(PwUpdateRequestDto requestDto, String email) throws ContapException {

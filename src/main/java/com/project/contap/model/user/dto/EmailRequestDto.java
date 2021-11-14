@@ -1,4 +1,4 @@
-package com.project.contap.model.user.email;
+package com.project.contap.model.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

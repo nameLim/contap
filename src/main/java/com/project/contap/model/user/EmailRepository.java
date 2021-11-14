@@ -1,4 +1,4 @@
-package com.project.contap.model.user.email;
+package com.project.contap.model.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;

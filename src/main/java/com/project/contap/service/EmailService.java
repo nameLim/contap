@@ -1,8 +1,10 @@
-package com.project.contap.model.user.email;
+package com.project.contap.service;
 
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
+import com.project.contap.model.user.EmailRepository;
 import com.project.contap.model.user.UserRepository;
+import com.project.contap.model.user.dto.EmailRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailException;
