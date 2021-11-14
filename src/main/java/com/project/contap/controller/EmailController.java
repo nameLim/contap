@@ -1,6 +1,8 @@
-package com.project.contap.model.user.email;
+package com.project.contap.controller;
 
 import com.project.contap.exception.ContapException;
+import com.project.contap.model.user.dto.EmailRequestDto;
+import com.project.contap.service.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

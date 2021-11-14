@@ -1,4 +1,4 @@
-package com.project.contap.model.user.sns;
+package com.project.contap.model.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
