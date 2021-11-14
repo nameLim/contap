@@ -144,7 +144,7 @@ public class UserRepositoryImpl implements CostomUserRepository{
                                 hu.field
                         )).distinct()
                 .from(hu)
-                .offset(page).limit(9)
+                .offset(0).limit(9)
                 .fetch();
         //귀찮.. 다음에 페이징처리하자
     }
