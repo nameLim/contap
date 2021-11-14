@@ -7,5 +7,4 @@ import java.util.Set;
 
 public interface HashTagRepositoty extends JpaRepository<HashTag, Long> {
     List<HashTag> findAllByNameIn(Set<String> hashName);
-    List<HashTag> findAllByNameInOrderByType(Set<String> hashName);
 }

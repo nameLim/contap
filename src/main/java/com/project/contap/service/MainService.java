@@ -49,20 +49,6 @@ public class MainService {
 
     public List<UserMainDto> getUserDtoList(UserDetailsImpl userDetails) {
         List<UserMainDto> ret = userRepository.getRandomUser(User.userCount);
-
-//        if(userDetails != null) {
-//            QFriend qfriend = QFriend.friend;
-//            List<Long> listFriendId = jpaQueryFactory
-//                    .select(
-//                            qfriend.you.id
-//                    ).distinct()
-//                    .from(qfriend)
-//                    .where(qfriend.me.id.eq(userDetails.getUser().getId()))
-//                    .fetch();
-//                checkid.setIsFriend(listFriendId.contains(checkid.getUserId()));
-//            }
-//        } // 이구문은 프론트한테 한번 문의해보자
-
         return ret;
     }
 
