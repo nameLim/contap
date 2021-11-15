@@ -22,7 +22,6 @@ import java.util.*;
 public class ContapService {
 
     private final TapRepository tapRepository;
-    private final FriendRepository friendRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
     private final Common common;
@@ -55,11 +54,11 @@ public class ContapService {
     @Transactional
     public DefaultRsp rapAccept(Long tagId,String receiveUserEmail) {
         Tap tap = tapRepository.findById(tagId).orElse(null);
-        User sendUser = tap.getSendUser();
         if (tap != null)
         {
             if (tap.getStatus() !=0)
                 return new DefaultRsp("이미 처리된 Tap 입니다.");
+            User sendUser = tap.getSendUser();
             common.makeChatRoom(tap.getSendUser(),tap.getReceiveUser());
             common.sendAlarmIfneeded(MsgTypeEnum.ACCEPT_TAP,sendUser.getEmail(),receiveUserEmail);
             tapRepository.delete(tap);
