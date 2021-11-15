@@ -136,6 +136,8 @@ public class ChatRoomRepository {
 
     public void whenMakeFriend(String roomId,String me,String you)
     {
+        if(me.startsWith("testUser")) // 지금 어쩔수없이 추가함 차후에 공부하고 수정하자..
+            return;
         double date = Double.parseDouble(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss")));
         listOpsforRoomstatus.rightPush(roomId,"@@/0/_test용_"); // [0] = 보낸사람 , [1] = 채팅방 인원수
         zSetforchatdate.add(me,roomId,date);
