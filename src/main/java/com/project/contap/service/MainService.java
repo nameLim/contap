@@ -70,7 +70,7 @@ public class MainService {
             return new DefaultRsp("상대방의 요청을 수락 하였습니다.");
         }
 
-        Boolean checksendtap =tapRepository.checkSendTap(receiveUser,sendUser);
+        Boolean checksendtap = tapRepository.checkSendTap(receiveUser,sendUser);
         if (checksendtap)
             return new DefaultRsp("이미 상대에게 요청을 보낸 상태입니다.");
 
