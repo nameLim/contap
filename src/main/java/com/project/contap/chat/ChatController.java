@@ -1,4 +1,4 @@
-package com.project.contap.controller;
+package com.project.contap.chat;
 
 import com.project.contap.chat.ChatMessage;
 import com.project.contap.chat.ChatMessageDTO;

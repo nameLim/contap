@@ -48,7 +48,7 @@ public class Common {
     }
 
     public void sendAlarmIfneeded(MsgTypeEnum type, String tapSender, String tapReceiver) {
-        String receiverssesion = chatRoomRepository.getSessionId(tapSender);
+        String receiverssesion = chatRoomRepository.getSessionId(tapReceiver);
         if(receiverssesion != null) {
             ChatMessageDTO msg = setChatMessageDTO(type,tapReceiver,tapSender,receiverssesion);
             redisTemplate.convertAndSend(channelTopic.getTopic(), msg);

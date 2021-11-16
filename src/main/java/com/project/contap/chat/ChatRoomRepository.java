@@ -93,8 +93,9 @@ public class ChatRoomRepository {
         StringBuilder newStatus = new StringBuilder();
         if (splitStatus[0] != "@@" && splitStatus[0] != enterUser)
             newStatus.append("@@/");
-        int userCnt = Integer.parseInt(splitStatus[1]);
-        newStatus.append(userCnt+1);
+        String userCnt = Integer.toString(Integer.parseInt(splitStatus[1])+1);
+
+        newStatus.append(userCnt);
         newStatus.append("/");
         newStatus.append(splitStatus[2]);
         listOpsforRoomstatus.rightPush(roomId,newStatus.toString());
@@ -125,7 +126,7 @@ public class ChatRoomRepository {
             String roomStatus = Sender+"/1/"+msg;
             listOpsforRoomstatus.rightPush(roomId, roomStatus);
         }else{
-            String roomStatus = "@@/1/"+msg;
+            String roomStatus = "@@/2/"+msg;
             listOpsforRoomstatus.rightPop(roomId);
             listOpsforRoomstatus.rightPush(roomId, roomStatus);
         }
@@ -184,12 +185,14 @@ public class ChatRoomRepository {
         List<List<String>> values = new ArrayList<>();
         List<String> rooms = new ArrayList<>();
         List<String> newMsg = new ArrayList<>();
+        List<String> dates = new ArrayList<>();
         for (Iterator<ZSetOperations.TypedTuple<String>> iterator = ret.iterator(); iterator.hasNext();) {
             ZSetOperations.TypedTuple<String> typedTuple = iterator.next();
             String roomStatus = listOpsforRoomstatus.index(typedTuple.getValue(), -1);
             if(type==0) {
                 rooms.add(typedTuple.getValue());
                 newMsg.add(roomStatus);
+                dates.add(typedTuple.getScore().toString());
             }
             else if (type == 1)
             {
@@ -197,6 +200,7 @@ public class ChatRoomRepository {
                 {
                     rooms.add(typedTuple.getValue());
                     newMsg.add(roomStatus);
+                    dates.add(typedTuple.getScore().toString());
                 }
             }
             else
@@ -205,11 +209,13 @@ public class ChatRoomRepository {
                 {
                     rooms.add(typedTuple.getValue());
                     newMsg.add(roomStatus);
+                    dates.add(typedTuple.getScore().toString());
                 }
             }
         }
         values.add(rooms);
         values.add(newMsg);
+        values.add(dates);
         return values;
     }
 }

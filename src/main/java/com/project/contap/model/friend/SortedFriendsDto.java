@@ -13,6 +13,7 @@ public class SortedFriendsDto {
     private String hashTags;
     private String roomId;
     private String roomStatus;
+    private String date;
     public SortedFriendsDto(String roomId,String roomStatus)
     {
         this.roomId = roomId;

@@ -44,7 +44,7 @@ public class ContapService {
         {
             if (tap.getStatus() !=0)
                 return new DefaultRsp("이미 처리된 Tap 입니다.");
-            common.sendAlarmIfneeded(MsgTypeEnum.REJECT_TAP,tap.getSendUser().getEmail(),receiveUserEmail);
+            common.sendAlarmIfneeded(MsgTypeEnum.REJECT_TAP,receiveUserEmail,tap.getSendUser().getEmail());
             tapRepository.delete(tap);
             return new DefaultRsp("정상적으로 처리 되었습니다.");
         }
@@ -60,7 +60,7 @@ public class ContapService {
                 return new DefaultRsp("이미 처리된 Tap 입니다.");
             User sendUser = tap.getSendUser();
             common.makeChatRoom(tap.getSendUser(),tap.getReceiveUser());
-            common.sendAlarmIfneeded(MsgTypeEnum.ACCEPT_TAP,sendUser.getEmail(),receiveUserEmail);
+            common.sendAlarmIfneeded(MsgTypeEnum.ACCEPT_TAP,receiveUserEmail,sendUser.getEmail());
             tapRepository.delete(tap);
             return new DefaultRsp("정상적으로 처리 되었습니다.");
         }
@@ -92,6 +92,10 @@ public class ContapService {
             dtoArrays[i] = new SortedFriendsDto();
             dtoArrays[i].setRoomStatus(order.get(1).get(i));
             dtoArrays[i].setRoomId(order.get(0).get(i));
+            String date = order.get(2).get(i);
+            int e = date.indexOf("E");
+            date = date.substring(0,e).replace(".","");
+            dtoArrays[i].setDate(date);
         }
 
         for(UserTapDto userDto : myFriendsUserDto)
