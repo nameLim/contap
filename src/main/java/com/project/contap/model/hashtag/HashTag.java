@@ -11,7 +11,6 @@ import java.util.List;
 @Entity
 @Setter
 @Getter
-@Builder
 @AllArgsConstructor
 public class HashTag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,5 +26,11 @@ public class HashTag {
     @ManyToMany(mappedBy = "tags")
     @JsonIgnore
     private List<User> users;
+
+    public HashTag(String name, int type)
+    {
+        this.name = name;
+        this.type = type;
+    }
 
 }
