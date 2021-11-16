@@ -8,13 +8,10 @@ import com.project.contap.model.user.UserRepository;
 import com.project.contap.model.user.dto.PwUpdateRequestDto;
 import com.project.contap.model.user.dto.SignUpRequestDto;
 import com.project.contap.model.user.dto.UserLoginDto;
-import com.project.contap.security.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 
@@ -231,14 +228,14 @@ class UserServiceTest {
         }
 
 //        @Test
-//        @DisplayName("로그인 - 실패케이스 - 이메일이 틀릴 경우")
+//        @DisplayName("로그인 - 실패케이스 - 다른 이메일로 로그인할 경우")
 //        public void login_useremail() {
 //
-//            UserLoginDto loginDto = new UserLoginDto("test1@naver.com","1234qwer");
+//            UserLoginDto loginDto = new UserLoginDto("test@gamil.com","1234qwer");
 //            UserService userService = new UserService(passwordEncoder,userRepository,chatRoomRepository);
 //
 //            User user = User.builder()
-//                    .email("test@naver.com")
+//                    .email("test1@naver.com")
 //                    .pw("1234qwer")
 //                    .userName("test")
 //                    .build();
@@ -246,7 +243,7 @@ class UserServiceTest {
 //            when(passwordEncoder.matches(loginDto.getPw(),user.getPw()))
 //                    .thenReturn(true);
 //            when(userRepository.findByEmail(user.getEmail()))
-//                    .thenReturn(null);
+//                    .thenReturn(Optional.of(user));
 //
 //            User user1 = userService.login(loginDto);
 //
@@ -254,9 +251,8 @@ class UserServiceTest {
 //                userService.login(loginDto);
 //            });
 //
+//            System.out.println(exception);
 //            assertEquals(exception.getErrorCode(),ErrorCode.USER_NOT_FOUND);
-//
-//
 //
 //        }
 
@@ -386,7 +382,6 @@ class UserServiceTest {
         @DisplayName("비밀번호 변경 - 실패케이스 - 현재비밀번호입력과 기존비밀번호가 일치하지 않을때")
         public void pw_currentPw_equal() {
             PwUpdateRequestDto requestDto = new PwUpdateRequestDto("1234qwer","qwer1234","qwer1234");
-            String email = "test@naver.com";
             User user = User.builder()
                     .email("test@naver.com")
                     .pw("zxcvasdf")
@@ -398,11 +393,11 @@ class UserServiceTest {
 
             when(passwordEncoder.matches(requestDto.getCurrentPw(), user.getPw()))
                     .thenReturn(false);
-            when(userRepository.findByEmail(email))
+            when(userRepository.findByEmail(user.getEmail()))
                     .thenReturn(Optional.of(user));
 
             ContapException exception = assertThrows(ContapException.class, () -> {
-                userService.updatePassword(requestDto,email);
+                userService.updatePassword(requestDto,user.getEmail());
             });
 
             assertEquals(exception.getErrorCode(),ErrorCode.NOT_EQUAL_PASSWORD);
