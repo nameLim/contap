@@ -227,34 +227,29 @@ class UserServiceTest {
 
         }
 
-//        @Test
-//        @DisplayName("로그인 - 실패케이스 - 다른 이메일로 로그인할 경우")
-//        public void login_useremail() {
-//
-//            UserLoginDto loginDto = new UserLoginDto("test@gamil.com","1234qwer");
-//            UserService userService = new UserService(passwordEncoder,userRepository,chatRoomRepository);
-//
-//            User user = User.builder()
-//                    .email("test1@naver.com")
-//                    .pw("1234qwer")
-//                    .userName("test")
-//                    .build();
-//
-//            when(passwordEncoder.matches(loginDto.getPw(),user.getPw()))
-//                    .thenReturn(true);
-//            when(userRepository.findByEmail(user.getEmail()))
-//                    .thenReturn(Optional.of(user));
-//
-//            User user1 = userService.login(loginDto);
-//
-//            ContapException exception = assertThrows(ContapException.class, () -> {
-//                userService.login(loginDto);
-//            });
-//
-//            System.out.println(exception);
-//            assertEquals(exception.getErrorCode(),ErrorCode.USER_NOT_FOUND);
-//
-//        }
+        @Test
+        @DisplayName("로그인 - 실패케이스 - 다른 이메일로 로그인할 경우")
+        public void login_useremail() {
+
+            UserLoginDto loginDto = new UserLoginDto("test@naver.com","1234qwer");
+            UserService userService = new UserService(passwordEncoder,userRepository,chatRoomRepository);
+
+            User user = User.builder()
+                    .email("test1@naver.com")
+                    .pw("1234qwer")
+                    .userName("test")
+                    .build();
+
+            when(userRepository.findByEmail(loginDto.getEmail()))
+                    .thenThrow(new ContapException(ErrorCode.USER_NOT_FOUND));
+
+            ContapException exception = assertThrows(ContapException.class, () -> {
+                userService.login(loginDto);
+            });
+
+            assertEquals(exception.getErrorCode(),ErrorCode.USER_NOT_FOUND);
+
+        }
 
         @Test
         @DisplayName("로그인 - 실패케이스 - 비밀번호가 틀릴 경우")
@@ -277,7 +272,6 @@ class UserServiceTest {
             ContapException exception = assertThrows(ContapException.class, () -> {
                 userService.login(loginDto);
             });
-
 
             assertEquals(exception.getErrorCode(), ErrorCode.NOT_EQUAL_PASSWORD);
 
@@ -403,9 +397,6 @@ class UserServiceTest {
             assertEquals(exception.getErrorCode(),ErrorCode.NOT_EQUAL_PASSWORD);
 
         }
-
-
-
 
     }
 
