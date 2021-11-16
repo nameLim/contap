@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final JPAQueryFactory jpaQueryFactory; // 이건차후에 쓸수도있을것같아서 남겨둠
     private final ChatRoomRepository chatRoomRepository;
 
     public User registerUser(SignUpRequestDto requestDto) throws ContapException {
@@ -216,9 +215,6 @@ public class UserService {
         }
 
         if(!passwordEncoder.matches(requestDto.getCurrentPw(), user.getPw())){
-            throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
-        }
-        if (!requestDto.getNewPw().equals(requestDto.getNewPwCheck())) {
             throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
         }
     }
