@@ -217,9 +217,6 @@ public class UserService {
         if(!passwordEncoder.matches(requestDto.getCurrentPw(), user.getPw())){
             throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
         }
-        if (!requestDto.getNewPw().equals(requestDto.getNewPwCheck())) {
-            throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
-        }
     }
 }
 
