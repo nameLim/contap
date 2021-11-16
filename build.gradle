@@ -106,6 +106,8 @@ dependencies {
 
     //swagger
     implementation 'org.springdoc:springdoc-openapi-ui:1.5.2'
+
+    implementation group: 'org.apache.commons', name: 'commons-text', version: '1.9'
 }
 // QueryDSL
 sourceSets {

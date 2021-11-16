@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final JPAQueryFactory jpaQueryFactory; // 이건차후에 쓸수도있을것같아서 남겨둠
     private final ChatRoomRepository chatRoomRepository;
 
     public User registerUser(SignUpRequestDto requestDto) throws ContapException {
