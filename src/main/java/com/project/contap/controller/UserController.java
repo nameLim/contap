@@ -62,22 +62,18 @@ public class UserController {
         return result;
     }
 
-
     @Operation(summary = "회원탈퇴")
-    @DeleteMapping("/setting/withdrawal")
+    @PostMapping("/setting/withdrawal")
     public Map<String, String> deleteUser(@RequestBody UserLoginDto requestDto,@Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
-
-
-        userService.deleteUser(requestDto,userDetails.getUser());
+        userService.changeToInactive(requestDto, userDetails.getUser());
+//        userService.deleteUser(requestDto,userDetails.getUser());
 
         Map<String, String> result = new HashMap<>();
         result.put("result", "success");
+        result.put("message", "휴면계정으로 되며, 한달 후 삭제됩니다.");
 
         return result;
-
     }
-
-
 
     @Operation(summary = "비밀번호 변경")
     @PostMapping("/setting/password")
@@ -104,7 +100,6 @@ public class UserController {
         return result;
     }
 
-
     @Operation(summary = "핸드폰 번호 변경")
     @PostMapping("/setting/modifyPhoneNumber")
     public String modifyPhoneNumber(
@@ -119,5 +114,11 @@ public class UserController {
             @Parameter(name = "alarmState", in = ParameterIn.QUERY, description = "알람 받기 여부(0:취소, 1:받기)")@RequestParam int alarmState
             , @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
         userService.changeAlarmState(alarmState, userDetails.getUser());
+    }
+
+    @Operation(summary = "사용자 전화번호 조회")
+    @GetMapping("/setting/getPhoneNumber")
+    public String getPhoneNumber(@Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
+        return userService.getPhoneNumber(userDetails.getUser());
     }
 }

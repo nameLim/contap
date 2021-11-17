@@ -3,10 +3,8 @@ package com.project.contap.model.user;
 import com.project.contap.common.SearchRequestDto;
 import com.project.contap.model.user.dto.UserMainDto;
 import com.project.contap.model.user.dto.UserTapDto;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CostomUserRepository {
     List<UserTapDto> findMysendORreceiveTapUserInfo(Long userId, int type, int page);
