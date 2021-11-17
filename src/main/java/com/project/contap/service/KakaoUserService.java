@@ -5,9 +5,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.contap.model.user.User;
+import com.project.contap.model.user.UserRepository;
 import com.project.contap.model.user.dto.SnsUserInfoDto;
 import com.project.contap.security.UserDetailsImpl;
-import com.project.contap.model.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -61,7 +61,7 @@ public class KakaoUserService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", "c9bedfe3483ea916f1399af30bea3522");
-        body.add("redirect_uri", "http://localhost:3000/login");
+        body.add("redirect_uri", "http://localhost:3000/login?kakao");
         body.add("code", code);
 
 // HTTP 요청 보내기

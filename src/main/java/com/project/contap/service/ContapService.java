@@ -4,6 +4,9 @@ import com.project.contap.chat.ChatRoomRepository;
 import com.project.contap.common.Common;
 import com.project.contap.common.DefaultRsp;
 import com.project.contap.common.enumlist.MsgTypeEnum;
+import com.project.contap.exception.ContapException;
+import com.project.contap.exception.ErrorCode;
+import com.project.contap.model.friend.Friend;
 import com.project.contap.model.friend.FriendRepository;
 import com.project.contap.model.friend.SortedFriendsDto;
 import com.project.contap.model.tap.Tap;
@@ -12,6 +15,7 @@ import com.project.contap.model.user.User;
 import com.project.contap.model.user.UserRepository;
 import com.project.contap.model.user.dto.UserTapDto;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -24,6 +28,7 @@ public class ContapService {
     private final TapRepository tapRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
+    private final FriendRepository friendRepository;
     private final Common common;
 
     public List<UserTapDto> getMydoTap(User user,int page) {
@@ -105,7 +110,21 @@ public class ContapService {
             dtoArrays[sortInfo.get(userDto.getRoomId())].setUserName(userDto.getUserName());
             dtoArrays[sortInfo.get(userDto.getRoomId())].setProfile(userDto.getProfile());
             dtoArrays[sortInfo.get(userDto.getRoomId())].setHashTags(userDto.getHashTags());
+            dtoArrays[sortInfo.get(userDto.getRoomId())].setField(userDto.getField());
         }
         return Arrays.asList(dtoArrays);
+    }
+
+    @Transactional
+    public DefaultRsp delFriend(User user, Long userId) {
+        User secUser = userRepository.findById(userId).orElse(null);
+        if (secUser==null)
+            throw new ContapException(ErrorCode.USER_NOT_FOUND);
+        Friend fir = friendRepository.getFriend(user,secUser);
+        Friend sec = friendRepository.getFriend(secUser,user);
+        chatRoomRepository.whendeleteFriend(fir.getRoomId(),user.getEmail(),secUser.getEmail());
+        friendRepository.delete(fir);
+        friendRepository.delete(sec);
+        return new DefaultRsp("정상처리됨");
     }
 }

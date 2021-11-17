@@ -69,4 +69,9 @@ public class MainController {
             , @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
         mainService.tutorial(tutorialNum, userDetails.getUser());
     }
+
+    @GetMapping("/main/info")
+    public int getUserAuth(@Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return mainService.getUserAuthStatus(userDetails.getUser());
+    }
 }

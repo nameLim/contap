@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -23,7 +25,8 @@ public class ChatService {
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatroomRepository;
     private final ChannelTopic channelTopic;
-    private List<String> updateRoomList = new ArrayList<>(); //  check new msg
+//    private List<String> updateRoomList = new ArrayList<>(); //  HashMap 으로 변경하자
+    private HashMap<String,List<ChatMessage>> updateRoomList2 = new HashMap<>(); // 메모리문제가있으려나 ..?
     private List<ChatMessage> chatmessages= new ArrayList<>(); // for bulk insert
     //msg저장 방식에대해서 조금더 생각해보자 완전 바껴야할수도있을것같음.
     private String subPrefix = "/sub";
@@ -34,8 +37,11 @@ public class ChatService {
         ChatMessage newmsg = new ChatMessage(message);
         message.setWriterSessionId(senderName);
         chatmessages.add(newmsg);
-        if(!updateRoomList.contains(newmsg.getRoomId()))
-            updateRoomList.add(newmsg.getRoomId());
+        if (updateRoomList2.containsKey(newmsg.getRoomId())) //있
+            updateRoomList2.get(newmsg.getRoomId()).add(newmsg);
+        else
+            updateRoomList2.put(newmsg.getRoomId(),new ArrayList<ChatMessage>(){{add(newmsg);}});
+
         int inRoomUserCnt = chatroomRepository.getChatUserCnt(message.getRoomId());
         if(inRoomUserCnt == 1)
         {
@@ -58,7 +64,7 @@ public class ChatService {
     @Transactional
     public void saveBulk() {
         chatMessageRepository.saveAll(chatmessages);
-        updateRoomList.clear();
+        updateRoomList2.clear();
         chatmessages.clear();
     }
 
@@ -67,8 +73,6 @@ public class ChatService {
         if (dest.startsWith(subPrefix)) {
             String roomId =  dest.substring(subPrefixlen);
             chatroomRepository.enterRoom(roomId,userEmail,sessionId2);
-            if(updateRoomList.contains(roomId))
-                saveBulk();
         }
         else
             chatroomRepository.userConnect(userEmail,sessionId);
@@ -78,6 +82,17 @@ public class ChatService {
     }
 
     public List<ChatMessage> getchatmsg(String roomId) {
-        return chatMessageRepository.findAllByRoomId(roomId);
+        List<ChatMessage> chatList = chatMessageRepository.findAllByRoomId(roomId);
+        if(updateRoomList2.containsKey(roomId))
+            chatList.addAll(updateRoomList2.get(roomId));
+        return chatList;
+    }
+
+    public List<ChatMessage> findMessage(String roomId, Long longId) {
+        List<ChatMessage> chatList = chatMessageRepository.findMessage(roomId,longId);
+        Collections.reverse(chatList);
+        if(longId <= 0 &&updateRoomList2.containsKey(roomId) )
+            chatList.addAll(updateRoomList2.get(roomId));
+        return chatList;
     }
 }

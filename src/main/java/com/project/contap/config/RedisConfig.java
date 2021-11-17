@@ -4,6 +4,8 @@ import com.project.contap.pubsub.RedisSubscriber;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisSentinelConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
@@ -22,9 +24,19 @@ public class RedisConfig {
     public ChannelTopic channelTopic() {
         return new ChannelTopic("chatroom");
     }
-    /**
-     * redis pub/sub 메시지를 처리하는 listener 설정
-     */
+
+//    @Bean
+//    public RedisConnectionFactory redisConnectionFactory(){
+//        RedisSentinelConfiguration redisSentinelConfiguration = new RedisSentinelConfiguration()
+//                .master("mymaster")
+//                .sentinel("localhost",5000)
+//                .sentinel("localhost",5001)
+//                .sentinel("localhost",5002);
+//        LettuceConnectionFactory lettuceConnectionFactory =
+//                new LettuceConnectionFactory(redisSentinelConfiguration);
+//        return lettuceConnectionFactory; }
+    // 위 코드는 sentinel 용임.. 서버올릴때 풀겠음.
+
     @Bean
     public RedisMessageListenerContainer redisMessageListener(
             RedisConnectionFactory connectionFactory,

@@ -14,6 +14,7 @@ public class SortedFriendsDto {
     private String roomId;
     private String roomStatus;
     private String date;
+    private int field;
     public SortedFriendsDto(String roomId,String roomStatus)
     {
         this.roomId = roomId;
