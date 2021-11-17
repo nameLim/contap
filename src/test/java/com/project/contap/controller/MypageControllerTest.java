@@ -2,7 +2,7 @@ package com.project.contap.controller;
 
 import com.project.contap.model.user.User;
 import com.project.contap.security.WebSecurityConfig;
-import com.project.contap.service.MypageService;
+import com.project.contap.service.MainService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,13 +19,16 @@ class MypageControllerTest {
     private MockMvc mvc;
 
     @Autowired
-    private MypageService mypageService;
+    private MainService mainService;
 
     User testUser;
 
     @BeforeEach
     public void setup() {
-//        testUser = new User("testUse@gmail.com","1234qwer","testUser");
+        testUser = User.builder()
+                    .email("testUse@gmail.com")
+                    .pw("1234qwer")
+                    .userName("testUser").build();
     }
 
     @Nested
