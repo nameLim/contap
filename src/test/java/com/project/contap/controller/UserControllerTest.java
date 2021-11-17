@@ -132,8 +132,8 @@ class UserControllerTest {
         mvc.perform(post("/setting/withdrawal").principal(mockPrincipal)
                         .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
-                .andExpect(status().isOk())
-                .andDo(print());
+                        .andExpect(status().isOk())
+                        .andDo(print());
 
         verify(userService,atLeastOnce() ).changeToInactive(refEq(dto),refEq(testUserDetails.getUser()));
     }

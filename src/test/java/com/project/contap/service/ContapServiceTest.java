@@ -25,13 +25,13 @@ import static org.mockito.Mockito.when;
 class ContapServiceTest {
 
     @Mock
+    FriendRepository friendRepository;
+    @Mock
     TapRepository tapRepository;
     @Mock
     ChatRoomRepository chatRoomRepository;
     @Mock
     UserRepository userRepository;
-    @Mock
-    FriendRepository friendRepository;
     @Mock
     Common common;
 
