@@ -105,6 +105,7 @@ public class ContapService {
             dtoArrays[sortInfo.get(userDto.getRoomId())].setUserName(userDto.getUserName());
             dtoArrays[sortInfo.get(userDto.getRoomId())].setProfile(userDto.getProfile());
             dtoArrays[sortInfo.get(userDto.getRoomId())].setHashTags(userDto.getHashTags());
+            dtoArrays[sortInfo.get(userDto.getRoomId())].setField(userDto.getField());
         }
         return Arrays.asList(dtoArrays);
     }
