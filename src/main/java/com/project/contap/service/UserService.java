@@ -2,6 +2,7 @@ package com.project.contap.service;
 
 import com.project.contap.chat.ChatRoomRepository;
 import com.project.contap.common.enumlist.AuthorityEnum;
+import com.project.contap.common.enumlist.UserStatusEnum;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
 import com.project.contap.model.user.User;
@@ -30,27 +31,37 @@ public class UserService {
 
     public User registerUser(SignUpRequestDto requestDto) throws ContapException {
 
-        checkValidation(requestDto);
-        // 패스워드 암호화
-        String pw = passwordEncoder.encode(requestDto.getPw());
-        User.userCount = User.userCount+1;
+        checkLength(requestDto);
+        String pw = passwordEncoder.encode(requestDto.getPw()); // 패스워드 암호화
 
-        User user = User.builder()
+        //휴면계정인지 확인
+        User user = isInactiveUser(requestDto.getEmail());
+        if(user != null) {
+            user.setUserStatus(UserStatusEnum.ACTIVE);
+            user.setPw(pw);
+            user = userRepository.save(user);
+            return user;
+        }
+
+        checkDupValidation(requestDto);
+        user = User.builder()
                 .email(requestDto.getEmail())
                 .pw(pw)
                 .userName(requestDto.getUserName())
+                .userStatus(UserStatusEnum.ACTIVE)
                 .build();
-        return userRepository.save(user);
+        user = userRepository.save(user);
+        User.userCount++;
+        return user;
     }
 
     public User login(UserLoginDto requestDto) throws ContapException {
-        User user = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(
-                () -> new ContapException(ErrorCode.USER_NOT_FOUND)
-        );
+        User user = userRepository.findByEmail(requestDto.getEmail()).orElse(null);
+        if(user==null || user.getUserStatus().equals(UserStatusEnum.WITHDRAWN)) //탈퇴 회원은 데이터를 삭제될 수 있는 사항이므로 후에 변경 예정
+            new ContapException(ErrorCode.USER_NOT_FOUND);
 
-        if (!passwordEncoder.matches(requestDto.getPw(), user.getPw())) {
+        if (!passwordEncoder.matches(requestDto.getPw(), user.getPw()))
             throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
-        }
 
         return user;
     }
@@ -61,12 +72,9 @@ public class UserService {
             userRepository.delete(user);
             User.userCount = User.userCount-1;
         }
-        else {
+        else
             throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
-        }
     }
-
-
 
     @Transactional
     public void updatePassword(PwUpdateRequestDto requestDto, String email) throws ContapException {
@@ -114,7 +122,7 @@ public class UserService {
             throw new ContapException(ErrorCode.USER_NOT_FOUND); //회원 정보를 찾을 수 없습니다.
 
         User user = userRepository.findById(requestUser.getId()).orElse(null);
-        if (user.getEmail()!=null && !user.isWrittenBy(requestUser))
+        if (user.getEmail()!=null && (!user.isWrittenBy(requestUser) || user.getUserStatus()!=UserStatusEnum.ACTIVE))
             throw new ContapException(ErrorCode.ACCESS_DENIED); //권한이 없습니다.
 
         return user;
@@ -133,7 +141,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    private void checkValidation(SignUpRequestDto requestDto) {
+    private void checkLength(SignUpRequestDto requestDto){
         if (requestDto.getEmail().equals("")) {
             throw new ContapException(ErrorCode.REGISTER_ERROR);
         }
@@ -147,6 +155,24 @@ public class UserService {
             throw new ContapException(ErrorCode.REGISTER_ERROR);
         }
 
+        String password = requestDto.getPw();
+        String passwordCheck = requestDto.getPwCheck();
+
+        if (!password.isEmpty() && !passwordCheck.isEmpty()) {
+            if (password.length() >= 6 && password.length() <= 20) {
+                if (!password.equals(passwordCheck)) {
+                    throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
+                }
+            }
+            else
+                throw new ContapException(ErrorCode.PASSWORD_PATTERN_LENGTH);
+        } else {
+            throw new ContapException(ErrorCode.PASSWORD_ENTER);
+        }
+    }
+
+    private void checkDupValidation(SignUpRequestDto requestDto) {
+
         //가입 email(id) 중복체크
         String email = requestDto.getEmail();
         if (!isValidEmail(email)) {
@@ -158,28 +184,11 @@ public class UserService {
             throw new ContapException(ErrorCode.EMAIL_DUPLICATE);
         }
 
-
         //가입 nickname 중복체크
         String userName = requestDto.getUserName();
         Optional<User> found2 = userRepository.findByUserName(userName);
         if (found2.isPresent()) {
             throw new ContapException(ErrorCode.NICKNAME_DUPLICATE);
-        }
-
-        String password = requestDto.getPw();
-        String passwordCheck = requestDto.getPwCheck();
-
-        if (!password.isEmpty() && !passwordCheck.isEmpty()) {
-            if (password.length() >= 6 && password.length() <= 20) {
-                if (!password.equals(passwordCheck)) {
-                    throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
-                }
-            } else {
-                throw new ContapException(ErrorCode.PASSWORD_PATTERN_LENGTH);
-
-            }
-        } else {
-            throw new ContapException(ErrorCode.PASSWORD_ENTER);
         }
     }
 
@@ -221,6 +230,32 @@ public class UserService {
         if (!requestDto.getNewPw().equals(requestDto.getNewPwCheck())) {
             throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
         }
+    }
+
+    @Transactional
+    public void changeToInactive(UserLoginDto requestDto, User requestUser) {
+        User user = checkUserAuthority(requestUser);
+        if(!passwordEncoder.matches(requestDto.getPw(), user.getPw()))
+            throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
+
+        user.setUserStatus(UserStatusEnum.INACTIVE); // 휴면계정으로 변환
+        userRepository.save(user);
+    }
+
+    public String getPhoneNumber(User requestUser) {
+        User user = checkUserAuthority(requestUser);
+
+        //핸드폰번호 정규식 검사
+        if(!isValidPhoneNumber(user.getPhoneNumber())) {
+            throw new ContapException((ErrorCode.PHONE_FORM_INVALID)); //핸드폰번호 형식이 맞지 않습니다.
+        }
+
+        return user.getPhoneNumber().replaceFirst("^([0-9]{4})([0-9]{4})$", "$1-$2");
+    }
+
+    private User isInactiveUser(String email) {
+        User user = userRepository.findByEmailAndUserStatusEquals(email, UserStatusEnum.INACTIVE);
+        return user;
     }
 }
 

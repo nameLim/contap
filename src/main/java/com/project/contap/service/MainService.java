@@ -98,4 +98,8 @@ public class MainService {
         userRepository.save(user);
     }
 
+    public int getUserAuthStatus(User requestUser) {
+        User user = userService.checkUserAuthority(requestUser);
+        return user.getAuthStatus();
+    }
 }

@@ -1,6 +1,7 @@
 package com.project.contap.model.user;
 
 import com.project.contap.common.SearchRequestDto;
+import com.project.contap.common.enumlist.UserStatusEnum;
 import com.project.contap.common.util.RandomNumberGeneration;
 import com.project.contap.model.friend.QFriend;
 import com.project.contap.model.tap.QTap;
@@ -12,7 +13,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import javax.persistence.EntityManager;
 import java.util.List;
-import java.util.Random;
 
 public class UserRepositoryImpl implements CostomUserRepository{
     private final JPAQueryFactory queryFactory;
@@ -107,7 +107,7 @@ public class UserRepositoryImpl implements CostomUserRepository{
 
         if(tagsandtype.getField() != 3)
         {
-            builder.and(hu.field.eq(tagsandtype.getField()));
+            builder.and(hu.field.eq(tagsandtype.getField())).and(hu.userStatus.eq(UserStatusEnum.ACTIVE));
         }
         return queryFactory
                 .select(
@@ -146,6 +146,7 @@ public class UserRepositoryImpl implements CostomUserRepository{
                                 hu.field
                         )).distinct()
                 .from(hu)
+                .where(hu.userStatus.eq(UserStatusEnum.ACTIVE))
                 .offset(0).limit(9)
                 .fetch();
         //귀찮.. 다음에 페이징처리하자
@@ -167,7 +168,4 @@ public class UserRepositoryImpl implements CostomUserRepository{
                 .where(qUser.phoneNumber.eq(phoneNumber))
                 .fetchFirst() != null;
     }
-
-
-
 }

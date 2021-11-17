@@ -1,10 +1,11 @@
 package com.project.contap.model.user;
 
+import com.project.contap.common.enumlist.UserStatusEnum;
+import com.project.contap.common.util.TimeStamped;
 import com.project.contap.model.card.Card;
 import com.project.contap.model.friend.Friend;
 import com.project.contap.model.hashtag.HashTag;
 import com.project.contap.model.user.dto.PwUpdateRequestDto;
-import com.project.contap.common.util.TimeStamped;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -66,6 +67,10 @@ public class User extends TimeStamped {
     @Schema(description = "사용자 권한(bit로 관리함) 0001:폰,0010:프로필,0100:otherUserRead,1000:alarm")
     private int authStatus;
 
+    @Column
+    @Schema(description = "현재 회원 휴면, 비휴면, 탈퇴상태")
+    private UserStatusEnum userStatus;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     @Schema(description = "뒷면카드")
     private List<Card> cards;
@@ -73,10 +78,6 @@ public class User extends TimeStamped {
     @ManyToMany
     @Schema(description = "해쉬태그 HashTag형")
     private List<HashTag> tags;
-
-    @Column
-    @Schema(description = "현재 알람 가진 여부")
-    private Boolean hasRecentAlarm = false;
 
     @OneToMany(mappedBy = "me", fetch = FetchType.LAZY)
     @Schema(description = "그랩관계")
