@@ -124,7 +124,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("회원탈퇴 - 휴면계정전환")
+    @DisplayName("회원탈퇴 - 휴면계정")
     void deleteuser() throws Exception {
         String email = "test@naver.com";
         String pw = "1234qwer";
