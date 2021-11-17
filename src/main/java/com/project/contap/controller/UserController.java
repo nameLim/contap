@@ -6,6 +6,7 @@ import com.project.contap.exception.ErrorCode;
 import com.project.contap.model.user.User;
 import com.project.contap.model.user.dto.PwUpdateRequestDto;
 import com.project.contap.model.user.dto.SignUpRequestDto;
+import com.project.contap.model.user.dto.UserInfoDto;
 import com.project.contap.model.user.dto.UserLoginDto;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.security.jwt.JwtTokenProvider;
@@ -103,9 +104,9 @@ public class UserController {
     @Operation(summary = "핸드폰 번호 변경")
     @PostMapping("/setting/modifyPhoneNumber")
     public String modifyPhoneNumber(
-            @Parameter(name = "phoneNumber", in = ParameterIn.QUERY, description = "핸드폰 번호") @RequestParam String phoneNumber
+            @RequestBody UserInfoDto userInfoDto
             , @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
-        return userService.modifyPhoneNumber(phoneNumber, userDetails.getUser());
+        return userService.modifyPhoneNumber(userInfoDto.getPhoneNumber(), userDetails.getUser());
     }
 
     @Operation(summary = "알림 받기 여부 변경")

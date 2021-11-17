@@ -5,9 +5,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.contap.model.user.User;
+import com.project.contap.model.user.UserRepository;
 import com.project.contap.model.user.dto.SnsUserInfoDto;
 import com.project.contap.security.UserDetailsImpl;
-import com.project.contap.model.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -62,7 +62,7 @@ public class GithubUserService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("client_secret", "4f0e51148be204784876a50f544598c325a503b9");
         body.add("client_id", "ec87ecda94ea612cbe6c");
-        body.add("redirect_uri", "http://localhost:3000/login");
+        body.add("redirect_uri", "http://localhost:3000/login?github");
         body.add("code", code);
 
 // HTTP 요청 보내기
