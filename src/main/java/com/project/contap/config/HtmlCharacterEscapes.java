@@ -22,7 +22,6 @@ public class HtmlCharacterEscapes extends CharacterEscapes {
 
     @Override
     public int[] getEscapeCodesForAscii() {
-
         return asciiEscapes;
     }
 
@@ -31,4 +30,3 @@ public class HtmlCharacterEscapes extends CharacterEscapes {
         return new SerializedString(StringEscapeUtils.escapeHtml4(Character.toString((char) ch)));
     }
 }
-
