@@ -143,6 +143,7 @@ public class ChatRoomRepository {
         listOpsforRoomstatus.rightPush(roomId,"@@/0/_test용_"); // [0] = 보낸사람 , [1] = 채팅방 인원수
         zSetforchatdate.add(me,roomId,date);
         zSetforchatdate.add(you,roomId,date);
+
     }
 
     // 유저가 로그아웃 상태동안에 메시지를 받을경우

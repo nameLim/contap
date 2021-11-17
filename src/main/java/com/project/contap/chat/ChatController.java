@@ -24,10 +24,18 @@ public class ChatController {
 
 
 
+    //findMessage
     @ResponseBody
     @GetMapping("/chat/getmsg/{roomId}")
     public List<ChatMessage> getmessage(@PathVariable String roomId)
     {
         return chatService.getchatmsg(roomId);// 권한체크 필수
+    }
+
+    @ResponseBody
+    @GetMapping("/chat/getmsg/{roomId}/{longId}")
+    public List<ChatMessage> getmessage_30(@PathVariable String roomId,@PathVariable Long longId)
+    {
+        return chatService.findMessage(roomId,longId);// 권한체크 필수
     }
 }
