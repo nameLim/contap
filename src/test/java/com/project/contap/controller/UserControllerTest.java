@@ -124,18 +124,18 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("회원탈퇴")
+    @DisplayName("회원탈퇴 - 휴면계정")
     void deleteuser() throws Exception {
         String email = "test@naver.com";
         String pw = "1234qwer";
         UserLoginDto dto = new UserLoginDto(email,pw);
-        mvc.perform(delete("/setting/withdrawal").principal(mockPrincipal)
+        mvc.perform(post("/setting/withdrawal").principal(mockPrincipal)
                 .content(objectMapper.writeValueAsString(dto))
                 .contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        verify(userService,atLeastOnce() ).deleteUser(refEq(dto),refEq(testUserDetails.getUser()));
+        verify(userService,atLeastOnce() ).changeToInactive(refEq(dto),refEq(testUserDetails.getUser()));
     }
 
     @Test
