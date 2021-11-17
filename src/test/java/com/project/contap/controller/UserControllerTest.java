@@ -130,10 +130,10 @@ class UserControllerTest {
         String pw = "1234qwer";
         UserLoginDto dto = new UserLoginDto(email,pw);
         mvc.perform(post("/setting/withdrawal").principal(mockPrincipal)
-                .content(objectMapper.writeValueAsString(dto))
-                .contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
-                .andExpect(status().isOk())
-                .andDo(print());
+                        .content(objectMapper.writeValueAsString(dto))
+                        .contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
+                        .andExpect(status().isOk())
+                        .andDo(print());
 
         verify(userService,atLeastOnce() ).changeToInactive(refEq(dto),refEq(testUserDetails.getUser()));
     }
