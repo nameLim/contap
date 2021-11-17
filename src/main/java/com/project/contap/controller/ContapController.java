@@ -53,4 +53,12 @@ public class ContapController {
         return contapService.rapAccept(tagId.getTagId(),userDetails.getUser().getEmail());
     }
 
+    @PostMapping("/contap/deletefriend/{userId}")
+    public DefaultRsp delFriend(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable  Long userId) {
+        return contapService.delFriend(userDetails.getUser(),userId);
+
+    }
+
 }
