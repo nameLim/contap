@@ -219,4 +219,12 @@ public class ChatRoomRepository {
         values.add(dates);
         return values;
     }
+
+    public void whendeleteFriend(String roomId,String firEmail,String secEmail)
+    {
+        listOpsforRoomstatus.rightPop(roomId);
+        zSetforchatdate.remove(firEmail,roomId);
+        zSetforchatdate.remove(secEmail,roomId);
+
+    }
 }

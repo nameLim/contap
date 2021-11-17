@@ -19,4 +19,15 @@ public class FriendRepositoryImpl implements CustomFriendRepository {
                         .and(qFriend.you.eq(you)))
                 .fetchFirst() != null;
     }
+    @Override
+    public Friend getFriend(User me, User you)
+    {
+        QFriend qFriend = QFriend.friend;
+        return  queryFactory
+                .select(qFriend)
+                .from(qFriend)
+                .where(qFriend.me.eq(me)
+                        .and(qFriend.you.eq(you)))
+                .fetchOne();
+    }
 }
