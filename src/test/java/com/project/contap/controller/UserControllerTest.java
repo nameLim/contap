@@ -132,7 +132,7 @@ class UserControllerTest {
                         .andExpect(status().isOk())
                         .andDo(print());
 
-        verify(userService,atLeastOnce() ).changeToInactive(refEq(dto),refEq(testUserDetails.getUser()));
+        verify(userService,atLeastOnce() ).changeToInactive(refEq(dto),refEq(testUserDetails));
     }
 
     @Test
