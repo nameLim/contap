@@ -39,6 +39,7 @@ public class MypageService {
 
     // 회원 정보 가져오기
     // 가져오는 값 : 기본 회원정보(앞면카드), 모든 뒷면카드
+    @Transactional(readOnly = true)
     public UserInfoDto getMyInfo(UserDetails userDetails) {
         User user = userService.userFromUserDetails(userDetails);
         List<Card> userCards = user.getCards();

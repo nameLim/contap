@@ -107,8 +107,9 @@ public class UserRepositoryImpl implements CostomUserRepository{
 
         if(tagsandtype.getField() != 3)
         {
-            builder.and(hu.field.eq(tagsandtype.getField())).and(hu.userStatus.eq(UserStatusEnum.ACTIVE));
+            builder.and(hu.field.eq(tagsandtype.getField()));
         }
+        builder.and(hu.userStatus.eq(UserStatusEnum.ACTIVE));
         return queryFactory
                 .select(
                         Projections.constructor(UserMainDto.class,
