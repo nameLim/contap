@@ -261,5 +261,11 @@ public class UserService {
         User user = userRepository.findByEmailAndUserStatusEquals(email, UserStatusEnum.INACTIVE);
         return user;
     }
+
+    public void ActiveUsercntSet()
+    {
+        User.userCount = userRepository.getActiveUsercnt();
+        System.out.println("userCnt : " + User.userCount.toString());
+    }
 }
 
