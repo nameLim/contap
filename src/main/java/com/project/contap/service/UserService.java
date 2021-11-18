@@ -128,7 +128,10 @@ public class UserService {
 
     public User userFromUserDetails(UserDetails userDetails) {
         if ( userDetails instanceof UserDetailsImpl ) {
-            return ((UserDetailsImpl) userDetails).getUser();
+            if(userDetails == null)
+                throw new ContapException(ErrorCode.USER_NOT_FOUND);
+
+            return checkUserAuthority(((UserDetailsImpl) userDetails).getUser());
         } else {
             throw new ContapException(ErrorCode.USER_NOT_FOUND);
         }
