@@ -21,6 +21,7 @@ public class ChatMessageRepositoryImpl implements CostomChatMessageRepository{
             return  queryFactory
                     .select(qChatMessage)
                     .from(qChatMessage)
+                    .where(qChatMessage.roomId.eq(roomId))
                     .orderBy(qChatMessage.id.desc())
                     .offset(0).limit(15)
                     .fetch();
@@ -28,7 +29,7 @@ public class ChatMessageRepositoryImpl implements CostomChatMessageRepository{
             return  queryFactory
                     .select(qChatMessage)
                     .from(qChatMessage)
-                    .where(qChatMessage.id.lt(startId))
+                    .where(qChatMessage.id.lt(startId).and(qChatMessage.roomId.eq(roomId)))
                     .orderBy(qChatMessage.id.desc())
                     .offset(0).limit(15)
                     .fetch();

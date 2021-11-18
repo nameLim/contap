@@ -1,7 +1,11 @@
 package com.project.contap.controller;
 
+import com.project.contap.chat.ChatRoomRepository;
+import com.project.contap.common.enumlist.UserStatusEnum;
 import com.project.contap.exception.ContapException;
 import com.project.contap.model.card.Card;
+import com.project.contap.model.friend.Friend;
+import com.project.contap.model.friend.FriendRepository;
 import com.project.contap.model.hashtag.HashTag;
 import com.project.contap.model.user.User;
 import com.project.contap.model.card.CardRepository;
@@ -13,6 +17,7 @@ import com.project.contap.common.util.RandomNumberGeneration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,15 +29,24 @@ public class TestController {
     private final UserRepository userRepository;
     private final HashTagRepositoty hashTagRepositoty;
     private final CardRepository cardRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final FriendRepository friendRepository;
+    private final ChatRoomRepository chatRoomRepository;
     @Autowired
     public TestController(
             UserRepository userRepository,
             HashTagRepositoty hashTagRepositoty,
-            CardRepository cardRepository
+            CardRepository cardRepository,
+            PasswordEncoder passwordEncoder,
+            FriendRepository friendRepository,
+            ChatRoomRepository chatRoomRepository
     ) {
         this.userRepository = userRepository;
         this.hashTagRepositoty =hashTagRepositoty;
         this.cardRepository =  cardRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.friendRepository = friendRepository;
+        this.chatRoomRepository = chatRoomRepository;
     }
 
     @GetMapping("/forclient1/{id}") // 한유저가쓴 카드 모두조회
@@ -66,6 +80,9 @@ public class TestController {
 
     @GetMapping("/HashSet") // 한유저가쓴 카드 모두조회
     void forclient4() throws ContapException {
+        HashTag check = hashTagRepositoty.findById(1L).orElse(null);
+        if(check != null)
+            return;
         List<HashTag> hashs = new ArrayList<>();
         hashs.add(new HashTag("Flutter",0));
         hashs.add(new HashTag("제플린",0));
@@ -117,4 +134,77 @@ public class TestController {
         hashs.add(new HashTag("피겨 스케이팅",1));
         hashTagRepositoty.saveAll(hashs);
     }
+
+    @GetMapping("/UserSet") // 한유저가쓴 카드 모두조회
+    void userSet() throws ContapException {
+        User check = userRepository.findById(1L).orElse(null);
+        if(check != null)
+            return;
+        String pw = passwordEncoder.encode("commonpw"); // 패스워드 암호화
+        for(int i = 0 ; i < 5000 ; i++)
+        {
+            User user = User.builder()
+                    .email(String.format("userEmail%d@gmail.com",i))
+                    .pw(pw)
+                    .userName(String.format("userName%d",i))
+                    .field(i%3)
+                    .userStatus(UserStatusEnum.ACTIVE).build();
+            userRepository.save(user);
+        }
+    }
+
+    @GetMapping("/UserHashSet")
+    void userHashSet() throws ContapException
+    {
+        for(Long i = 1L ; i <= 5000L ; i++)
+        {
+            User user=userRepository.findById(i).orElse(null);
+            HashTag ht1 = hashTagRepositoty.getById(new Long(RandomNumberGeneration.randomRange(1,40)));//
+            HashTag ht2 = hashTagRepositoty.getById(new Long(RandomNumberGeneration.randomRange(41,48)));//
+            user.getTags().clear();
+            user.getTags().add(ht1);
+            user.getTags().add(ht2);
+            user.setHashTagsString("@"+ht1.getName() + "@_@"+ht2.getName()+"@");
+            userRepository.save(user);
+        }
+    }
+
+    @GetMapping("/CardSet")
+    void CardSet() throws ContapException
+    {
+        for(Long i = 1L ; i <= 5000L ; i++)
+        {
+            User user=userRepository.findById(i).orElse(null);
+            user.getCards().clear();
+            for(int j = 0 ; j <3;j++)
+            {
+                Card card = Card.builder()
+                        .user(user)
+                        .cardOrder(new Long(j+1))
+                        .title(String.format("title%d_%d",i,j))
+                        .content(String.format("content%d_%d",i,j))
+                        .link(String.format("link%d_%d",i,j))
+                        .build();
+
+                user.getCards().add(cardRepository.save(card));
+            }
+            userRepository.save(user);
+        }
+    }
+    @GetMapping("/friend")
+    void friendSet() throws ContapException
+    {
+        for(Long i = 1L ; i <= 2000L ; i = i+2)
+        {
+            User user1=userRepository.findById(i).orElse(null);
+            User user2=userRepository.findById(i+1).orElse(null);
+            String roomId = UUID.randomUUID().toString();
+            Friend fir = Friend.builder().me(user1).you(user2).roomId(roomId).build();
+            Friend sec = Friend.builder().me(user2).you(user1).roomId(roomId).build();
+            friendRepository.save(fir);
+            friendRepository.save(sec);
+            chatRoomRepository.whenMakeFriend(roomId,user1.getEmail(),user2.getEmail());
+        }
+    }
 }
+
