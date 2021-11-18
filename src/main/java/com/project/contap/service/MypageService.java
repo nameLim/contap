@@ -1,21 +1,22 @@
 package com.project.contap.service;
 
-import com.project.contap.model.card.dto.BackRequestCardDto;
-import com.project.contap.model.card.dto.BackResponseCardDto;
+import com.project.contap.common.enumlist.AuthorityEnum;
+import com.project.contap.common.util.ImageService;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
-import com.project.contap.common.enumlist.AuthorityEnum;
 import com.project.contap.model.card.Card;
-import com.project.contap.model.hashtag.HashTag;
-import com.project.contap.model.user.User;
 import com.project.contap.model.card.CardRepository;
+import com.project.contap.model.card.dto.BackRequestCardDto;
+import com.project.contap.model.card.dto.BackResponseCardDto;
+import com.project.contap.model.hashtag.HashTag;
 import com.project.contap.model.hashtag.HashTagRepositoty;
+import com.project.contap.model.user.User;
+import com.project.contap.model.user.UserRepository;
 import com.project.contap.model.user.dto.FrontRequestCardDto;
 import com.project.contap.model.user.dto.FrontResponseCardDto;
 import com.project.contap.model.user.dto.UserInfoDto;
-import com.project.contap.model.user.UserRepository;
-import com.project.contap.common.util.ImageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,9 +39,8 @@ public class MypageService {
 
     // 회원 정보 가져오기
     // 가져오는 값 : 기본 회원정보(앞면카드), 모든 뒷면카드
-    public UserInfoDto getMyInfo(User requestUser) {
-
-        User user = userService.checkUserAuthority(requestUser);
+    public UserInfoDto getMyInfo(UserDetails userDetails) {
+        User user = userService.userFromUserDetails(userDetails);
         List<Card> userCards = user.getCards();
         List<BackResponseCardDto> cardDtoList = new ArrayList<>();
 
@@ -62,8 +62,8 @@ public class MypageService {
 
     //앞카드 수정
     @Transactional
-    public FrontResponseCardDto modifyFrontCard(FrontRequestCardDto frontRequestCardDto, User requestUser) throws IOException {
-        User user = userService.checkUserAuthority(requestUser);
+    public FrontResponseCardDto modifyFrontCard(FrontRequestCardDto frontRequestCardDto, UserDetails userDetails) throws IOException {
+        User user = userService.userFromUserDetails(userDetails);
 
         // nickname 변경했을 경우 중복체크
         if(!user.getUserName().equals(frontRequestCardDto.getUserName())) {
@@ -120,9 +120,8 @@ public class MypageService {
 
     //뒷카드 추가
     @Transactional
-    public BackResponseCardDto createBackCard(BackRequestCardDto backRequestCardDto, User requestUser) {
-
-        User user = userService.checkUserAuthority(requestUser);
+    public BackResponseCardDto createBackCard(BackRequestCardDto backRequestCardDto, UserDetails userDetails) {
+        User user = userService.userFromUserDetails(userDetails);
 
         int cardSize = user.getCards().size();
         if( cardSize >= 10 )
@@ -143,9 +142,8 @@ public class MypageService {
 
     //뒷카드 수정
     @Transactional
-    public BackResponseCardDto modifyBackCard(Long cardId, BackRequestCardDto backRequestCardDto, User requestUser) {
-
-        User user = userService.checkUserAuthority(requestUser);
+    public BackResponseCardDto modifyBackCard(Long cardId, BackRequestCardDto backRequestCardDto, UserDetails userDetails) {
+        User user = userService.userFromUserDetails(userDetails);
         Card card = cardRepository.findById(cardId).orElse(null);
         if(card == null)
             throw new ContapException(ErrorCode.NOT_FOUND_CARD); //해당 카드를 찾을 수 없습니다.
@@ -160,9 +158,8 @@ public class MypageService {
 
     //뒷카드 삭제
     @Transactional
-    public BackResponseCardDto deleteBackCard(Long cardId, User requestUser) {
-
-        User user = userService.checkUserAuthority(requestUser);
+    public BackResponseCardDto deleteBackCard(Long cardId, UserDetails userDetails) {
+        User user = userService.userFromUserDetails(userDetails);
         Card card = cardRepository.findById(cardId).orElse(null);
         if(card == null)
             throw new ContapException(ErrorCode.NOT_FOUND_CARD); //해당 카드를 찾을 수 없습니다.

@@ -8,30 +8,28 @@ import com.project.contap.model.tap.Tap;
 import com.project.contap.model.tap.TapRepository;
 import com.project.contap.model.user.User;
 import com.project.contap.model.user.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ContapServiceTest {
 
     @Mock
-    FriendRepository friendRepository;
-    @Mock
     TapRepository tapRepository;
     @Mock
     ChatRoomRepository chatRoomRepository;
     @Mock
     UserRepository userRepository;
+    @Mock
+    FriendRepository friendRepository;
     @Mock
     Common common;
 
@@ -51,7 +49,7 @@ class ContapServiceTest {
     @DisplayName("Tap 거절 - 정상처리")
     void tapReject_good() {
         Tap mockTap = Tap.builder().id(tapId).sendUser(imsiSender).receiveUser(imsiReceiver).msg("gd").status(0).build();
-        ContapService cantapService = new ContapService(tapRepository,chatRoomRepository,userRepository,friendRepository,common);
+        ContapService cantapService = new ContapService(tapRepository,chatRoomRepository,userRepository,friendRepository, common);
         when(tapRepository.findById(tapId))
                 .thenReturn(Optional.of(mockTap));
         DefaultRsp dfRsp = cantapService.tapReject(tapId,imsiReceiver.getEmail());
@@ -63,7 +61,7 @@ class ContapServiceTest {
     @DisplayName("Tap 거절 - 이미처리된탭_status_1")
     void tapReject_already() {
         Tap mockTap = Tap.builder().id(tapId).sendUser(imsiSender).receiveUser(imsiReceiver).msg("gd").status(1).build();
-        ContapService cantapService = new ContapService(tapRepository,chatRoomRepository,userRepository,friendRepository,common);
+        ContapService cantapService = new ContapService(tapRepository,chatRoomRepository,userRepository,friendRepository ,common);
         when(tapRepository.findById(tapId))
                 .thenReturn(Optional.of(mockTap));
         DefaultRsp dfRsp = cantapService.tapReject(tapId,imsiReceiver.getEmail());
