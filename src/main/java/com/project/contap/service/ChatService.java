@@ -90,9 +90,11 @@ public class ChatService {
 
     public List<ChatMessage> findMessage(String roomId, Long longId) {
         List<ChatMessage> chatList = chatMessageRepository.findMessage(roomId,longId);
-        Collections.reverse(chatList);
-        if(longId <= 0 &&updateRoomList2.containsKey(roomId) )
-            chatList.addAll(updateRoomList2.get(roomId));
+        if(longId <= 0) {
+            Collections.reverse(chatList);
+            if (updateRoomList2.containsKey(roomId))
+                chatList.addAll(updateRoomList2.get(roomId));
+        }
         return chatList;
     }
 }
