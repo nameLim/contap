@@ -61,7 +61,6 @@ class MypageControllerTest {
 
     User testUser;
     private Principal mockPrincipal;
-    UserDetailsImpl testUserDetails;
 
     @BeforeEach
     public void setup() {
@@ -75,7 +74,7 @@ class MypageControllerTest {
                     .userName("testUser")
                     .field(0)
                     .userStatus(UserStatusEnum.ACTIVE).build();
-        testUserDetails = new UserDetailsImpl(testUser);
+        UserDetailsImpl testUserDetails = new UserDetailsImpl(testUser);
         mockPrincipal = new UsernamePasswordAuthenticationToken(testUserDetails, "", Collections.emptyList());
     }
 
@@ -100,10 +99,6 @@ class MypageControllerTest {
 
                 verify(mypageService).modifyFrontCard(any(),eq(testUser));
                 when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
-                assertNull(testUser.getProfile());
-                assertEquals("namelim",testUser.getUserName());
-                assertEquals("@Java@_@",testUser.getHashTagsString());
-                assertEquals(1,testUser.getField());
             }
 
             @Test

@@ -10,7 +10,6 @@ import com.project.contap.model.user.UserRepository;
 import com.project.contap.model.user.dto.PwUpdateRequestDto;
 import com.project.contap.model.user.dto.SignUpRequestDto;
 import com.project.contap.model.user.dto.UserLoginDto;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -106,7 +105,7 @@ public class UserService {
         }
         user.setPhoneNumber(phoneNumber.replace("-",""));
         userRepository.save(user);
-        return phoneNumber.replaceFirst("^([0-9]{4})([0-9]{4})$", "$1-$2");
+        return phoneNumber.replaceAll("([010]{3})([0-9]{4})([0-9]{4})", "$1-$2-$3");
     }
 
     private boolean isValidPhoneNumber(String phoneNumber) {
@@ -241,12 +240,13 @@ public class UserService {
     public String getPhoneNumber(User requestUser) {
         User user = checkUserAuthority(requestUser);
 
-        //핸드폰번호 정규식 검사
-        if(!isValidPhoneNumber(user.getPhoneNumber())) {
-            throw new ContapException((ErrorCode.PHONE_FORM_INVALID)); //핸드폰번호 형식이 맞지 않습니다.
-        }
+        String returnPhoneNumber = user.getPhoneNumber().replaceAll("([010]{3})([0-9]{4})([0-9]{4})", "$1-$2-$3");
 
-        return user.getPhoneNumber().replaceFirst("^([0-9]{4})([0-9]{4})$", "$1-$2");
+        //핸드폰번호 정규식 검사
+        if(!isValidPhoneNumber(returnPhoneNumber))
+            throw new ContapException((ErrorCode.PHONE_FORM_INVALID)); //핸드폰번호 형식이 맞지 않습니다.
+
+        return returnPhoneNumber;
     }
 
     private User isInactiveUser(String email) {
