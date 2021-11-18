@@ -1,6 +1,7 @@
 package com.project.contap.service;
 
 import com.project.contap.chat.ChatRoomRepository;
+import com.project.contap.common.enumlist.UserStatusEnum;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
 import com.project.contap.model.user.User;
@@ -34,8 +35,6 @@ class UserServiceTest {
     @Mock
     ChatRoomRepository chatRoomRepository;
 
-
-    @Nested
     @DisplayName("회원가입 테스트")
     class registerUser {
 
@@ -50,6 +49,7 @@ class UserServiceTest {
                     .email(requestDto.getEmail())
                     .pw("mytest")
                     .userName(requestDto.getUserName())
+                    .userStatus(UserStatusEnum.ACTIVE)
                     .build();
 
             when(passwordEncoder.encode(requestDto.getPw()))
@@ -62,6 +62,7 @@ class UserServiceTest {
             assertEquals(user.getEmail(), requestDto.getEmail());
             assertEquals(user.getPw(), "mytest");
             assertEquals(user.getUserName(), requestDto.getUserName());
+            assertEquals(user.getUserStatus(),UserStatusEnum.ACTIVE);
         }
 
         @Test
@@ -210,6 +211,7 @@ class UserServiceTest {
                     .email("test@naver.com")
                     .pw("1234qwer")
                     .userName("test")
+                    .userStatus(UserStatusEnum.ACTIVE)
                     .build();
 
             when(passwordEncoder.matches(loginDto.getPw(), user.getPw()))
@@ -223,6 +225,7 @@ class UserServiceTest {
             assertEquals(user1.getEmail(), user.getEmail());
             assertEquals(user1.getPw(), user.getPw());
             assertEquals(user1.getUserName(), user.getUserName());
+            assertEquals(UserStatusEnum.ACTIVE,user.getUserStatus());
 
 
         }
@@ -261,6 +264,7 @@ class UserServiceTest {
                     .email("test@naver.com")
                     .pw("1234qwer")
                     .userName("test")
+                    .userStatus(UserStatusEnum.ACTIVE)
                     .build();
 
             when(passwordEncoder.matches(loginDto.getPw(), user.getPw()))

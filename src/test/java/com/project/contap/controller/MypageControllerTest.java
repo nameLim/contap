@@ -32,8 +32,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -59,10 +58,11 @@ class MypageControllerTest {
     @MockBean
     private UserRepository userRepository;
 
-    User testUser;
-    private Principal mockPrincipal;
-    UserDetailsImpl testUserDetails;
 
+    private Principal mockPrincipal;
+
+    User testUser;
+    UserDetailsImpl testUserDetails;
     @BeforeEach
     public void setup() {
         mvc = MockMvcBuilders.webAppContextSetup(context)
@@ -98,12 +98,8 @@ class MypageControllerTest {
                         .andExpect(status().isOk())
                         .andDo(print());
 
-                verify(mypageService).modifyFrontCard(any(),eq(testUser));
+                verify(mypageService).modifyFrontCard(any(),eq(testUserDetails));
                 when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
-                assertNull(testUser.getProfile());
-                assertEquals("namelim",testUser.getUserName());
-                assertEquals("@Java@_@",testUser.getHashTagsString());
-                assertEquals(1,testUser.getField());
             }
 
             @Test
@@ -124,7 +120,7 @@ class MypageControllerTest {
                             .andExpect(status().isOk())
                             .andDo(print());
 
-                verify(mypageService).createBackCard(any(),eq(testUser));
+                verify(mypageService).createBackCard(any(),refEq(testUserDetails));
 
                 when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
                 assertEquals(999L,testUser.getId());
@@ -151,7 +147,7 @@ class MypageControllerTest {
                                 .content(backCardInfo))
                             .andExpect(status().isOk())
                             .andDo(print());
-                verify(mypageService).modifyBackCard(eq(1L),any(),eq(testUser));
+                verify(mypageService).modifyBackCard(eq(1L),any(),refEq(testUserDetails));
             }
         }
 
@@ -186,7 +182,7 @@ class MypageControllerTest {
                 mvc.perform(get("/mypage/myinfo").principal(mockPrincipal))
                         .andExpect(status().isOk())
                         .andDo(print());
-                verify(mypageService).getMyInfo(testUser);
+                verify(mypageService).getMyInfo(testUserDetails);
 
                 assertEquals(999L,testUser.getId());
                 assertEquals("1234qwer",testUser.getPw());
@@ -211,7 +207,7 @@ class MypageControllerTest {
                         .andDo(print())
                         .andExpect(status().isOk());
 
-                verify(mypageService).deleteBackCard(1L,testUser);
+                verify(mypageService).deleteBackCard(1L,testUserDetails);
 
                 assertEquals(999L,testUser.getId());
                 assertEquals("1234qwer",testUser.getPw());

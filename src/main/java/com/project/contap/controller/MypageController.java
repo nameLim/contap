@@ -2,11 +2,11 @@ package com.project.contap.controller;
 
 import com.project.contap.model.card.dto.BackRequestCardDto;
 import com.project.contap.model.card.dto.BackResponseCardDto;
-import com.project.contap.security.UserDetailsImpl;
-import com.project.contap.service.MypageService;
 import com.project.contap.model.user.dto.FrontRequestCardDto;
 import com.project.contap.model.user.dto.FrontResponseCardDto;
 import com.project.contap.model.user.dto.UserInfoDto;
+import com.project.contap.security.UserDetailsImpl;
+import com.project.contap.service.MypageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -27,7 +27,7 @@ public class MypageController {
     @Operation(summary = "내 정보 조회")
     @GetMapping("/myinfo")
     public UserInfoDto getMyInfo(@Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return mypageService.getMyInfo(userDetails.getUser());
+        return mypageService.getMyInfo(userDetails);
     }
 
     @Operation(summary = "카드 앞면 수정")
@@ -36,7 +36,7 @@ public class MypageController {
             @ModelAttribute FrontRequestCardDto frontRequestCardDto
             ,@Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails
     ) throws IOException {
-        return mypageService.modifyFrontCard(frontRequestCardDto, userDetails.getUser());
+        return mypageService.modifyFrontCard(frontRequestCardDto, userDetails);
     }
 
     @Operation(summary = "카드 뒷면 생성")
@@ -46,7 +46,7 @@ public class MypageController {
             , @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return mypageService.createBackCard(
                 backRequestCardDto,
-                userDetails.getUser()
+                userDetails
         );
     }
 
@@ -56,7 +56,7 @@ public class MypageController {
             @Parameter(name = "cardId", in = ParameterIn.PATH, description = "카드아이디") @PathVariable Long cardId
             , @RequestBody BackRequestCardDto backRequestCardDto
             , @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return mypageService.modifyBackCard(cardId, backRequestCardDto, userDetails.getUser());
+        return mypageService.modifyBackCard(cardId, backRequestCardDto, userDetails);
     }
 
     @Operation(summary = "카드 뒷면 삭제")
@@ -64,6 +64,6 @@ public class MypageController {
     public BackResponseCardDto deleteBackCard(
             @Parameter(name = "cardId", in = ParameterIn.PATH, description = "카드아이디") @PathVariable Long cardId
             , @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return mypageService.deleteBackCard(cardId, userDetails.getUser());
+        return mypageService.deleteBackCard(cardId, userDetails);
     }
 }
