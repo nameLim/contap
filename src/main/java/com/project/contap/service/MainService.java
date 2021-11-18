@@ -17,6 +17,7 @@ import com.project.contap.model.user.UserRepository;
 import com.project.contap.model.user.dto.UserMainDto;
 import com.project.contap.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -84,8 +85,8 @@ public class MainService {
         return new DefaultRsp("정상적으로 처리 되었습니다.");
     }
 
-    public void tutorial(int tutorialNum, User requestUser) {
-        User user = userService.checkUserAuthority(requestUser);
+    public void tutorial(int tutorialNum, UserDetails requestUser) {
+        User user = userService.userFromUserDetails(requestUser);
 
         int authStatus = user.getAuthStatus();
         if(tutorialNum == 0) { //phone
@@ -98,8 +99,8 @@ public class MainService {
         userRepository.save(user);
     }
 
-    public int getUserAuthStatus(User requestUser) {
-        User user = userService.checkUserAuthority(requestUser);
+    public int getUserAuthStatus(UserDetails userDetails) {
+        User user = userService.userFromUserDetails(userDetails);
         return user.getAuthStatus();
     }
 }
