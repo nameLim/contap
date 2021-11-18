@@ -21,7 +21,6 @@ public class ProcessUserStatusJob {
         List<User> oldUsers = userRepository.findByModifiedDtBeforeAndAndUserStatusEquals(LocalDateTime.now().minusMonths(1), UserStatusEnum.INACTIVE);
         for(User user: oldUsers){
             //회원 정보 삭제 해야할 곳
-            
             user.setUserStatus(UserStatusEnum.WITHDRAWN);
         }
 
