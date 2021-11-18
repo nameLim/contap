@@ -1,5 +1,7 @@
 package com.project.contap;
 
+import com.project.contap.common.Common;
+import com.project.contap.common.util.RandomNumberGeneration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,11 +12,11 @@ import org.springframework.data.redis.core.ZSetOperations;
 import java.util.ArrayList;
 import java.util.List;
 
-@SpringBootTest
+
 public class realTest {
     //여기다테스트 해보고싶은코드 작성하면 편할것같아서 추가해봤어요
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+//    @Autowired
+//    private RedisTemplate<String, String> redisTemplate;
 
     @Test
     void test()
@@ -34,9 +36,7 @@ public class realTest {
     @Test
     void test2()
     {
-        ListOperations<String, String> listOpsforRoomstatus = redisTemplate.opsForList();
-        listOpsforRoomstatus.rightPush("test1","test"); // [0] = 보낸사람 , [1] = 채팅방 인원수
-        listOpsforRoomstatus.rightPop("test1");
-        listOpsforRoomstatus.rightPush("test1","test");
+        for(int i = 0 ; i< 1000; i++)
+            System.out.println();
     }
 }
