@@ -4,4 +4,5 @@ import java.util.List;
 
 public interface CostomChatMessageRepository {
     List<ChatMessage> findMessage(String roomId,Long startId);
+    ChatMessage findLastMessage(String roomId);
 }

@@ -1,6 +1,8 @@
 package com.project.contap.common;
 
+import com.project.contap.chat.ChatMessage;
 import com.project.contap.chat.ChatMessageDTO;
+import com.project.contap.chat.ChatMessageRepository;
 import com.project.contap.chat.ChatRoomRepository;
 import com.project.contap.common.enumlist.MsgTypeEnum;
 import com.project.contap.model.friend.Friend;
@@ -14,7 +16,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -23,16 +27,19 @@ public class Common {
     private final RedisTemplate redisTemplate;
     private final ChannelTopic channelTopic;
     private final FriendRepository friendRepository;
+    private final ChatMessageRepository chatMessageRepository;
     @Autowired
     public Common(ChatRoomRepository chatRoomRepository,
                   RedisTemplate redisTemplate,
                   ChannelTopic channelTopic,
-                  FriendRepository friendRepository)
+                  FriendRepository friendRepository,
+                  ChatMessageRepository chatMessageRepository)
     {
         this.chatRoomRepository = chatRoomRepository;
         this.redisTemplate=redisTemplate;
         this.channelTopic = channelTopic;
         this.friendRepository = friendRepository;
+        this.chatMessageRepository = chatMessageRepository;
     }
 
     //진짜 잡다한 기능들만 들어갈 예정인 클래스..
@@ -95,6 +102,24 @@ public class Common {
         } catch (CoolsmsException e) {
             System.out.println(e.getMessage());
             System.out.println(e.getCode());
+        }
+    }
+    public void DbinfoToRedis()
+    {
+        chatRoomRepository.serverRestart();
+        List<Friend> friends =  friendRepository.findAll();
+        List<String> roomIds = new ArrayList<>();
+        ChatMessage msg = null;
+        for(Friend friend : friends)
+        {
+            if(roomIds.contains(friend.getRoomId())){
+                roomIds.remove(friend.getRoomId());
+            }
+            else{
+                roomIds.add(friend.getRoomId());
+                msg = chatMessageRepository.findLastMessage(friend.getRoomId());
+                chatRoomRepository.setDBinfoToRedis(friend,msg);
+            }
         }
     }
 }

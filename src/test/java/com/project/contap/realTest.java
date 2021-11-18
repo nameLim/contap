@@ -2,9 +2,13 @@ package com.project.contap;
 
 import com.project.contap.common.Common;
 import com.project.contap.common.util.RandomNumberGeneration;
+import com.project.contap.model.friend.Friend;
+import com.project.contap.model.friend.FriendRepository;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.connection.RedisServerCommands;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
@@ -13,10 +17,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+@RequiredArgsConstructor
+@SpringBootTest
 public class realTest {
     //여기다테스트 해보고싶은코드 작성하면 편할것같아서 추가해봤어요
 //    @Autowired
 //    private RedisTemplate<String, String> redisTemplate;
+    @Autowired
+    private FriendRepository friendRepository;
 
     @Test
     void test()
@@ -37,6 +45,11 @@ public class realTest {
     void test2()
     {
         for(int i = 0 ; i< 1000; i++)
-            System.out.println();
+            System.out.println(RandomNumberGeneration.randomRange(0,0));
+    }
+    @Test
+    void test3()
+    {
+        System.out.println(friendRepository.getallFriend());
     }
 }

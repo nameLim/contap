@@ -122,4 +122,10 @@ public class UserController {
     public String getPhoneNumber(@Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
         return userService.getPhoneNumber(userDetails);
     }
+
+
+    @GetMapping("/set/usercount") // 혹시몰라서 만들어봄.
+    public void ActiveUsercntSet() throws ContapException {
+        userService.ActiveUsercntSet();
+    }
 }

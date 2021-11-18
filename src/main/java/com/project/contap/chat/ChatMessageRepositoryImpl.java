@@ -34,4 +34,11 @@ public class ChatMessageRepositoryImpl implements CostomChatMessageRepository{
                     .offset(0).limit(15)
                     .fetch();
     }
+
+    @Override
+    public ChatMessage findLastMessage(String roomId)
+    {
+        QChatMessage qChatMessage = QChatMessage.chatMessage;
+        return queryFactory.select(qChatMessage).from(qChatMessage).where(qChatMessage.roomId.eq(roomId)).orderBy(qChatMessage.createdDt.desc()).offset(0).limit(1).fetchOne();
+    }
 }
