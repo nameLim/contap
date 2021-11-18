@@ -10,7 +10,9 @@ import com.project.contap.model.user.UserRepository;
 import com.project.contap.model.user.dto.PwUpdateRequestDto;
 import com.project.contap.model.user.dto.SignUpRequestDto;
 import com.project.contap.model.user.dto.UserLoginDto;
+import com.project.contap.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -89,10 +91,8 @@ public class UserService {
         return alarms;
     }
 
-    public String modifyPhoneNumber(String phoneNumber, User requestUser) {
-
-        User user = checkUserAuthority(requestUser);
-
+    public String modifyPhoneNumber(String phoneNumber, UserDetails userDetails) {
+        User user = userFromUserDetails(userDetails);
         //핸드폰번호 정규식 검사
         if(!isValidPhoneNumber(phoneNumber)) {
             throw new ContapException((ErrorCode.PHONE_FORM_INVALID)); //핸드폰번호 형식이 맞지 않습니다.
@@ -126,8 +126,16 @@ public class UserService {
         return user;
     }
 
-    public void changeAlarmState(int alarmState, User requestUser) {
-        User user = checkUserAuthority(requestUser);
+    public User userFromUserDetails(UserDetails userDetails) {
+        if ( userDetails instanceof UserDetailsImpl ) {
+            return ((UserDetailsImpl) userDetails).getUser();
+        } else {
+            throw new ContapException(ErrorCode.USER_NOT_FOUND);
+        }
+    }
+
+    public void changeAlarmState(int alarmState, UserDetails userDetails) {
+        User user = userFromUserDetails(userDetails);
         int authStatus = user.getAuthStatus();
         if(alarmState==0) {
             authStatus = authStatus - AuthorityEnum.ALARM.getAuthority();
@@ -228,8 +236,8 @@ public class UserService {
     }
 
     @Transactional
-    public void changeToInactive(UserLoginDto requestDto, User requestUser) {
-        User user = checkUserAuthority(requestUser);
+    public void changeToInactive(UserLoginDto requestDto, UserDetails userDetails) {
+        User user = userFromUserDetails(userDetails);
         if(!passwordEncoder.matches(requestDto.getPw(), user.getPw()))
             throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
 
@@ -237,8 +245,8 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public String getPhoneNumber(User requestUser) {
-        User user = checkUserAuthority(requestUser);
+    public String getPhoneNumber(UserDetails userDetails) {
+        User user = userFromUserDetails(userDetails);
 
         String returnPhoneNumber = user.getPhoneNumber().replaceAll("([010]{3})([0-9]{4})([0-9]{4})", "$1-$2-$3");
 
