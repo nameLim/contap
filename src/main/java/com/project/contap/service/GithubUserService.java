@@ -4,6 +4,7 @@ package com.project.contap.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.contap.common.enumlist.UserStatusEnum;
 import com.project.contap.model.user.User;
 import com.project.contap.model.user.UserRepository;
 import com.project.contap.model.user.dto.SnsUserInfoDto;
@@ -144,6 +145,7 @@ public class GithubUserService {
                     .pw(encodedPassword)
                     .userName(name)
                     .profile(profile)
+                    .userStatus(UserStatusEnum.ACTIVE)
                     .build();
             userRepository.save(githubUser);
 

@@ -35,6 +35,7 @@ class UserServiceTest {
     @Mock
     ChatRoomRepository chatRoomRepository;
 
+    @Nested
     @DisplayName("회원가입 테스트")
     class registerUser {
 
