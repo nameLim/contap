@@ -61,7 +61,6 @@ class MypageControllerTest {
 
     User testUser;
     private Principal mockPrincipal;
-    UserDetailsImpl testUserDetails;
 
     @BeforeEach
     public void setup() {
@@ -75,7 +74,7 @@ class MypageControllerTest {
                     .userName("testUser")
                     .field(0)
                     .userStatus(UserStatusEnum.ACTIVE).build();
-        testUserDetails = new UserDetailsImpl(testUser);
+        UserDetailsImpl testUserDetails = new UserDetailsImpl(testUser);
         mockPrincipal = new UsernamePasswordAuthenticationToken(testUserDetails, "", Collections.emptyList());
     }
 
