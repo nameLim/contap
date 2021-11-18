@@ -254,8 +254,26 @@ public class ChatRoomRepository {
         zSetforchatdate.add(friend.getMe().getEmail(),friend.getRoomId(),date);
         zSetforchatdate.add(friend.getYou().getEmail(),friend.getRoomId(),date);
     }
+
     public void deleteUser(String userEmail)
     {
-        return;
+        String alarmInfo = hashOpsAlarmInfo.get(ALARM_INFO,userEmail);
+        String LoginInfo = hashOpsLoginInfo.get(LOGIN_INFO,userEmail);
+        if(alarmInfo != null)
+            hashOpsAlarmInfo.delete(ALARM_INFO,userEmail,alarmInfo);
+        if(LoginInfo != null) {
+            hashOpsLoginInfo.delete(LOGIN_INFO, userEmail, LoginInfo);
+            String ReverseInfo = hashOpsReverseLoginInfo.get(REVERSE_LOGIN_INFO,LoginInfo);
+            if(ReverseInfo != null)
+                hashOpsReverseLoginInfo.delete(REVERSE_LOGIN_INFO, LoginInfo, ReverseInfo);
+        }
+    }
+
+    public void deleteRoomInfo(String email_me, String email1_you, String roomId) {
+        listOpsforRoomstatus.rightPop(roomId);
+        zSetforchatdate.remove(email_me,roomId);
+        zSetforchatdate.remove(email1_you,roomId);
+
+
     }
 }

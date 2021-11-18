@@ -5,6 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 
 public class TapRepositoryImpl implements CustomTapRepository{
     private final JPAQueryFactory queryFactory;
@@ -33,5 +34,16 @@ public class TapRepositoryImpl implements CustomTapRepository{
                         .and(qTap.receiveUser.eq(receiver))
                         .and(qTap.status.eq(0)))
                 .fetchFirst() != null;
+    }
+    @Override
+    public List<Tap> getMyTaps(User user)
+    {
+        QTap qTap = QTap.tap;
+        return queryFactory
+                .select(qTap)
+                .from(qTap)
+                .where(qTap.sendUser.eq(user)
+                        .or(qTap.receiveUser.eq(user)))
+                .fetch();
     }
 }

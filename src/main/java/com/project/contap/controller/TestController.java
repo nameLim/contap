@@ -1,5 +1,7 @@
 package com.project.contap.controller;
 
+import com.project.contap.chat.ChatMessage;
+import com.project.contap.chat.ChatMessageRepository;
 import com.project.contap.chat.ChatRoomRepository;
 import com.project.contap.common.enumlist.UserStatusEnum;
 import com.project.contap.exception.ContapException;
@@ -7,6 +9,8 @@ import com.project.contap.model.card.Card;
 import com.project.contap.model.friend.Friend;
 import com.project.contap.model.friend.FriendRepository;
 import com.project.contap.model.hashtag.HashTag;
+import com.project.contap.model.tap.Tap;
+import com.project.contap.model.tap.TapRepository;
 import com.project.contap.model.user.User;
 import com.project.contap.model.card.CardRepository;
 import com.project.contap.model.hashtag.HashTagRepositoty;
@@ -17,11 +21,14 @@ import com.project.contap.common.util.RandomNumberGeneration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -32,6 +39,8 @@ public class TestController {
     private final PasswordEncoder passwordEncoder;
     private final FriendRepository friendRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatMessageRepository chatMessageRepository;
+    private final TapRepository tapRepository;
     @Autowired
     public TestController(
             UserRepository userRepository,
@@ -39,7 +48,9 @@ public class TestController {
             CardRepository cardRepository,
             PasswordEncoder passwordEncoder,
             FriendRepository friendRepository,
-            ChatRoomRepository chatRoomRepository
+            ChatRoomRepository chatRoomRepository,
+            ChatMessageRepository chatMessageRepository,
+            TapRepository tapRepository
     ) {
         this.userRepository = userRepository;
         this.hashTagRepositoty =hashTagRepositoty;
@@ -47,6 +58,8 @@ public class TestController {
         this.passwordEncoder = passwordEncoder;
         this.friendRepository = friendRepository;
         this.chatRoomRepository = chatRoomRepository;
+        this.chatMessageRepository = chatMessageRepository;
+        this.tapRepository = tapRepository;
     }
 
     @GetMapping("/forclient1/{id}") // 한유저가쓴 카드 모두조회
@@ -141,10 +154,10 @@ public class TestController {
         if(check != null)
             return;
         String pw = passwordEncoder.encode("commonpw"); // 패스워드 암호화
-        for(int i = 0 ; i < 5000 ; i++)
+        for(int i = 0 ; i < 50 ; i++)
         {
             User user = User.builder()
-                    .email(String.format("userEmail%d@gmail.com",i))
+                    .email(String.format("useremail%d@gmail.com",i))
                     .pw(pw)
                     .userName(String.format("userName%d",i))
                     .field(i%3)
@@ -156,7 +169,7 @@ public class TestController {
     @GetMapping("/UserHashSet")
     void userHashSet() throws ContapException
     {
-        for(Long i = 1L ; i <= 5000L ; i++)
+        for(Long i = 1L ; i <= 50L ; i++)
         {
             User user=userRepository.findById(i).orElse(null);
             HashTag ht1 = hashTagRepositoty.getById(new Long(RandomNumberGeneration.randomRange(1,40)));//
@@ -169,10 +182,17 @@ public class TestController {
         }
     }
 
+    @GetMapping("/testdeleteuser/{userId}")
+    void auserHashSet( @PathVariable Long userId ) throws ContapException
+    {
+        User user = userRepository.findById(userId).orElse(null);
+        userRepository.delete(user);
+    }
+
     @GetMapping("/CardSet")
     void CardSet() throws ContapException
     {
-        for(Long i = 1L ; i <= 5000L ; i++)
+        for(Long i = 1L ; i <= 50L ; i++)
         {
             User user=userRepository.findById(i).orElse(null);
             user.getCards().clear();
@@ -194,7 +214,7 @@ public class TestController {
     @GetMapping("/friend")
     void friendSet() throws ContapException
     {
-        for(Long i = 1L ; i <= 2000L ; i = i+2)
+        for(Long i = 1L ; i <= 30L ; i = i+2)
         {
             User user1=userRepository.findById(i).orElse(null);
             User user2=userRepository.findById(i+1).orElse(null);
@@ -205,6 +225,39 @@ public class TestController {
             friendRepository.save(sec);
             chatRoomRepository.whenMakeFriend(roomId,user1.getEmail(),user2.getEmail());
         }
+    }
+
+
+    @Transactional
+    @GetMapping("/friend/{userId}")
+    public void perform(@PathVariable Long userId) throws Exception {
+        User user2 = userRepository.findById(userId).orElse(null);
+        List<User> oldUsers = new ArrayList<>();
+        oldUsers.add(user2);
+        for(User user: oldUsers){
+            List<Card> cards =  cardRepository.findAllByUser(user);
+            cardRepository.deleteAll(cards);
+            List<Friend> friends = friendRepository.getallmyFriend(user);
+            List<String> roomIds = new ArrayList<>();
+            for(Friend friend : friends)
+            {
+                if(roomIds.contains(friend.getRoomId())){
+                    roomIds.remove(friend.getRoomId());
+                }
+                else{
+                    roomIds.add(friend.getRoomId());
+                    List<ChatMessage> msg = chatMessageRepository.findAllByRoomId(friend.getRoomId());
+                    chatMessageRepository.deleteAll(msg);
+                    chatRoomRepository.deleteRoomInfo(friend.getYou().getEmail(),friend.getMe().getEmail(),friend.getRoomId());
+                }
+            }
+            friendRepository.deleteAll(friends);
+            List<Tap> taps = tapRepository.getMyTaps(user);
+            tapRepository.deleteAll(taps);
+            chatRoomRepository.deleteUser(user.getEmail());
+            user.setUserStatus(UserStatusEnum.WITHDRAWN);
+        }
+        userRepository.delete(user2);
     }
 }
 
