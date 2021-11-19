@@ -25,16 +25,16 @@ public class RedisConfig {
         return new ChannelTopic("chatroom");
     }
 
-//    @Bean
-//    public RedisConnectionFactory redisConnectionFactory(){
-//        RedisSentinelConfiguration redisSentinelConfiguration = new RedisSentinelConfiguration()
-//                .master("mymaster")
-//                .sentinel("localhost",5000)
-//                .sentinel("localhost",5001)
-//                .sentinel("localhost",5002);
-//        LettuceConnectionFactory lettuceConnectionFactory =
-//                new LettuceConnectionFactory(redisSentinelConfiguration);
-//        return lettuceConnectionFactory; }
+    @Bean
+    public RedisConnectionFactory redisConnectionFactory(){
+        RedisSentinelConfiguration redisSentinelConfiguration = new RedisSentinelConfiguration()
+                .master("mymaster")
+                .sentinel("localhost",5000)
+                .sentinel("localhost",5001)
+                .sentinel("localhost",5002);
+        LettuceConnectionFactory lettuceConnectionFactory =
+                new LettuceConnectionFactory(redisSentinelConfiguration);
+        return lettuceConnectionFactory; }
     // 위 코드는 sentinel 용임.. 서버올릴때 풀겠음.
 
     @Bean
