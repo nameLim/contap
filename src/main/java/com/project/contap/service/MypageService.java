@@ -169,7 +169,7 @@ public class MypageService {
 
         cardRepository.delete(card);
         if(user.getCards().size()==1) {
-            int authStatus = user.getAuthStatus()-AuthorityEnum.CAN_OTHER_READ.getAuthority();
+            int authStatus = user.getAuthStatus() & (AuthorityEnum.ALL_AUTHORITY.getAuthority() - AuthorityEnum.CAN_OTHER_READ.getAuthority());
             user.setAuthStatus(authStatus);
         }
 

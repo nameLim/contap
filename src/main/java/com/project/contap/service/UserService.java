@@ -141,7 +141,7 @@ public class UserService {
         User user = userFromUserDetails(userDetails);
         int authStatus = user.getAuthStatus();
         if(alarmState==0) {
-            authStatus = authStatus - AuthorityEnum.ALARM.getAuthority();
+            authStatus = authStatus & (AuthorityEnum.ALL_AUTHORITY.getAuthority() - AuthorityEnum.ALARM.getAuthority());
         }
         else if(alarmState==1) {
             authStatus = authStatus|AuthorityEnum.ALARM.getAuthority();
