@@ -9,16 +9,18 @@ import com.project.contap.model.user.UserRepository;
 import com.project.contap.model.user.dto.PwUpdateRequestDto;
 import com.project.contap.model.user.dto.SignUpRequestDto;
 import com.project.contap.model.user.dto.UserLoginDto;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 
@@ -35,6 +37,7 @@ class UserServiceTest {
     @Mock
     ChatRoomRepository chatRoomRepository;
 
+    @Nested
     @DisplayName("회원가입 테스트")
     class registerUser {
 

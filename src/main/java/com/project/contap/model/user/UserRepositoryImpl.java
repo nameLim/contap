@@ -128,13 +128,17 @@ public class UserRepositoryImpl implements CostomUserRepository{
     @Override
     public List<UserMainDto> getRandomUser(Long usercnt)
     {
-//        Long check1 = usercnt/9;
-//        Long check2 = usercnt%9;
-//        Long page = check1;
-//        if(check2.equals(0L))
-//            page = page - 1L;
-//        Random random = new Random();
-        int page = RandomNumberGeneration.randomRange(1,30);
+
+        Long check1 = (usercnt/9);
+        Long check2 = (usercnt%9);
+
+        Long page = check1;
+
+        if(check2.equals(0L) && !check1.equals(0L))
+            page = page - 1L;
+
+        page = new Long(RandomNumberGeneration.randomRange(0,page.intValue()));
+
         QUser hu = QUser.user;
         return queryFactory
                 .select(
@@ -148,7 +152,7 @@ public class UserRepositoryImpl implements CostomUserRepository{
                         )).distinct()
                 .from(hu)
                 .where(hu.userStatus.eq(UserStatusEnum.ACTIVE))
-                .offset(0).limit(9)
+                .offset(page*9).limit(9)
                 .fetch();
         //귀찮.. 다음에 페이징처리하자
     }
@@ -168,5 +172,14 @@ public class UserRepositoryImpl implements CostomUserRepository{
         return  queryFactory.from(qUser)
                 .where(qUser.phoneNumber.eq(phoneNumber))
                 .fetchFirst() != null;
+    }
+
+    @Override
+    public Long getActiveUsercnt()
+    {
+        QUser qUser = QUser.user;
+        return  queryFactory.select(qUser.id).from(qUser)
+                .where(qUser.userStatus.eq(UserStatusEnum.ACTIVE))
+                .fetchCount();
     }
 }

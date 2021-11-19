@@ -13,4 +13,5 @@ public interface CostomUserRepository {
     List<UserMainDto> getRandomUser(Long usercnt);
     Boolean existUserByUserName(String userName);
     Boolean existUserByPhoneNumber(String phoneNumber);
+    Long getActiveUsercnt();
 }

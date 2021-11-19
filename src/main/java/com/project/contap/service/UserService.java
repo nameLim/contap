@@ -203,7 +203,7 @@ public class UserService {
 
     private boolean isValidEmail(String email) {
         boolean err = false;
-        String regex = "^[_a-z0-9-]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$";
+        String regex = "^[_A-Za-z0-9-]+(.[_A-Za-z0-9-]+)*@(?:\\w+\\.)+\\w+$";
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(email);
         if (m.matches()) {
@@ -264,6 +264,12 @@ public class UserService {
     private User isInactiveUser(String email) {
         User user = userRepository.findByEmailAndUserStatusEquals(email, UserStatusEnum.INACTIVE);
         return user;
+    }
+
+    public void ActiveUsercntSet()
+    {
+        User.userCount = userRepository.getActiveUsercnt();
+        System.out.println("userCnt : " + User.userCount.toString());
     }
 }
 

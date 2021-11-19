@@ -4,6 +4,7 @@ import com.project.contap.model.user.User;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 
 public class FriendRepositoryImpl implements CustomFriendRepository {
     private final JPAQueryFactory queryFactory;
@@ -29,5 +30,23 @@ public class FriendRepositoryImpl implements CustomFriendRepository {
                 .where(qFriend.me.eq(me)
                         .and(qFriend.you.eq(you)))
                 .fetchOne();
+    }
+
+    @Override
+    public List<Friend> getallFriend()
+    {
+        QFriend qFriend = QFriend.friend;
+        return  queryFactory.select(qFriend).from(qFriend).fetch();
+    }
+    @Override
+    public List<Friend> getallmyFriend(User user)
+    {
+        QFriend qFriend = QFriend.friend;
+        return  queryFactory
+                .select(qFriend)
+                .from(qFriend)
+                .where(qFriend.me.eq(user)
+                        .or(qFriend.you.eq(user)))
+                .fetch();
     }
 }

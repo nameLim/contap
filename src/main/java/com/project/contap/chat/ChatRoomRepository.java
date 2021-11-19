@@ -1,9 +1,13 @@
 package com.project.contap.chat;
 
 import com.project.contap.common.enumlist.AlarmEnum;
+import com.project.contap.model.friend.Friend;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.*;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -17,7 +21,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Repository
 public class ChatRoomRepository {
-
     public static final String ALARM_INFO = "ALARM_INFO";
     public static final String LOGIN_INFO = "LOGIN_INFO";
     public static final String ROOM_INFO = "ROOM_INFO";
@@ -55,6 +58,8 @@ public class ChatRoomRepository {
     @Resource(name = "redisTemplate")
     private HashOperations<String, String, String> hashOpsRoomInfo; //이건 사라진다.
     // disconnection 시 방 인원 줄일려고 만듬
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
     public void userConnect(String userEmail, String sessionId) {
         hashOpsLoginInfo.put(LOGIN_INFO,userEmail,sessionId);
@@ -225,6 +230,52 @@ public class ChatRoomRepository {
         listOpsforRoomstatus.rightPop(roomId);
         zSetforchatdate.remove(firEmail,roomId);
         zSetforchatdate.remove(secEmail,roomId);
+
+    }
+
+
+    public void serverRestart()
+    {
+        redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
+        //알람은 아쉽지만 지워질수밖에..
+    }
+
+    public void setDBinfoToRedis(Friend friend,ChatMessage chatMsg) // flush 는 일단 수동으로 하자
+    {
+        double date;
+        // = Double.parseDouble(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss")));
+        String str = "@@/0/_test용_";
+        if(chatMsg == null){
+            date = Double.parseDouble(LocalDateTime.now().minusMonths(1).format(DateTimeFormatter.ofPattern("yyMMddHHmmss")));
+        }
+        else{
+            date = Double.parseDouble(chatMsg.getCreatedDt().format(DateTimeFormatter.ofPattern("yyMMddHHmmss")));
+            str = chatMsg.getWriter()+"/0/"+chatMsg.getMessage();
+        }
+        listOpsforRoomstatus.rightPush(friend.getRoomId(),str); // [0] = 보낸사람 , [1] = 채팅방 인원수
+        zSetforchatdate.add(friend.getMe().getEmail(),friend.getRoomId(),date);
+        zSetforchatdate.add(friend.getYou().getEmail(),friend.getRoomId(),date);
+    }
+
+    public void deleteUser(String userEmail)
+    {
+        String alarmInfo = hashOpsAlarmInfo.get(ALARM_INFO,userEmail);
+        String LoginInfo = hashOpsLoginInfo.get(LOGIN_INFO,userEmail);
+        if(alarmInfo != null)
+            hashOpsAlarmInfo.delete(ALARM_INFO,userEmail,alarmInfo);
+        if(LoginInfo != null) {
+            hashOpsLoginInfo.delete(LOGIN_INFO, userEmail, LoginInfo);
+            String ReverseInfo = hashOpsReverseLoginInfo.get(REVERSE_LOGIN_INFO,LoginInfo);
+            if(ReverseInfo != null)
+                hashOpsReverseLoginInfo.delete(REVERSE_LOGIN_INFO, LoginInfo, ReverseInfo);
+        }
+    }
+
+    public void deleteRoomInfo(String email_me, String email1_you, String roomId) {
+        listOpsforRoomstatus.rightPop(roomId);
+        zSetforchatdate.remove(email_me,roomId);
+        zSetforchatdate.remove(email1_you,roomId);
+
 
     }
 }

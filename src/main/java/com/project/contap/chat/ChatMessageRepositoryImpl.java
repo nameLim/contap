@@ -1,7 +1,5 @@
 package com.project.contap.chat;
 
-import com.project.contap.model.card.dto.QCardDto;
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import javax.persistence.EntityManager;
@@ -33,5 +31,12 @@ public class ChatMessageRepositoryImpl implements CostomChatMessageRepository{
                     .orderBy(qChatMessage.id.desc())
                     .offset(0).limit(15)
                     .fetch();
+    }
+
+    @Override
+    public ChatMessage findLastMessage(String roomId)
+    {
+        QChatMessage qChatMessage = QChatMessage.chatMessage;
+        return queryFactory.select(qChatMessage).from(qChatMessage).where(qChatMessage.roomId.eq(roomId)).orderBy(qChatMessage.createdDt.desc()).offset(0).limit(1).fetchOne();
     }
 }

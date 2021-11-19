@@ -2,10 +2,10 @@ package com.project.contap.service;
 
 import com.project.contap.chat.ChatMessage;
 import com.project.contap.chat.ChatMessageDTO;
+import com.project.contap.chat.ChatMessageRepository;
 import com.project.contap.chat.ChatRoomRepository;
 import com.project.contap.common.enumlist.AlarmEnum;
 import com.project.contap.common.enumlist.MsgTypeEnum;
-import com.project.contap.chat.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
@@ -90,9 +90,11 @@ public class ChatService {
 
     public List<ChatMessage> findMessage(String roomId, Long longId) {
         List<ChatMessage> chatList = chatMessageRepository.findMessage(roomId,longId);
-        Collections.reverse(chatList);
-        if(longId <= 0 &&updateRoomList2.containsKey(roomId) )
-            chatList.addAll(updateRoomList2.get(roomId));
+        if(longId <= 0) {
+            Collections.reverse(chatList);
+            if (updateRoomList2.containsKey(roomId))
+                chatList.addAll(updateRoomList2.get(roomId));
+        }
         return chatList;
     }
 }
