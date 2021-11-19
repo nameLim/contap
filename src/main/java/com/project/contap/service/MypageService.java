@@ -193,7 +193,7 @@ public class MypageService {
     private String getImgPath(MultipartFile profile, String profile1) throws IOException {
         if(profile!=null)
             // profile 업로드
-            return ImageService.upload(imageService, profile, "static", profile1);
+            return imageService.upload(profile, "static", profile1);
         else
             // null이기 때문에 사용자의 기존 profile 가져오기
             return profile1;

@@ -29,6 +29,7 @@ public class ProcessUserStatusJob {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final TapRepository tapRepository;
+    private final ImageService imageService;
 
     // 초, 분, 시, 일, 월, 주 순서
     @Scheduled(cron = "0 0 4 * * *")
@@ -57,6 +58,7 @@ public class ProcessUserStatusJob {
             List<Tap> taps = tapRepository.getMyTaps(user);
             tapRepository.deleteAll(taps);
             chatRoomRepository.deleteUser(user.getEmail());
+            imageService.deleteOldFile(user.getProfile());
             userRepository.delete(user);
         }
     }

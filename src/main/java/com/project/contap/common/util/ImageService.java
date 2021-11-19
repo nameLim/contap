@@ -33,22 +33,18 @@ public class ImageService {
     @Value("${cloud.aws.s3.bucket.url}")
     private String bucketUrl;
 
-    public static String upload(ImageService imageService, MultipartFile multipartFile, String dirName, String oldProfile) throws IOException {
+    public String upload(MultipartFile multipartFile, String dirName, String oldProfile) throws IOException {
 
         // File 형식으로 변경
-        File file = imageService.convertMultipartFileToFile(multipartFile).orElseThrow(
+        File file = convertMultipartFileToFile(multipartFile).orElseThrow(
                 () -> new ContapException(ErrorCode.ERROR_CONVERT_FILE) //파일 변환 중 에러가 발생하였습니다.
         );
 
         // 업로드
-        String uploadImageUrl = imageService.uploadToS3(file, dirName);
+        String uploadImageUrl = uploadToS3(file, dirName);
         
         //기존 파일 삭제
-        if(oldProfile != null && oldProfile.contains(imageService.bucketUrl)) {
-            oldProfile = oldProfile.substring(imageService.bucketUrl.length()+1);
-            imageService.amazonS3Client.deleteObject(imageService.bucket, oldProfile);
-        }
-
+        deleteOldFile(oldProfile);
         return uploadImageUrl;
     }
 
@@ -99,4 +95,11 @@ public class ImageService {
         throw new ContapException(ErrorCode.ERROR_DELETE_FILE);
     }
 
+    public void deleteOldFile(String oldProfile) {
+        //기존 파일 삭제
+        if(oldProfile != null && oldProfile.contains(bucketUrl)) {
+            oldProfile = oldProfile.substring(bucketUrl.length()+1);
+            amazonS3Client.deleteObject(bucket, oldProfile);
+        }
+    }
 }
