@@ -48,7 +48,7 @@ public class ContapService {
         {
             if (tap.getStatus() !=0)
                 return new DefaultRsp("이미 처리된 Tap 입니다.");
-            common.sendAlarmIfneeded(MsgTypeEnum.REJECT_TAP,receiveUserEmail,tap.getSendUser().getEmail(),tap.getSendUser());
+            common.sendAlarmIfneeded(MsgTypeEnum.REJECT_TAP,receiveUserEmail,tap.getSendUser().getEmail(),tap.getReceiveUser());
             tapRepository.delete(tap);
             return new DefaultRsp("정상적으로 처리 되었습니다.");
         }
@@ -64,7 +64,7 @@ public class ContapService {
                 return new DefaultRsp("이미 처리된 Tap 입니다.");
             User sendUser = tap.getSendUser();
             common.makeChatRoom(tap.getSendUser(),tap.getReceiveUser());
-            common.sendAlarmIfneeded(MsgTypeEnum.ACCEPT_TAP,receiveUserEmail,sendUser.getEmail(), sendUser);
+            common.sendAlarmIfneeded(MsgTypeEnum.ACCEPT_TAP,receiveUserEmail,sendUser.getEmail(), tap.getReceiveUser());
             tapRepository.delete(tap);
             return new DefaultRsp("정상적으로 처리 되었습니다.");
         }
