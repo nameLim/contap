@@ -63,7 +63,7 @@ public class GithubUserService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("client_secret", "4f0e51148be204784876a50f544598c325a503b9");
         body.add("client_id", "ec87ecda94ea612cbe6c");
-        body.add("redirect_uri", "http://localhost:3000/login?github");
+        body.add("redirect_uri", "http://contap.co.kr/login?github");  //http://localhost:3000/login?github
         body.add("code", code);
 
 // HTTP 요청 보내기

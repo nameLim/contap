@@ -12,8 +12,3 @@ springdoc:
     disable-swagger-default-url: true
     groups-order: DESC
 
-#spring:
-#  sevlet:
-#    multipart:
-#      max-file-size: 50MB
-#      max-file-size:50MB
