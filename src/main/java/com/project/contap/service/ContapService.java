@@ -15,7 +15,6 @@ import com.project.contap.model.user.User;
 import com.project.contap.model.user.UserRepository;
 import com.project.contap.model.user.dto.UserTapDto;
 import lombok.RequiredArgsConstructor;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -49,7 +48,7 @@ public class ContapService {
         {
             if (tap.getStatus() !=0)
                 return new DefaultRsp("이미 처리된 Tap 입니다.");
-            common.sendAlarmIfneeded(MsgTypeEnum.REJECT_TAP,receiveUserEmail,tap.getSendUser().getEmail());
+            common.sendAlarmIfneeded(MsgTypeEnum.REJECT_TAP,receiveUserEmail,tap.getSendUser().getEmail(),tap.getSendUser());
             tapRepository.delete(tap);
             return new DefaultRsp("정상적으로 처리 되었습니다.");
         }
@@ -65,7 +64,7 @@ public class ContapService {
                 return new DefaultRsp("이미 처리된 Tap 입니다.");
             User sendUser = tap.getSendUser();
             common.makeChatRoom(tap.getSendUser(),tap.getReceiveUser());
-            common.sendAlarmIfneeded(MsgTypeEnum.ACCEPT_TAP,receiveUserEmail,sendUser.getEmail());
+            common.sendAlarmIfneeded(MsgTypeEnum.ACCEPT_TAP,receiveUserEmail,sendUser.getEmail(), sendUser);
             tapRepository.delete(tap);
             return new DefaultRsp("정상적으로 처리 되었습니다.");
         }
