@@ -246,6 +246,7 @@ public class UserService {
 
         user.setUserStatus(UserStatusEnum.INACTIVE); // 휴면계정으로 변환
         userRepository.save(user);
+        User.userCount--;
     }
 
     public String getPhoneNumber(UserDetails userDetails) {

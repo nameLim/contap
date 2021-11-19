@@ -71,7 +71,7 @@ public class User extends TimeStamped {
     @Schema(description = "현재 회원 휴면, 비휴면, 탈퇴상태")
     private UserStatusEnum userStatus;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "user")
     @Schema(description = "뒷면카드")
     private List<Card> cards;
 
