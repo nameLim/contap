@@ -158,6 +158,8 @@ public class KakaoUserService {
         if (sameUser.getKakaoId() == null) {
             System.out.println("중복");
             sameUser.setKakaoId(snsUserInfoDto.getId());
+            sameUser.setProfile(snsUserInfoDto.getProfile());
+            sameUser.setUserName(snsUserInfoDto.getNickname());
             userRepository.save(sameUser);
         }
         return sameUser;
