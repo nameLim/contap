@@ -108,7 +108,7 @@ public class Common {
         params.put("to", user.getPhoneNumber());   // 탭요청 알람을 받기위해서 정확하게 기재해주세요
         params.put("from", siteNumber); //사전에 사이트에서 번호를 인증하고 등록하여야 함 // 070 번호하나사고
         params.put("type", "SMS");
-        params.put("text", user.getUserName() +"님 탭을 확인해주세요..!"); //메시지 내용
+        params.put("text", user.getUserName() + "님 탭을 확인해보세요."); //메시지 내용
         params.put("app_version", "test app 1.2");
         try {
             JSONObject obj = (JSONObject) coolsms.send(params);
