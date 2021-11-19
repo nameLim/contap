@@ -4,32 +4,28 @@ import com.project.contap.chat.ChatMessage;
 import com.project.contap.chat.ChatMessageRepository;
 import com.project.contap.chat.ChatRoomRepository;
 import com.project.contap.common.enumlist.UserStatusEnum;
+import com.project.contap.common.util.RandomNumberGeneration;
 import com.project.contap.exception.ContapException;
 import com.project.contap.model.card.Card;
+import com.project.contap.model.card.CardRepository;
 import com.project.contap.model.friend.Friend;
 import com.project.contap.model.friend.FriendRepository;
 import com.project.contap.model.hashtag.HashTag;
+import com.project.contap.model.hashtag.HashTagRepositoty;
 import com.project.contap.model.tap.Tap;
 import com.project.contap.model.tap.TapRepository;
 import com.project.contap.model.user.User;
-import com.project.contap.model.card.CardRepository;
-import com.project.contap.model.hashtag.HashTagRepositoty;
 import com.project.contap.model.user.UserRepository;
-import com.project.contap.service.ContapService;
-import com.project.contap.service.MainService;
-import com.project.contap.common.util.RandomNumberGeneration;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class TestController {

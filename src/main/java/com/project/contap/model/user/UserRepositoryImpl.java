@@ -13,7 +13,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import javax.persistence.EntityManager;
 import java.util.List;
-import java.util.Random;
 
 public class UserRepositoryImpl implements CostomUserRepository{
     private final JPAQueryFactory queryFactory;

@@ -4,7 +4,6 @@ import com.project.contap.chat.ChatMessage;
 import com.project.contap.chat.ChatMessageRepository;
 import com.project.contap.chat.ChatRoomRepository;
 import com.project.contap.common.enumlist.UserStatusEnum;
-import com.project.contap.model.card.Card;
 import com.project.contap.model.card.CardRepository;
 import com.project.contap.model.friend.Friend;
 import com.project.contap.model.friend.FriendRepository;
@@ -15,8 +14,8 @@ import com.project.contap.model.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,18 +26,18 @@ public class ProcessUserStatusJob {
     private final UserRepository userRepository;
     private final CardRepository cardRepository;
     private final FriendRepository friendRepository;
-    private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatMessageRepository chatMessageRepository;
     private final TapRepository tapRepository;
 
     // 초, 분, 시, 일, 월, 주 순서
-    @Transactional
     @Scheduled(cron = "0 0 4 * * *")
+    @Transactional
     public void perform() throws Exception {
         List<User> oldUsers = userRepository.findByModifiedDtBeforeAndAndUserStatusEquals(LocalDateTime.now().minusMonths(1), UserStatusEnum.INACTIVE);
+
         for(User user: oldUsers){
-            List<Card> cards =  cardRepository.findAllByUser(user);
-            cardRepository.deleteAll(cards);
+            cardRepository.deleteAll(user.getCards());
             List<Friend> friends = friendRepository.getallmyFriend(user);
             List<String> roomIds = new ArrayList<>();
             for(Friend friend : friends)
@@ -53,12 +52,13 @@ public class ProcessUserStatusJob {
                     chatRoomRepository.deleteRoomInfo(friend.getYou().getEmail(),friend.getMe().getEmail(),friend.getRoomId());
                 }
             }
+
             friendRepository.deleteAll(friends);
             List<Tap> taps = tapRepository.getMyTaps(user);
             tapRepository.deleteAll(taps);
             chatRoomRepository.deleteUser(user.getEmail());
+            userRepository.delete(user);
         }
-        userRepository.saveAll(oldUsers);
     }
 
 }

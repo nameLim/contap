@@ -1,7 +1,5 @@
 package com.project.contap.chat;
 
-import com.project.contap.model.card.dto.QCardDto;
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import javax.persistence.EntityManager;

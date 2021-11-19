@@ -2,7 +2,6 @@ package com.project.contap.model.tap;
 
 import com.project.contap.model.user.User;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import javax.persistence.EntityManager;
 import java.util.List;

@@ -81,7 +81,7 @@ public class MainService {
                 .msg(msg)
                 .build();
         tapRepository.save(newTap);
-        common.sendAlarmIfneeded(MsgTypeEnum.SEND_TAP,sendUser.getEmail(),receiveUser.getEmail());
+        common.sendAlarmIfneeded(MsgTypeEnum.SEND_TAP,sendUser.getEmail(),receiveUser.getEmail(), sendUser);
         return new DefaultRsp("정상적으로 처리 되었습니다.");
     }
 

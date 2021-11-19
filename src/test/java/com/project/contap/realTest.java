@@ -1,17 +1,11 @@
 package com.project.contap;
 
-import com.project.contap.common.Common;
 import com.project.contap.common.util.RandomNumberGeneration;
-import com.project.contap.model.friend.Friend;
 import com.project.contap.model.friend.FriendRepository;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.connection.RedisServerCommands;
-import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ZSetOperations;
 
 import java.util.ArrayList;
 import java.util.List;
