@@ -110,6 +110,7 @@ public class ContapService {
             dtoArrays[sortInfo.get(userDto.getRoomId())].setProfile(userDto.getProfile());
             dtoArrays[sortInfo.get(userDto.getRoomId())].setHashTags(userDto.getHashTags());
             dtoArrays[sortInfo.get(userDto.getRoomId())].setField(userDto.getField());
+            dtoArrays[sortInfo.get(userDto.getRoomId())].setLogin(chatRoomRepository.getSessionId(userDto.getEmail()) != null);
         }
         return Arrays.asList(dtoArrays);
     }
