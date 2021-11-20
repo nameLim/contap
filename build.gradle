@@ -108,6 +108,9 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-ui:1.5.2'
 
     implementation group: 'org.apache.commons', name: 'commons-text', version: '1.9'
+
+    implementation 'io.sentry:sentry-log4j2:1.7.30'
+    implementation 'io.sentry:sentry-spring-boot-starter:5.4.1'
 }
 // QueryDSL
 sourceSets {

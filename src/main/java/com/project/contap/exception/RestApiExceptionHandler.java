@@ -2,6 +2,7 @@ package com.project.contap.exception;
 
 
 import com.project.contap.common.util.AddLog;
+import io.sentry.Sentry;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,10 +27,10 @@ public class RestApiExceptionHandler {
             restApiException.setErrorMessage(((ContapException) ex).getErrorCode().getMessage());
         } else // 아니면
         {
-            AddLog.addExLog(request);
             restApiException.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
             restApiException.setErrorMessage("서버에 문의해주세요");
             restApiException.setErrorMessage(ex.getMessage());
+            Sentry.captureException(ex);
         }
         return new ResponseEntity(
                 restApiException,

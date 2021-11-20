@@ -53,6 +53,7 @@ public class UserController {
         result.put("token", jwtTokenProvider.createToken(user.getEmail(), user.getEmail(), user.getUserName())); // "username" : {username}
         result.put("email", user.getEmail());
         result.put("userName", user.getUserName());
+        result.put("profile", user.getProfile());
         result.put("result", "success");
         String[] alarm = userService.getAlarm(user.getEmail());
         result.put("TAP_RECEIVE", alarm[AlarmEnum.TAP_RECEIVE.getValue()]);
@@ -96,6 +97,7 @@ public class UserController {
         Map<String, String> result = new HashMap<>();
         result.put("email", userDetails.getUser().getEmail());
         result.put("userName", userDetails.getUser().getUserName());
+        result.put("profile",userDetails.getUser().getProfile());
         result.put("result", "success");
 
         return result;
