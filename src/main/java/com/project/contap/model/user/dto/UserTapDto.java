@@ -1,6 +1,7 @@
 package com.project.contap.model.user.dto;
 
 import com.project.contap.model.hashtag.HashTag;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,8 @@ public class UserTapDto {
     private String roomId;
     private int field;
     private String msg;
+    private int newFriend;
+    private Long friendId;
 
     public UserTapDto(Long id,
                       String email,
@@ -48,7 +51,9 @@ public class UserTapDto {
                       String userName,
                       String hashTagsString,
                       int field,
-                      String roomId) {
+                      String roomId,
+                      int newFriend,
+                      Long friendId) {
         this.userId = id;
         this.email = email;
         this.userName = userName;
@@ -56,6 +61,8 @@ public class UserTapDto {
         this.hashTags=hashTagsString;
         this.field = field;
         this.roomId = roomId;
+        this.newFriend = newFriend;
+        this.friendId = friendId;
     }
 
 }

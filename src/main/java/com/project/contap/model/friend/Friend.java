@@ -1,6 +1,7 @@
 package com.project.contap.model.friend;
 
 import com.project.contap.model.user.User;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.*;
 
 import javax.persistence.*;
@@ -21,6 +22,9 @@ public class Friend {
 
     @ManyToOne
     private User you;
+
+    @Column(nullable = false)
+    private int newFriend;
 
     @Column
     private String roomId;

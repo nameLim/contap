@@ -26,7 +26,7 @@ public class UserRepositoryImpl implements CostomUserRepository{
     {
         // 0 - 내가보낸
         // 1 - 내가받은
-        page = 6*page;
+        page = 12*page;
         QTap qtap = QTap.tap;
         if (type == 0)
             return queryFactory
@@ -44,7 +44,7 @@ public class UserRepositoryImpl implements CostomUserRepository{
                     .from(qtap)
                     .where(qtap.sendUser.id.eq(userId))
                     .orderBy(qtap.insertDt.desc())
-                    .offset(page).limit(6)
+                    .offset(page).limit(12)
                     .fetch();
         else
             return queryFactory
@@ -62,7 +62,7 @@ public class UserRepositoryImpl implements CostomUserRepository{
                     .from(qtap)
                     .where(qtap.receiveUser.id.eq(userId))
                     .orderBy(qtap.insertDt.desc())
-                    .offset(page).limit(6)
+                    .offset(page).limit(12)
                     .fetch();
 
     }
@@ -83,7 +83,9 @@ public class UserRepositoryImpl implements CostomUserRepository{
                                 qfriend.you.userName,
                                 qfriend.you.hashTagsString,
                                 qfriend.you.field,
-                                qfriend.roomId
+                                qfriend.roomId,
+                                qfriend.newFriend,
+                                qfriend.id
                         )).distinct()
                 .from(qfriend)
                 .where(qfriend.me.id.eq(userId)

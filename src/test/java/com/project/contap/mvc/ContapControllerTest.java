@@ -100,11 +100,11 @@ public class ContapControllerTest {
     @Test
     @DisplayName("친구 목록 조회")
     void GetMyFriends() throws Exception {
-        mvc.perform(get("/contap/getothers/0")
+        mvc.perform(get("/contap/getothers/0/0")
                         .principal(mockPrincipal))
                 .andExpect(status().isOk())
                 .andDo(print());
-        verify(contapService,times(1)).getMyfriends(testUserDetails.getUser(),0);
+        verify(contapService,times(1)).getMyfriends(testUserDetails.getUser(),0,0);
     }
 
     @Test
