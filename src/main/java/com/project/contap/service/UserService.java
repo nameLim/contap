@@ -63,6 +63,11 @@ public class UserService {
         if (!passwordEncoder.matches(requestDto.getPw(), user.getPw()))
             throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
 
+        if(user.getUserStatus()==UserStatusEnum.INACTIVE) {
+            user.setUserStatus(UserStatusEnum.ACTIVE);
+            userRepository.save(user);
+        }
+
         return user;
     }
 
