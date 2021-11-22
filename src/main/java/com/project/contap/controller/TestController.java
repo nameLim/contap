@@ -16,6 +16,8 @@ import com.project.contap.model.tap.Tap;
 import com.project.contap.model.tap.TapRepository;
 import com.project.contap.model.user.User;
 import com.project.contap.model.user.UserRepository;
+import com.project.contap.service.ContapService;
+import com.project.contap.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +39,8 @@ public class TestController {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final TapRepository tapRepository;
+    private final MainService mainService;
+    private final ContapService contapService;
     @Autowired
     public TestController(
             UserRepository userRepository,
@@ -46,7 +50,9 @@ public class TestController {
             FriendRepository friendRepository,
             ChatRoomRepository chatRoomRepository,
             ChatMessageRepository chatMessageRepository,
-            TapRepository tapRepository
+            TapRepository tapRepository,
+            MainService mainService,
+            ContapService contapService
     ) {
         this.userRepository = userRepository;
         this.hashTagRepositoty =hashTagRepositoty;
@@ -56,6 +62,8 @@ public class TestController {
         this.chatRoomRepository = chatRoomRepository;
         this.chatMessageRepository = chatMessageRepository;
         this.tapRepository = tapRepository;
+        this.mainService = mainService;
+        this.contapService = contapService;
     }
 
     @GetMapping("/forclient1/{id}") // 한유저가쓴 카드 모두조회
@@ -248,15 +256,13 @@ public class TestController {
             User user1=userRepository.findById(i).orElse(null);
             User user2=userRepository.findById(i+1).orElse(null);
             String roomId = UUID.randomUUID().toString();
-            Friend fir = Friend.builder().me(user1).you(user2).roomId(roomId).build();
-            Friend sec = Friend.builder().me(user2).you(user1).roomId(roomId).build();
+            Friend fir = Friend.builder().me(user1).you(user2).roomId(roomId).newFriend(1).build();
+            Friend sec = Friend.builder().me(user2).you(user1).roomId(roomId).newFriend(1).build();
             friendRepository.save(fir);
             friendRepository.save(sec);
             chatRoomRepository.whenMakeFriend(roomId,user1.getEmail(),user2.getEmail());
         }
     }
-
-
     @Transactional
     @GetMapping("/friend/{userId}")
     public void perform(@PathVariable Long userId) throws Exception {
@@ -288,5 +294,44 @@ public class TestController {
         }
         userRepository.delete(user2);
     }
+
+    @GetMapping("/dotappp/{userId}")
+    public void performmm(@PathVariable Long userId) throws Exception
+    {
+        User user = userRepository.findById(userId).orElse(null);
+        if(user == null)
+            return;
+        String pw = passwordEncoder.encode("commonpw"); // 패스워드 암호화
+        for(int i = 0 ; i < 100 ; i++)
+        {
+
+            User user1 = userRepository.findByEmail(String.format("useremail%d@gmail.com",i)).orElse(null);
+            if(user1 == null) {
+                user1 = User.builder()
+                        .email(String.format("useremail%d@gmail.com", i))
+                        .pw(pw)
+                        .userName(String.format("userName%d", i))
+                        .field(i % 3)
+                        .userStatus(UserStatusEnum.ACTIVE).build();
+                user1 = userRepository.save(user1);
+            }
+            mainService.dotap(user1,user.getId(),"우석님을위한API");
+        }
+    }
+
+    @GetMapping("/mytapok/{userId}")
+    public void performnmggm(@PathVariable Long userId) throws Exception
+    {
+        User user = userRepository.findById(userId).orElse(null);
+        if(user == null)
+            return;
+        List<Tap> taps= tapRepository.findAllByReceiveUser(user);
+        for(Tap tap : taps)
+        {
+            contapService.rapAccept(tap.getId(),user.getEmail());
+        }
+
+    }
+
 }
 

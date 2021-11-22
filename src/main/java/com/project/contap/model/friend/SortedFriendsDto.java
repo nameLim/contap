@@ -15,6 +15,7 @@ public class SortedFriendsDto {
     private String roomStatus;
     private String date;
     private Boolean login;
+    private Boolean newFriend;
     private int field;
     public SortedFriendsDto(String roomId,String roomStatus)
     {

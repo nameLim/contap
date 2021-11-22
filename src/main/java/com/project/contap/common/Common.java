@@ -83,11 +83,13 @@ public class Common {
                 .roomId(roomId)
                 .me(receiveUser)
                 .you(sendUser)
+                .newFriend(1)
                 .build();
         Friend sec = Friend.builder()
                 .roomId(roomId)
                 .me(sendUser)
                 .you(receiveUser)
+                .newFriend(1)
                 .build();
         friendRepository.save(fir);
         friendRepository.save(sec);
@@ -96,7 +98,7 @@ public class Common {
 
     private void sendSMS(User user) {
 
-        if(user.getPhoneNumber().equals("")||user.getPhoneNumber()==null)
+        if(user.getPhoneNumber()==null || user.getPhoneNumber().equals(""))
             return;
 
         if((user.getAuthStatus()&AuthorityEnum.ALARM.getAuthority())!=AuthorityEnum.ALARM.getAuthority())
