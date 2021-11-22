@@ -14,4 +14,5 @@ public interface CostomUserRepository {
     Boolean existUserByUserName(String userName);
     Boolean existUserByPhoneNumber(String phoneNumber);
     Long getActiveUsercnt();
+    Boolean existUserByEmailAndUserStatus(String email);
 }

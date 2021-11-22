@@ -10,10 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
 import java.io.UnsupportedEncodingException;
 
 import static com.project.contap.common.util.RandomNumberGeneration.makeRandomNumber;
@@ -32,7 +32,7 @@ public class EmailService {
 
         String validatedEmail = email.replaceAll(" ", "");
 
-        if (userRepository.existsByEmail(validatedEmail)) {
+        if (userRepository.existUserByEmailAndUserStatus(validatedEmail)) {
             throw new RuntimeException("이미 사용 중인 이메일 입니다.");
         }
 

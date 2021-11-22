@@ -184,4 +184,12 @@ public class UserRepositoryImpl implements CostomUserRepository{
                 .where(qUser.userStatus.eq(UserStatusEnum.ACTIVE))
                 .fetchCount();
     }
+
+    @Override
+    public Boolean existUserByEmailAndUserStatus(String email) {
+        QUser qUser = QUser.user;
+        return queryFactory.select(qUser.id).from(qUser)
+                .where(qUser.userStatus.eq(UserStatusEnum.ACTIVE))
+                .fetchFirst() != null;
+    }
 }
