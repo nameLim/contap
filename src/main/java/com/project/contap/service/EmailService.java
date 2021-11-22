@@ -100,7 +100,7 @@ public class EmailService {
         msg += "<a href=\"https://\" style=\"padding-right: 30px; padding-left: 30px; text-decoration: none; color: #434245;\" rel=\"noreferrer noopener\" target=\"_blank\">2021 Contap</a>";
 
         message.setText(msg, "utf-8", "html");
-        message.setFrom(new InternetAddress("ooojunseok@gmail.com","ConTap"));
+        message.setFrom(new InternetAddress("contap.16team@gmail.com","ConTap"));
 
         return message;
     }
