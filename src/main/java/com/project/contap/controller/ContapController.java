@@ -33,11 +33,14 @@ public class ContapController {
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return contapService.getMyTap(userDetails.getUser(),page);
     }
-    @GetMapping("/contap/getothers/{type}")
+
+    //원래는 분리되어야할컨트롤러 지만.. 시간이남으면분리할게요 -LSJ-
+    @GetMapping("/contap/getothers/{type}/{page}")
     public List<SortedFriendsDto> getMyfriends(
             @PathVariable(required = false) int type,
+            @PathVariable int page,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return contapService.getMyfriends(userDetails.getUser(),type);
+        return contapService.getMyfriends(userDetails.getUser(),type,page);
     }
 
     @PostMapping("/contap/reject")

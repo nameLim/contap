@@ -71,14 +71,16 @@ public class ContapService {
         return new DefaultRsp("해당 tab이 존재하지 않습니다 TabID를 다시확인해주세요..");
     }
 
-    public List<SortedFriendsDto>getMyfriends(User user,int type) {
-        List<List<String>> order = chatRoomRepository.getMyFriendsOrderByDate(0,user.getEmail(),type);
+    @Transactional
+    public List<SortedFriendsDto>getMyfriends(User user,int type,int page) {
+        // 0 이면 페이징처리
+        List<List<String>> order = chatRoomRepository.getMyFriendsOrderByDate(page,user.getEmail(),type);
         List<UserTapDto> myFriendsUserDto = new ArrayList<>();
         List<SortedFriendsDto> ret = new ArrayList<>();
 
         if(order.get(0).size() != 0) {
             myFriendsUserDto = userRepository.findMyFriendsById(user.getId(),order.get(0));
-            ret = sortFriendList(order,myFriendsUserDto);
+            ret = sortFriendList(order,myFriendsUserDto,type==0);
         } // 페이지 기능이 사라지는게 확정이된다면 다른방법을 고려해보도록하자..
 
         return ret;
@@ -86,22 +88,31 @@ public class ContapService {
 
     private List<SortedFriendsDto> sortFriendList
             (List<List<String>> order,
-             List<UserTapDto> myFriendsUserDto) {
+             List<UserTapDto> myFriendsUserDto,
+             boolean newFriend) {
         SortedFriendsDto dtoArrays[] = new SortedFriendsDto[order.get(0).size()];
         Map<String, Integer> sortInfo = new HashMap<>();
-
+        Boolean doSave = false;
+        List<Long> friendIds = new ArrayList<>();
         for(int i = 0 ; i < order.get(0).size();i++)
         {
             sortInfo.put(order.get(0).get(i),i);
             dtoArrays[i] = new SortedFriendsDto();
             dtoArrays[i].setRoomStatus(order.get(1).get(i));
+
+            for(int j = 0 ; j < 3 ; j++) {
+                if (dtoArrays[i].getRoomStatus() == null)
+                    dtoArrays[i].setRoomStatus(chatRoomRepository.getRoomStatus(order.get(0).get(i)));
+                else
+                    break;
+            }
+
             dtoArrays[i].setRoomId(order.get(0).get(i));
             String date = order.get(2).get(i);
             int e = date.indexOf("E");
             date = date.substring(0,e).replace(".","");
             dtoArrays[i].setDate(date);
         }
-
         for(UserTapDto userDto : myFriendsUserDto)
         {
             dtoArrays[sortInfo.get(userDto.getRoomId())].setUserId(userDto.getUserId());
@@ -111,7 +122,20 @@ public class ContapService {
             dtoArrays[sortInfo.get(userDto.getRoomId())].setHashTags(userDto.getHashTags());
             dtoArrays[sortInfo.get(userDto.getRoomId())].setField(userDto.getField());
             dtoArrays[sortInfo.get(userDto.getRoomId())].setLogin(chatRoomRepository.getSessionId(userDto.getEmail()) != null);
+            dtoArrays[sortInfo.get(userDto.getRoomId())].setNewFriend(userDto.getNewFriend()==1);
+            if (newFriend  && userDto.getNewFriend() == 1)
+                friendIds.add(userDto.getFriendId());
         }
+
+        if (newFriend && friendIds.size()>0) {
+            List<Friend> friends;
+            friends = friendRepository.findAllById(friendIds);
+            for(Friend friend : friends)
+                friend.setNewFriend(0);
+            friendRepository.saveAll(friends);
+        }
+
+
         return Arrays.asList(dtoArrays);
     }
 

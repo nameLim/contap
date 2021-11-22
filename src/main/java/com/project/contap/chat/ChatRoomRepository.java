@@ -13,9 +13,7 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 
 @RequiredArgsConstructor
@@ -49,8 +47,8 @@ public class ChatRoomRepository {
 
     @Resource(name = "redisTemplate")
     private ListOperations<String, String> listOpsforRoomstatus; // 이건 친구관계가있으면 사라지지 않는다
-//        stringStringListOperations.rightPush("LSJ","sad 0");
-//    String a = stringStringListOperations.rightPop("LSJ");
+    // stringStringListOperations.rightPush("LSJ","sad 0");
+    // String a = stringStringListOperations.rightPop("LSJ");
     // Key : roomId , Value : [1] - Sender or @@ [2] - 방에입장해있는 유저의수.
     // 방에 새로운 메시지가 있는지, 방에입장해있는 유저는 몇명인지에대한 정보
     // 이건 서버 시작과 동시에 set해줘야한다.
@@ -121,10 +119,10 @@ public class ChatRoomRepository {
     }
     public void newMsg(String roomId,String Sender,String reciever, int type,String msg)
     {
-        // type 관련 상태값. 차후에 시간나면 바꿀거임
-        //0 둘다 채팅방
-        //1 한명만 채팅방 나머지 한명은 로그인
-        //2 한명만 채팅방 나머지 한명은 로그아웃
+    // type 관련 상태값. 차후에 시간나면 바꿀거임
+    // 0 둘다 채팅방
+    // 1 한명만 채팅방 나머지 한명은 로그인
+    // 2 한명만 채팅방 나머지 한명은 로그아웃
 
         if(type != 0) { // room에 한명있고 메시지 보낼때 들어와야한다
             listOpsforRoomstatus.rightPop(roomId);
@@ -184,10 +182,14 @@ public class ChatRoomRepository {
 
     public List<List<String>> getMyFriendsOrderByDate(int page,String userName,int type)
     {
-        //int start = 9*page;
-        //java.util.Set<ZSetOperations.TypedTuple<String>> ret = zSetforchatdate.reverseRangeWithScores(userName,start,start+8);
-        // 사실은 페이지형식으로 클라이언트에게 주려고했으나 전체 다 주는걸로 변경되어서 필요없어짐 하지만 차후에 어케될지모르니 남겨둠..
-        java.util.Set<ZSetOperations.TypedTuple<String>> ret = zSetforchatdate.reverseRangeWithScores(userName,0,-1);
+        int start = 12*page;
+        java.util.Set<ZSetOperations.TypedTuple<String>> ret = new HashSet<>();
+
+        if(type == 0)
+            ret = zSetforchatdate.reverseRangeWithScores(userName,start,start+11);
+        else
+            ret = zSetforchatdate.reverseRangeWithScores(userName,0,-1);
+
         List<List<String>> values = new ArrayList<>();
         List<String> rooms = new ArrayList<>();
         List<String> newMsg = new ArrayList<>();
@@ -195,12 +197,12 @@ public class ChatRoomRepository {
         for (Iterator<ZSetOperations.TypedTuple<String>> iterator = ret.iterator(); iterator.hasNext();) {
             ZSetOperations.TypedTuple<String> typedTuple = iterator.next();
             String roomStatus = listOpsforRoomstatus.index(typedTuple.getValue(), -1);
-            if(type==0) {
+            if(type!=1) {
                 rooms.add(typedTuple.getValue());
                 newMsg.add(roomStatus);
                 dates.add(typedTuple.getScore().toString());
             }
-            else if (type == 1)
+            else
             {
                 if(!listOpsforRoomstatus.index(typedTuple.getValue(), -1).endsWith("/_test용_"))
                 {
@@ -209,15 +211,16 @@ public class ChatRoomRepository {
                     dates.add(typedTuple.getScore().toString());
                 }
             }
-            else
-            {
-                if(listOpsforRoomstatus.index(typedTuple.getValue(), -1).endsWith("/_test용_"))
-                {
-                    rooms.add(typedTuple.getValue());
-                    newMsg.add(roomStatus);
-                    dates.add(typedTuple.getScore().toString());
-                }
-            }
+
+//            else
+//            {
+//                if(listOpsforRoomstatus.index(typedTuple.getValue(), -1).endsWith("/_test용_"))
+//                {
+//                    rooms.add(typedTuple.getValue());
+//                    newMsg.add(roomStatus);
+//                    dates.add(typedTuple.getScore().toString());
+//                }
+//            }
         }
         values.add(rooms);
         values.add(newMsg);
@@ -275,7 +278,10 @@ public class ChatRoomRepository {
         listOpsforRoomstatus.rightPop(roomId);
         zSetforchatdate.remove(email_me,roomId);
         zSetforchatdate.remove(email1_you,roomId);
+    }
 
-
+    public String getRoomStatus(String roomId)
+    {
+        return listOpsforRoomstatus.index(roomId, -1);
     }
 }
