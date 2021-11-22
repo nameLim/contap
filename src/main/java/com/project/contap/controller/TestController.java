@@ -153,7 +153,7 @@ public class TestController {
         hashs.add(new HashTag("공예",1));
         hashs.add(new HashTag("드로잉",1));
         hashs.add(new HashTag("게임",1));
-        hashs.add(new HashTag("콘서트",1));
+        hashs.add(new HashTag("피규어",1));
         hashs.add(new HashTag("자동차",1));
         hashs.add(new HashTag("산책",1));
         hashs.add(new HashTag("뷰티",1));
