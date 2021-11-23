@@ -24,7 +24,7 @@ public class UserTapDto {
     private String roomId;
     private int field;
     private String msg;
-    private int newFriend;
+    private Boolean newFriend;
     private Long friendId;
 
     public UserTapDto(Long id,
@@ -34,7 +34,9 @@ public class UserTapDto {
                       String hashTagsString,
                       Long tapId,
                       String msg,
-                      int field) {
+                      int field,
+                      int newFriend
+    ) {
         this.userId = id;
         this.email = email;
         this.userName = userName;
@@ -43,6 +45,7 @@ public class UserTapDto {
         this.tapId = tapId;
         this.msg = msg;
         this.field = field;
+        this.newFriend = newFriend==1;
     }
 
     public UserTapDto(Long id,
@@ -61,7 +64,7 @@ public class UserTapDto {
         this.hashTags=hashTagsString;
         this.field = field;
         this.roomId = roomId;
-        this.newFriend = newFriend;
+        this.newFriend = newFriend==1;
         this.friendId = friendId;
     }
 

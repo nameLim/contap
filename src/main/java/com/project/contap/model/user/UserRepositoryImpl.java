@@ -39,7 +39,8 @@ public class UserRepositoryImpl implements CostomUserRepository{
                                     qtap.receiveUser.hashTagsString,
                                     qtap.id,
                                     qtap.msg,
-                                    qtap.receiveUser.field
+                                    qtap.receiveUser.field,
+                                    qtap.newFriend
                             ))
                     .from(qtap)
                     .where(qtap.sendUser.id.eq(userId))
@@ -57,7 +58,8 @@ public class UserRepositoryImpl implements CostomUserRepository{
                                     qtap.sendUser.hashTagsString,
                                     qtap.id,
                                     qtap.msg,
-                                    qtap.sendUser.field
+                                    qtap.sendUser.field,
+                                    qtap.newFriend
                             ))
                     .from(qtap)
                     .where(qtap.receiveUser.id.eq(userId))

@@ -79,6 +79,7 @@ public class MainService {
                 .sendUser(sendUser)
                 .receiveUser(receiveUser)
                 .msg(msg)
+                .newFriend(1)
                 .build();
         tapRepository.save(newTap);
         common.sendAlarmIfneeded(MsgTypeEnum.SEND_TAP,sendUser.getEmail(),receiveUser.getEmail(), receiveUser);

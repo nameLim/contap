@@ -37,8 +37,18 @@ public class ContapService {
 
     @Transactional
     public List<UserTapDto> getMyTap(User user,int page) {
-
         List<UserTapDto> myReceiveTapUserDto = userRepository.findMysendORreceiveTapUserInfo(user.getId(),1,page);
+        List<Tap> taps = new ArrayList<>();
+        for(UserTapDto userTapDto : myReceiveTapUserDto) {
+            if(userTapDto.getNewFriend())
+                taps.add(tapRepository.findById(userTapDto.getTapId()).orElse(null));
+        }
+        for(Tap tap : taps)
+        {
+            tap.setNewFriend(0);
+        }
+        if(taps.size()>0)
+            tapRepository.saveAll(taps);
         return myReceiveTapUserDto;
     }
 
@@ -122,8 +132,8 @@ public class ContapService {
             dtoArrays[sortInfo.get(userDto.getRoomId())].setHashTags(userDto.getHashTags());
             dtoArrays[sortInfo.get(userDto.getRoomId())].setField(userDto.getField());
             dtoArrays[sortInfo.get(userDto.getRoomId())].setLogin(chatRoomRepository.getSessionId(userDto.getEmail()) != null);
-            dtoArrays[sortInfo.get(userDto.getRoomId())].setNewFriend(userDto.getNewFriend()==1);
-            if (newFriend  && userDto.getNewFriend() == 1)
+            dtoArrays[sortInfo.get(userDto.getRoomId())].setNewFriend(userDto.getNewFriend());
+            if (newFriend  && userDto.getNewFriend())
                 friendIds.add(userDto.getFriendId());
         }
 

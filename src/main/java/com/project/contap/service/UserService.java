@@ -58,7 +58,7 @@ public class UserService {
     public User login(UserLoginDto requestDto) throws ContapException {
         User user = userRepository.findByEmail(requestDto.getEmail()).orElse(null);
         if(user==null || user.getUserStatus().equals(UserStatusEnum.WITHDRAWN)) //탈퇴 회원은 데이터를 삭제될 수 있는 사항이므로 후에 변경 예정
-            new ContapException(ErrorCode.USER_NOT_FOUND);
+            throw new ContapException(ErrorCode.USER_NOT_FOUND);
 
         if (!passwordEncoder.matches(requestDto.getPw(), user.getPw()))
             throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);

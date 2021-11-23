@@ -27,5 +27,8 @@ public class Tap extends TimeStamped {
     private int status;//0 : 대기 - 1 : 거절 - 2 : 수락
 
     @Column
-    private String msg;//0 : 대기 - 1 : 거절 - 2 : 수락
+    private String msg;
+
+    @Column
+    private int newFriend; // 1: new
 }
