@@ -2,32 +2,27 @@ package com.project.contap.integrationtest;
 
 import com.project.contap.chat.ChatRoomRepository;
 import com.project.contap.common.DefaultRsp;
-import com.project.contap.controller.MainController;
 import com.project.contap.model.friend.Friend;
 import com.project.contap.model.friend.FriendRepository;
 import com.project.contap.model.tap.Tap;
 import com.project.contap.model.tap.TapRepository;
 import com.project.contap.model.user.User;
 import com.project.contap.model.user.UserRepository;
-import com.project.contap.service.ContapService;
 import com.project.contap.service.MainService;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@SpringBootTest(classes = SpringBootApplication.class)
 @Transactional
 public class MainTest {
     @Autowired
