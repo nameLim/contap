@@ -33,7 +33,7 @@ public class EmailService {
         String validatedEmail = email.replaceAll(" ", "");
 
         if (userRepository.existUserByEmailAndUserStatus(validatedEmail)) {
-            throw new RuntimeException("이미 사용 중인 이메일 입니다.");
+            throw new ContapException(ErrorCode.EMAIL_DUPLICATE);
         }
 
         String randomNumber = makeRandomNumber();
