@@ -40,6 +40,8 @@ public class UserService {
             user.setUserStatus(UserStatusEnum.ACTIVE);
             user.setPw(pw);
             user = userRepository.save(user);
+            if(user.checkForMain())
+                User.setUserCount(false);
             return user;
         }
 
@@ -51,7 +53,6 @@ public class UserService {
                 .userStatus(UserStatusEnum.ACTIVE)
                 .build();
         user = userRepository.save(user);
-        User.userCount++;
         return user;
     }
 
@@ -66,19 +67,11 @@ public class UserService {
         if(user.getUserStatus()==UserStatusEnum.INACTIVE) {
             user.setUserStatus(UserStatusEnum.ACTIVE);
             userRepository.save(user);
+            if(user.checkForMain())
+                User.setUserCount(false);
         }
 
         return user;
-    }
-
-    @Transactional
-    public void deleteUser(UserLoginDto requestDto, User user) throws ContapException {
-        if (passwordEncoder.matches(requestDto.getPw(), user.getPw())) {
-            userRepository.delete(user);
-            User.userCount = User.userCount-1;
-        }
-        else
-            throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
     }
 
     @Transactional
@@ -243,12 +236,14 @@ public class UserService {
     @Transactional
     public void changeToInactive(UserLoginDto requestDto, UserDetails userDetails) {
         User user = userFromUserDetails(userDetails);
+        boolean bcheck = user.checkForMain();
         if(!passwordEncoder.matches(requestDto.getPw(), user.getPw()))
             throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
 
         user.setUserStatus(UserStatusEnum.INACTIVE); // 휴면계정으로 변환
         userRepository.save(user);
-        User.userCount--;
+        if(user.checkForMain() != bcheck)
+            User.setUserCount(bcheck);
     }
 
     public String getPhoneNumber(User user) {

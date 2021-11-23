@@ -130,7 +130,7 @@ public class UserRepositoryImpl implements CostomUserRepository{
                 .fetch();
     }
     @Override
-    public List<UserMainDto> getRandomUser(Long usercnt)
+    public List<UserMainDto> getRandomUser(Long usercnt,Long myId)
     {
 
         Long check1 = (usercnt/9);
@@ -155,7 +155,10 @@ public class UserRepositoryImpl implements CostomUserRepository{
                                 hu.field
                         )).distinct()
                 .from(hu)
-                .where(hu.userStatus.eq(UserStatusEnum.ACTIVE))
+                .where(hu.userStatus.eq(UserStatusEnum.ACTIVE)
+                        .and(hu.tags.isNotEmpty())
+                        .and(hu.cards.isNotEmpty())
+                        .and(hu.id.ne(myId)))
                 .offset(page*9).limit(9)
                 .fetch();
         //귀찮.. 다음에 페이징처리하자
@@ -183,7 +186,9 @@ public class UserRepositoryImpl implements CostomUserRepository{
     {
         QUser qUser = QUser.user;
         return  queryFactory.select(qUser.id).from(qUser)
-                .where(qUser.userStatus.eq(UserStatusEnum.ACTIVE))
+                .where(qUser.userStatus.eq(UserStatusEnum.ACTIVE)
+                        .and(qUser.tags.isNotEmpty())
+                        .and(qUser.cards.isNotEmpty()))
                 .fetchCount();
     }
 

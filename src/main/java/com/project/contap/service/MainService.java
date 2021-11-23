@@ -50,7 +50,10 @@ public class MainService {
     }
 
     public List<UserMainDto> getUserDtoList(UserDetailsImpl userDetails) {
-        List<UserMainDto> ret = userRepository.getRandomUser(User.userCount);
+        Long myId = 0L;
+        if(userDetails != null)
+            myId = userDetails.getUser().getId();
+        List<UserMainDto> ret = userRepository.getRandomUser(User.userCount,myId);
         return ret;
     }
 

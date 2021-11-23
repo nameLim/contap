@@ -61,8 +61,8 @@ public class Card extends TimeStamped {
 //        this.tags = tags;
 //    }
 
-    public boolean isWritedBy(User user) {
-        return this.user.equals(user);
+    public boolean isWritedBy(Long userId) {
+        return this.user.getId().equals(userId);
     }
 
     public void update(BackRequestCardDto backRequestCardDto) {

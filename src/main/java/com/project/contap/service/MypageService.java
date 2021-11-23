@@ -61,6 +61,7 @@ public class MypageService {
     @Transactional
     public FrontResponseCardDto modifyFrontCard(FrontRequestCardDto frontRequestCardDto, User user) throws IOException {
         // nickname 변경했을 경우 중복체크
+        boolean bcheck = user.checkForMain();
         if(!user.getUserName().equals(frontRequestCardDto.getUserName())) {
             Boolean found = userRepository.existUserByUserName(frontRequestCardDto.getUserName());
             if (found)
@@ -99,6 +100,8 @@ public class MypageService {
         user.setHashTagsString(retTagStrBuilder.toString());
         user.setField(frontRequestCardDto.getField());
         user = userRepository.save(user);
+        if(user.checkForMain() != bcheck)
+            User.setUserCount(bcheck);
 
         //response
         return FrontResponseCardDto.builder()
@@ -110,6 +113,7 @@ public class MypageService {
 
     @Transactional
     public BackResponseCardDto createBackCard(BackRequestCardDto backRequestCardDto, User user) {
+        boolean bcheck = user.checkForMain();
         user.setCards(cardRepository.findAllByUser(user));
         int cardSize = user.getCards().size();
         if( cardSize >= 10 )
@@ -126,12 +130,15 @@ public class MypageService {
         int authStatus = user.getAuthStatus()|AuthorityEnum.CAN_OTHER_READ.getAuthority();
         user.setAuthStatus(authStatus);
         user = userRepository.save(user);
+        if(user.checkForMain() != bcheck)
+            User.setUserCount(bcheck);
         return makeBackResponseCardDto(card,user);
     }
 
     //뒷카드 수정
     @Transactional
     public BackResponseCardDto modifyBackCard(Long cardId, BackRequestCardDto backRequestCardDto, User user) {
+        boolean bcheck = user.checkForMain();
         Card card = cardRepository.findById(cardId).orElse(null);
         if(card == null)
             throw new ContapException(ErrorCode.NOT_FOUND_CARD); //해당 카드를 찾을 수 없습니다.
@@ -139,23 +146,30 @@ public class MypageService {
         card.update(backRequestCardDto);
         card = cardRepository.save(card);
         //response
+        if(user.checkForMain() != bcheck)
+            User.setUserCount(bcheck);
         return makeBackResponseCardDto(card,user);
     }
 
     //뒷카드 삭제
     @Transactional
     public BackResponseCardDto deleteBackCard(Long cardId, User user) {
+        boolean bcheck = user.checkForMain();
+        user.setCards(cardRepository.findAllByUser(user));
         Card card = cardRepository.findById(cardId).orElse(null);
         if(card == null)
             throw new ContapException(ErrorCode.NOT_FOUND_CARD); //해당 카드를 찾을 수 없습니다.
-        if(!card.isWritedBy(user))
+        if(!card.isWritedBy(user.getId()))
             throw new ContapException(ErrorCode.ACCESS_DENIED); //권한이 없습니다.
 
         cardRepository.delete(card);
         if(user.getCards().size()==1) {
             int authStatus = user.getAuthStatus() & (AuthorityEnum.ALL_AUTHORITY.getAuthority() - AuthorityEnum.CAN_OTHER_READ.getAuthority());
             user.setAuthStatus(authStatus);
+            userRepository.save(user);
         }
+        if(user.checkForMain() != bcheck)
+            User.setUserCount(bcheck);
         return makeBackResponseCardDto(card,user);
     }
 
