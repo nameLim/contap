@@ -17,13 +17,11 @@ import com.project.contap.model.tap.Tap;
 import com.project.contap.model.tap.TapRepository;
 import com.project.contap.model.user.User;
 import com.project.contap.model.user.UserRepository;
-import com.project.contap.model.user.dto.FrontRequestCardDto;
 import com.project.contap.service.ContapService;
 import com.project.contap.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -339,22 +337,22 @@ public class TestController {
 
     }
 
-    @GetMapping("/autoPushTest")
-    public void autoPushTest() throws Exception
-    {
-        System.out.println("Hi");
-
-    }
-
-    @GetMapping("/autoPushImageTest")
-    public void autoPushImageTest(@ModelAttribute FrontRequestCardDto frontRequestCardDto) throws Exception
-    {
-        System.out.println("Hi");
-        imageService.upload(frontRequestCardDto.getProfile(),"static", "");
-
-
-
-    }
+//    @GetMapping("/autoPushTest")
+//    public void autoPushTest() throws Exception
+//    {
+//        System.out.println("Hi");
+//
+//    }
+//
+//    @GetMapping("/autoPushImageTest")
+//    public void autoPushImageTest(@ModelAttribute FrontRequestCardDto frontRequestCardDto) throws Exception
+//    {
+//        System.out.println("Hi");
+//        imageService.upload(frontRequestCardDto.getProfile(),"static", "");
+//
+//
+//
+//    }
 
 }
 
