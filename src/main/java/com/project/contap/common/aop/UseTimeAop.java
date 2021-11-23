@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 @Aspect
 @Component
 public class UseTimeAop {
+    private Long setRunTime = 300L;
     @Around("execution(public * com.project.contap.controller..*(..))")
     public Object execute(ProceedingJoinPoint joinPoint) throws Throwable {
         HttpServletRequest request =
@@ -25,7 +26,8 @@ public class UseTimeAop {
         } finally {
             long endTime = System.currentTimeMillis();
             long runTime = endTime - startTime;
-            AddLog.addAPIUseTime(request,runTime);
+            if(runTime >= setRunTime)
+                AddLog.addAPIUseTime(request,runTime);
         }
     }
 }

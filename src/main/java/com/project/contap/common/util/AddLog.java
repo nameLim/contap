@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.util.Enumeration;
 
 public class AddLog {
+
+    //아래함수는 sentry로 변경되면서 안쓰이게됨.
+
     public static void addExLog(
             HttpServletRequest request
             ) throws IOException {
