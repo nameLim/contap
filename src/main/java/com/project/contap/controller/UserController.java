@@ -108,7 +108,9 @@ public class UserController {
     public String modifyPhoneNumber(
             @RequestBody UserInfoDto userInfoDto
             , @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
-        return userService.modifyPhoneNumber(userInfoDto.getPhoneNumber(), userDetails);
+        if (userDetails != null)
+            return userService.modifyPhoneNumber(userInfoDto.getPhoneNumber(), userDetails.getUser());
+        return "";
     }
 
     @Operation(summary = "알림 받기 여부 변경")
@@ -122,7 +124,10 @@ public class UserController {
     @Operation(summary = "사용자 전화번호 조회")
     @GetMapping("/setting/getPhoneNumber")
     public String getPhoneNumber(@Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
-        return userService.getPhoneNumber(userDetails);
+        if (userDetails != null)
+            return userService.getPhoneNumber(userDetails.getUser());
+        else
+            return null;
     }
 
 
