@@ -1,5 +1,6 @@
 package com.project.contap.model.user;
 
+import com.project.contap.common.enumlist.AuthorityEnum;
 import com.project.contap.common.enumlist.UserStatusEnum;
 import com.project.contap.common.util.TimeStamped;
 import com.project.contap.model.card.Card;
@@ -91,6 +92,24 @@ public class User extends TimeStamped {
 
     public boolean isWrittenBy(User user) {
         return this.email.equals(user.getEmail());
+    }
+    public boolean checkForMain()
+    {
+        boolean checkCard = (this.authStatus & AuthorityEnum.CAN_OTHER_READ.getAuthority()) > 0 ;
+        boolean checkTag = true;
+        if(this.hashTagsString == null || this.hashTagsString.length() <= 3)
+            checkTag = false;
+        boolean checkUserStatus = this.userStatus == UserStatusEnum.ACTIVE;
+        if(checkCard && checkTag && checkUserStatus)
+            return true;
+        return false;
+    }
+    public static void setUserCount(boolean check)
+    {
+        if(check)
+            User.userCount = User.userCount-1;
+        else
+            User.userCount = User.userCount+1;
     }
 
 
