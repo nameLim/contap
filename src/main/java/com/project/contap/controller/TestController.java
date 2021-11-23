@@ -4,6 +4,7 @@ import com.project.contap.chat.ChatMessage;
 import com.project.contap.chat.ChatMessageRepository;
 import com.project.contap.chat.ChatRoomRepository;
 import com.project.contap.common.enumlist.UserStatusEnum;
+import com.project.contap.common.util.ImageService;
 import com.project.contap.common.util.RandomNumberGeneration;
 import com.project.contap.exception.ContapException;
 import com.project.contap.model.card.Card;
@@ -16,11 +17,13 @@ import com.project.contap.model.tap.Tap;
 import com.project.contap.model.tap.TapRepository;
 import com.project.contap.model.user.User;
 import com.project.contap.model.user.UserRepository;
+import com.project.contap.model.user.dto.FrontRequestCardDto;
 import com.project.contap.service.ContapService;
 import com.project.contap.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -41,6 +44,7 @@ public class TestController {
     private final TapRepository tapRepository;
     private final MainService mainService;
     private final ContapService contapService;
+    private final ImageService imageService;
     @Autowired
     public TestController(
             UserRepository userRepository,
@@ -52,7 +56,8 @@ public class TestController {
             ChatMessageRepository chatMessageRepository,
             TapRepository tapRepository,
             MainService mainService,
-            ContapService contapService
+            ContapService contapService,
+            ImageService imageService
     ) {
         this.userRepository = userRepository;
         this.hashTagRepositoty =hashTagRepositoty;
@@ -64,6 +69,7 @@ public class TestController {
         this.tapRepository = tapRepository;
         this.mainService = mainService;
         this.contapService = contapService;
+        this.imageService = imageService;
     }
 
     @GetMapping("/forclient1/{id}") // 한유저가쓴 카드 모두조회
@@ -330,6 +336,23 @@ public class TestController {
         {
             contapService.rapAccept(tap.getId(),user.getEmail());
         }
+
+    }
+
+    @GetMapping("/autoPushTest")
+    public void autoPushTest() throws Exception
+    {
+        System.out.println("Hi");
+
+    }
+
+    @GetMapping("/autoPushImageTest")
+    public void autoPushImageTest(@ModelAttribute FrontRequestCardDto frontRequestCardDto) throws Exception
+    {
+        System.out.println("Hi");
+        imageService.upload(frontRequestCardDto.getProfile(),"static", "");
+
+
 
     }
 
