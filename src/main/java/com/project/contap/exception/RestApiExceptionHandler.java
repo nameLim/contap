@@ -29,7 +29,6 @@ public class RestApiExceptionHandler {
         {
             restApiException.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
             restApiException.setErrorMessage("서버에 문의해주세요");
-            restApiException.setErrorMessage(ex.getMessage());
             Sentry.captureException(ex);
         }
         return new ResponseEntity(

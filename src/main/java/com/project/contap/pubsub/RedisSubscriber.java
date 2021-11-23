@@ -21,29 +21,13 @@ public class RedisSubscriber  {
             // ChatMessage 객채로 맵핑
             ChatMessageDTO chatMessage = objectMapper.readValue(publishMessage, ChatMessageDTO.class);
             // 채팅방을 구독한 클라이언트에게 메시지 발송
-            if(chatMessage.getType() == MsgTypeEnum.CHAT_BOTH.getValue())
-            {
+
+            if((chatMessage.getType() & MsgTypeEnum.TO_ALL.getValue())!=0){
                 messagingTemplate.convertAndSend("/sub/chat/room/" + chatMessage.getRoomId(), chatMessage);
-            }else if(chatMessage.getType() == MsgTypeEnum.CHAT_EITHER_LOGINON.getValue())
-            {
-                messagingTemplate.convertAndSendToUser(chatMessage.getSessionId(),"/sub/user",chatMessage);
-                messagingTemplate.convertAndSend("/sub/chat/room/" + chatMessage.getRoomId(), chatMessage);
-            }else if(chatMessage.getType() == MsgTypeEnum.CHAT_EITHER_LOGOFF.getValue())
-            {
-                messagingTemplate.convertAndSend("/sub/chat/room/" + chatMessage.getRoomId(), chatMessage);
-            }else if(chatMessage.getType() == MsgTypeEnum.SEND_TAP.getValue())
-            {
-                messagingTemplate.convertAndSendToUser(chatMessage.getSessionId(),"/sub/user",chatMessage);
-            }else if(chatMessage.getType() == MsgTypeEnum.ACCEPT_TAP.getValue())
-            {
-                messagingTemplate.convertAndSendToUser(chatMessage.getSessionId(),"/sub/user",chatMessage);
-            }else if(chatMessage.getType() == MsgTypeEnum.REJECT_TAP.getValue())
-            {
+            }
+            if((chatMessage.getType() & MsgTypeEnum.TO_USER.getValue())!=0){
                 messagingTemplate.convertAndSendToUser(chatMessage.getSessionId(),"/sub/user",chatMessage);
             }
-
-
-
 
         } catch (Exception e) {
             log.error("Exception {}", e);

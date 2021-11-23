@@ -3,6 +3,7 @@ package com.project.contap.service;
 import com.project.contap.chat.ChatRoomRepository;
 import com.project.contap.common.Common;
 import com.project.contap.common.DefaultRsp;
+import com.project.contap.common.enumlist.DefaultRspEnum;
 import com.project.contap.common.enumlist.MsgTypeEnum;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
@@ -38,31 +39,21 @@ public class ContapService {
     @Transactional
     public List<UserTapDto> getMyTap(User user,int page) {
         List<UserTapDto> myReceiveTapUserDto = userRepository.findMysendORreceiveTapUserInfo(user.getId(),1,page);
-        List<Tap> taps = new ArrayList<>();
-        for(UserTapDto userTapDto : myReceiveTapUserDto) {
-            if(userTapDto.getNewFriend())
-                taps.add(tapRepository.findById(userTapDto.getTapId()).orElse(null));
-        }
-        for(Tap tap : taps)
-        {
-            tap.setNewFriend(0);
-        }
-        if(taps.size()>0)
-            tapRepository.saveAll(taps);
+        setNewFriendFalse(myReceiveTapUserDto);
         return myReceiveTapUserDto;
     }
+
+
 
     public DefaultRsp tapReject(Long tagId, String receiveUserEmail) {
         Tap tap = tapRepository.findById(tagId).orElse(null);
         if (tap != null)
         {
-            if (tap.getStatus() !=0)
-                return new DefaultRsp("이미 처리된 Tap 입니다.");
             common.sendAlarmIfneeded(MsgTypeEnum.REJECT_TAP,receiveUserEmail,tap.getSendUser().getEmail(),tap.getReceiveUser());
             tapRepository.delete(tap);
-            return new DefaultRsp("정상적으로 처리 되었습니다.");
+            return new DefaultRsp(DefaultRspEnum.OK);
         }
-        return new DefaultRsp("해당 tab이 존재하지 않습니다 TabID를 다시확인해주세요..");
+        return new DefaultRsp(DefaultRspEnum.NOT_FOUND_TAP);
     }
 
     @Transactional
@@ -70,15 +61,13 @@ public class ContapService {
         Tap tap = tapRepository.findById(tagId).orElse(null);
         if (tap != null)
         {
-            if (tap.getStatus() !=0)
-                return new DefaultRsp("이미 처리된 Tap 입니다.");
             User sendUser = tap.getSendUser();
             common.makeChatRoom(tap.getSendUser(),tap.getReceiveUser());
             common.sendAlarmIfneeded(MsgTypeEnum.ACCEPT_TAP,receiveUserEmail,sendUser.getEmail(), tap.getReceiveUser());
             tapRepository.delete(tap);
-            return new DefaultRsp("정상적으로 처리 되었습니다.");
+            return new DefaultRsp(DefaultRspEnum.OK);
         }
-        return new DefaultRsp("해당 tab이 존재하지 않습니다 TabID를 다시확인해주세요..");
+        return new DefaultRsp(DefaultRspEnum.NOT_FOUND_TAP);
     }
 
     @Transactional
@@ -109,7 +98,6 @@ public class ContapService {
             sortInfo.put(order.get(0).get(i),i);
             dtoArrays[i] = new SortedFriendsDto();
             dtoArrays[i].setRoomStatus(order.get(1).get(i));
-
             for(int j = 0 ; j < 3 ; j++) {
                 if (dtoArrays[i].getRoomStatus() == null)
                     dtoArrays[i].setRoomStatus(chatRoomRepository.getRoomStatus(order.get(0).get(i)));
@@ -125,18 +113,10 @@ public class ContapService {
         }
         for(UserTapDto userDto : myFriendsUserDto)
         {
-            dtoArrays[sortInfo.get(userDto.getRoomId())].setUserId(userDto.getUserId());
-            dtoArrays[sortInfo.get(userDto.getRoomId())].setEmail(userDto.getEmail());
-            dtoArrays[sortInfo.get(userDto.getRoomId())].setUserName(userDto.getUserName());
-            dtoArrays[sortInfo.get(userDto.getRoomId())].setProfile(userDto.getProfile());
-            dtoArrays[sortInfo.get(userDto.getRoomId())].setHashTags(userDto.getHashTags());
-            dtoArrays[sortInfo.get(userDto.getRoomId())].setField(userDto.getField());
-            dtoArrays[sortInfo.get(userDto.getRoomId())].setLogin(chatRoomRepository.getSessionId(userDto.getEmail()) != null);
-            dtoArrays[sortInfo.get(userDto.getRoomId())].setNewFriend(userDto.getNewFriend());
+            dtoArrays[sortInfo.get(userDto.getRoomId())].setFromUserDto(userDto,chatRoomRepository.getSessionId(userDto.getEmail()) != null);
             if (newFriend  && userDto.getNewFriend())
                 friendIds.add(userDto.getFriendId());
         }
-
         if (newFriend && friendIds.size()>0) {
             List<Friend> friends;
             friends = friendRepository.findAllById(friendIds);
@@ -144,8 +124,6 @@ public class ContapService {
                 friend.setNewFriend(0);
             friendRepository.saveAll(friends);
         }
-
-
         return Arrays.asList(dtoArrays);
     }
 
@@ -159,6 +137,21 @@ public class ContapService {
         chatRoomRepository.whendeleteFriend(fir.getRoomId(),user.getEmail(),secUser.getEmail());
         friendRepository.delete(fir);
         friendRepository.delete(sec);
-        return new DefaultRsp("정상처리됨");
+        return new DefaultRsp(DefaultRspEnum.OK);
+    }
+
+
+    private void setNewFriendFalse(List<UserTapDto> myReceiveTapUserDto) {
+        List<Tap> taps = new ArrayList<>();
+        for(UserTapDto userTapDto : myReceiveTapUserDto) {
+            if(userTapDto.getNewFriend())
+                taps.add(tapRepository.findById(userTapDto.getTapId()).orElse(null));
+        }
+        for(Tap tap : taps)
+        {
+            tap.setNewFriend(0);
+        }
+        if(taps.size()>0)
+            tapRepository.saveAll(taps);
     }
 }

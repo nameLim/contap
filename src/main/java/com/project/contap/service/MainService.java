@@ -4,6 +4,7 @@ import com.project.contap.common.Common;
 import com.project.contap.common.DefaultRsp;
 import com.project.contap.common.SearchRequestDto;
 import com.project.contap.common.enumlist.AuthorityEnum;
+import com.project.contap.common.enumlist.DefaultRspEnum;
 import com.project.contap.common.enumlist.MsgTypeEnum;
 import com.project.contap.model.card.CardRepository;
 import com.project.contap.model.card.dto.QCardDto;
@@ -57,23 +58,23 @@ public class MainService {
     @Transactional
     public DefaultRsp dotap(User sendUser, Long otherUserId,String msg) {
         if(sendUser.getId().equals(otherUserId))
-            return new DefaultRsp("자신한테 탭요청하지못해요");
+            return new DefaultRsp(DefaultRspEnum.CANT_SEND_TO_ME);
         User receiveUser = userRepository.findById(otherUserId).orElse(null);
         Boolean checkFriend = friendRepository.checkFriend(sendUser,receiveUser);
         if (checkFriend)
-            return new DefaultRsp("이미 친구 관계입니다.");
+            return new DefaultRsp(DefaultRspEnum.ALREADY_FRIEND);
 
         Tap checkrecievetap = tapRepository.checkReceiveTap(receiveUser,sendUser);
         if (checkrecievetap != null)
         {
             common.makeChatRoom(sendUser,receiveUser);
             tapRepository.delete(checkrecievetap);
-            return new DefaultRsp("상대방의 요청을 수락 하였습니다.");
+            return new DefaultRsp(DefaultRspEnum.ACCEPT_TAP);
         }
 
         Boolean checksendtap = tapRepository.checkSendTap(receiveUser,sendUser);
         if (checksendtap)
-            return new DefaultRsp("이미 상대에게 요청을 보낸 상태입니다.");
+            return new DefaultRsp(DefaultRspEnum.ALREADY_SEND);
 
         Tap newTap = Tap.builder()
                 .sendUser(sendUser)
@@ -83,7 +84,7 @@ public class MainService {
                 .build();
         tapRepository.save(newTap);
         common.sendAlarmIfneeded(MsgTypeEnum.SEND_TAP,sendUser.getEmail(),receiveUser.getEmail(), receiveUser);
-        return new DefaultRsp("정상적으로 처리 되었습니다.");
+        return new DefaultRsp(DefaultRspEnum.OK);
     }
 
     public void tutorial(int tutorialNum, UserDetails requestUser) {

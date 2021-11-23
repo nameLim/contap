@@ -138,4 +138,21 @@ public class Common {
             }
         }
     }
+
+    public void sendToDeveloper(String msg) {
+        Message coolsms = new Message(api_key, api_secret);
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("to", "01066454534");   // 탭요청 알람을 받기위해서 정확하게 기재해주세요
+        params.put("from", siteNumber); //사전에 사이트에서 번호를 인증하고 등록하여야 함 // 070 번호하나사고
+        params.put("type", "SMS");
+        params.put("text", msg); //메시지 내용
+        params.put("app_version", "test app 1.2");
+        try {
+            JSONObject obj = (JSONObject) coolsms.send(params);
+            System.out.println(obj.toString()); //전송 결과 출력
+        } catch (CoolsmsException e) {
+            System.out.println(e.getMessage());
+            System.out.println(e.getCode());
+        }
+    }
 }

@@ -96,13 +96,10 @@ public class UserService {
         return alarms;
     }
 
-    public String modifyPhoneNumber(String phoneNumber, UserDetails userDetails) {
-        User user = userFromUserDetails(userDetails);
-        //핸드폰번호 정규식 검사
+    public String modifyPhoneNumber(String phoneNumber, User user) {
         if(!isValidPhoneNumber(phoneNumber)) {
             throw new ContapException((ErrorCode.PHONE_FORM_INVALID)); //핸드폰번호 형식이 맞지 않습니다.
         }
-
         //휴대폰번호 중복 확인
         Boolean found = userRepository.existUserByPhoneNumber(phoneNumber);
         if (found) {
@@ -254,15 +251,10 @@ public class UserService {
         User.userCount--;
     }
 
-    public String getPhoneNumber(UserDetails userDetails) {
-        User user = userFromUserDetails(userDetails);
-
+    public String getPhoneNumber(User user) {
+        if(user.getPhoneNumber() == null)
+            return "";
         String returnPhoneNumber = user.getPhoneNumber().replaceAll("([010]{3})([0-9]{4})([0-9]{4})", "$1-$2-$3");
-
-        //핸드폰번호 정규식 검사
-        if(!isValidPhoneNumber(returnPhoneNumber))
-            throw new ContapException((ErrorCode.PHONE_FORM_INVALID)); //핸드폰번호 형식이 맞지 않습니다.
-
         return returnPhoneNumber;
     }
 
