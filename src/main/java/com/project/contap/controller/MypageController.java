@@ -27,7 +27,10 @@ public class MypageController {
     @Operation(summary = "내 정보 조회")
     @GetMapping("/myinfo")
     public UserInfoDto getMyInfo(@Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return mypageService.getMyInfo(userDetails);
+        if(userDetails!= null) // 이 if문은 차후에 시큐리티 컨피그에서 설정하면 날라갈거니까 차후에 수정좀해주세요 시간남는사람이 아래도 싹다_ LSJ
+            return mypageService.getMyInfo(userDetails.getUser());
+        else
+            return null;
     }
 
     @Operation(summary = "카드 앞면 수정")
@@ -36,7 +39,10 @@ public class MypageController {
             @ModelAttribute FrontRequestCardDto frontRequestCardDto
             ,@Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails
     ) throws IOException {
-        return mypageService.modifyFrontCard(frontRequestCardDto, userDetails);
+        if(userDetails!= null)
+            return mypageService.modifyFrontCard(frontRequestCardDto, userDetails.getUser());
+        else
+            return null;
     }
 
     @Operation(summary = "카드 뒷면 생성")
@@ -44,10 +50,12 @@ public class MypageController {
     public BackResponseCardDto createBackCard(
             @RequestBody BackRequestCardDto backRequestCardDto
             , @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return mypageService.createBackCard(
+        if(userDetails!= null)
+            return mypageService.createBackCard(
                 backRequestCardDto,
-                userDetails
+                userDetails.getUser()
         );
+        return null;
     }
 
     @Operation(summary = "카드 뒷면 수정")
@@ -56,7 +64,9 @@ public class MypageController {
             @Parameter(name = "cardId", in = ParameterIn.PATH, description = "카드아이디") @PathVariable Long cardId
             , @RequestBody BackRequestCardDto backRequestCardDto
             , @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return mypageService.modifyBackCard(cardId, backRequestCardDto, userDetails);
+        if(userDetails!= null)
+            return mypageService.modifyBackCard(cardId, backRequestCardDto, userDetails.getUser());
+        return null;
     }
 
     @Operation(summary = "카드 뒷면 삭제")
@@ -64,6 +74,9 @@ public class MypageController {
     public BackResponseCardDto deleteBackCard(
             @Parameter(name = "cardId", in = ParameterIn.PATH, description = "카드아이디") @PathVariable Long cardId
             , @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return mypageService.deleteBackCard(cardId, userDetails);
+        if(userDetails!=null)
+            return mypageService.deleteBackCard(cardId, userDetails.getUser());
+        else
+            return null;
     }
 }
