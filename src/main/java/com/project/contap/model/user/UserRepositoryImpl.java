@@ -196,7 +196,8 @@ public class UserRepositoryImpl implements CostomUserRepository{
     public Boolean existUserByEmailAndUserStatus(String email) {
         QUser qUser = QUser.user;
         return queryFactory.select(qUser.id).from(qUser)
-                .where(qUser.userStatus.eq(UserStatusEnum.ACTIVE))
+                .where(qUser.userStatus.eq(UserStatusEnum.ACTIVE)
+                        .and(qUser.email.eq(email)))
                 .fetchFirst() != null;
     }
 }

@@ -4,6 +4,7 @@ import com.project.contap.chat.ChatMessage;
 import com.project.contap.chat.ChatMessageRepository;
 import com.project.contap.chat.ChatRoomRepository;
 import com.project.contap.common.enumlist.UserStatusEnum;
+import com.project.contap.common.util.ImageService;
 import com.project.contap.common.util.RandomNumberGeneration;
 import com.project.contap.exception.ContapException;
 import com.project.contap.model.card.Card;
@@ -41,6 +42,7 @@ public class TestController {
     private final TapRepository tapRepository;
     private final MainService mainService;
     private final ContapService contapService;
+    private final ImageService imageService;
     @Autowired
     public TestController(
             UserRepository userRepository,
@@ -52,7 +54,8 @@ public class TestController {
             ChatMessageRepository chatMessageRepository,
             TapRepository tapRepository,
             MainService mainService,
-            ContapService contapService
+            ContapService contapService,
+            ImageService imageService
     ) {
         this.userRepository = userRepository;
         this.hashTagRepositoty =hashTagRepositoty;
@@ -64,6 +67,7 @@ public class TestController {
         this.tapRepository = tapRepository;
         this.mainService = mainService;
         this.contapService = contapService;
+        this.imageService = imageService;
     }
 
     @GetMapping("/forclient1/{id}") // 한유저가쓴 카드 모두조회
@@ -332,6 +336,23 @@ public class TestController {
         }
 
     }
+
+//    @GetMapping("/autoPushTest")
+//    public void autoPushTest() throws Exception
+//    {
+//        System.out.println("Hi");
+//
+//    }
+//
+//    @GetMapping("/autoPushImageTest")
+//    public void autoPushImageTest(@ModelAttribute FrontRequestCardDto frontRequestCardDto) throws Exception
+//    {
+//        System.out.println("Hi");
+//        imageService.upload(frontRequestCardDto.getProfile(),"static", "");
+//
+//
+//
+//    }
 
 }
 
