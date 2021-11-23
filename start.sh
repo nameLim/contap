@@ -22,4 +22,4 @@ echo "> $JAR_PATH 배포"
 #nohup java -jar $JAR_PATH -Dsring.config.location=classpath:$REPOSITORY/build/libs/application.properties,classpath:$REPOSITORY/build/libs/email.properties &
 #nohup java -jar $JAR_PATH --spring.config.location=file:$REPOSITORY/build/libs/application.properties &
 #nohup java -jar $JAR_PATH --spring.config.location=$REPOSITORY/build/libs/application.properties,$REPOSITORY/build/libs/email.properties
-nohup java -jar $JAR_PATH -Dsring.config.location=file:$REPOSITORY/build/libs/application.properties, file:$REPOSITORY/build/libs/email.properties &
+nohup java -jar $JAR_PATH --spring.config.location=file:$REPOSITORY/build/libs/application.properties, file:$REPOSITORY/build/libs/email.properties &
