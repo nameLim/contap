@@ -1,5 +1,6 @@
 package com.project.contap.model.friend;
 
+import com.project.contap.model.user.dto.UserTapDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -21,5 +22,16 @@ public class SortedFriendsDto {
     {
         this.roomId = roomId;
         this.roomStatus = roomStatus;
+    }
+
+    public void setFromUserDto(UserTapDto userDto,Boolean login) {
+        this.userId = userDto.getUserId();
+        this.email = userDto.getEmail();
+        this.userName = userDto.getUserName();
+        this.profile = userDto.getProfile();
+        this.hashTags = userDto.getHashTags();
+        this.field = userDto.getField();
+        this.login = login;
+        this.newFriend= userDto.getNewFriend();
     }
 }
