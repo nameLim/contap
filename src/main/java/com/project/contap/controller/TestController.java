@@ -35,7 +35,7 @@ import java.util.UUID;
 
 @RestController
 public class TestController {
-    @Value("logging.module.version")
+    @Value("${logging.module.version}")
     private String version;
 
     private final UserRepository userRepository;
@@ -346,7 +346,6 @@ public class TestController {
     @GetMapping("/autoPushTest")
     public String autoPushTest() throws Exception
     {
-
         return String.format("Project Version : %s", version);
 
     }
