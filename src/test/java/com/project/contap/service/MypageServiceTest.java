@@ -68,7 +68,7 @@ class MypageServiceTest {
         void getMyInfo_success() {
             when(userService.userFromUserDetails(any(UserDetails.class)))
                     .thenReturn(testUser);
-            UserInfoDto infoDto = mypageService.getMyInfo(testUserDetails);
+            UserInfoDto infoDto = mypageService.getMyInfo(testUser);
             assertEquals("testUser", infoDto.getUserName());
         }
 
@@ -97,7 +97,7 @@ class MypageServiceTest {
             FrontRequestCardDto frontRequestCardDto = new FrontRequestCardDto(null, "김혜림", "Java", 0);
             when(userRepository.existUserByUserName(frontRequestCardDto.getUserName())).thenReturn(false);
             when(userRepository.save(testUser)).thenReturn(testUser);
-            FrontResponseCardDto frontCardDto = mypageService.modifyFrontCard(frontRequestCardDto, testUserDetails);
+            FrontResponseCardDto frontCardDto = mypageService.modifyFrontCard(frontRequestCardDto, testUser);
             assertEquals(frontCardDto.getHashTagsString(), "@_@"); //hash_tag 테이블에 아무값이 없으므로 예상값은 @_@임
         }
 
@@ -110,7 +110,7 @@ class MypageServiceTest {
             when(userRepository.existUserByUserName(frontRequestCardDto.getUserName())).thenReturn(true);
 
             ContapException exception = assertThrows(ContapException.class, () -> {
-                mypageService.modifyFrontCard(frontRequestCardDto, testUserDetails);
+                mypageService.modifyFrontCard(frontRequestCardDto, testUser);
             });
             assertEquals(exception.getErrorCode(), ErrorCode.NICKNAME_DUPLICATE);
         }
@@ -131,7 +131,7 @@ class MypageServiceTest {
                     .link("").build();
             Card card = Card.builder().build();
             when(cardRepository.save(card)).thenReturn(card);
-            BackResponseCardDto backResponseCardDto = mypageService.createBackCard(backRequestCardDto, testUserDetails);
+            BackResponseCardDto backResponseCardDto = mypageService.createBackCard(backRequestCardDto, testUser);
             assertEquals(backResponseCardDto.getTitle(), backRequestCardDto.getTitle());
         }
 
@@ -149,7 +149,7 @@ class MypageServiceTest {
 
             if (testUser.getCards().size() >= 10) {
                 ContapException exception = assertThrows(ContapException.class, () -> {
-                    mypageService.createBackCard(backDto, testUserDetails);
+                    mypageService.createBackCard(backDto, testUser);
                 });
                 assertEquals(exception.getErrorCode(), ErrorCode.EXCESS_CARD_MAX);
             }
@@ -173,7 +173,7 @@ class MypageServiceTest {
             when(cardRepository.findById(1L)).thenReturn(Optional.of(card));
             when(cardRepository.save(card)).thenReturn(card);
 
-            BackResponseCardDto backResponseCardDto = mypageService.modifyBackCard(1L, backRequestCardDto, testUserDetails);
+            BackResponseCardDto backResponseCardDto = mypageService.modifyBackCard(1L, backRequestCardDto, testUser);
             assertEquals(backResponseCardDto.getTitle(), backRequestCardDto.getTitle());
         }
 
