@@ -55,13 +55,17 @@ public class ContapController {
             @RequestBody(required = false)  TagDto tagId) {
         return contapService.rapAccept(tagId.getTagId(),userDetails.getUser().getEmail());
     }
-
     @PostMapping("/contap/deletefriend/{userId}")
     public DefaultRsp delFriend(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable  Long userId) {
         return contapService.delFriend(userDetails.getUser(),userId);
-
+    }
+    @PostMapping("/contap/deltap")
+    public DefaultRsp delTap(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody(required = false)  TagDto tagId) {
+        return contapService.deleteTap(tagId.getTagId(),userDetails.getUser());
     }
 
 }
