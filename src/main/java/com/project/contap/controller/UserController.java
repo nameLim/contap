@@ -67,7 +67,7 @@ public class UserController {
     @Operation(summary = "회원탈퇴")
     @PostMapping("/setting/withdrawal")
     public Map<String, String> deleteUser(@RequestBody UserLoginDto requestDto,@Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
-        userService.changeToInactive(requestDto, userDetails);
+        userService.changeToInactive(requestDto, userDetails.getUser());
 //        userService.deleteUser(requestDto,userDetails.getUser());
 
         Map<String, String> result = new HashMap<>();
@@ -118,7 +118,7 @@ public class UserController {
     public void modifyPhoneNumber(
             @Parameter(name = "alarmState", in = ParameterIn.QUERY, description = "알람 받기 여부(0:취소, 1:받기)")@RequestParam int alarmState
             , @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws ContapException {
-        userService.changeAlarmState(alarmState, userDetails);
+        userService.changeAlarmState(alarmState, userDetails.getUser());
     }
 
     @Operation(summary = "사용자 전화번호 조회")

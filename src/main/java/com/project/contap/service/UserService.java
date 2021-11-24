@@ -132,8 +132,7 @@ public class UserService {
         }
     }
 
-    public void changeAlarmState(int alarmState, UserDetails userDetails) {
-        User user = userFromUserDetails(userDetails);
+    public void changeAlarmState(int alarmState, User user) {
         int authStatus = user.getAuthStatus();
         if(alarmState==0) {
             authStatus = authStatus & (AuthorityEnum.ALL_AUTHORITY.getAuthority() - AuthorityEnum.ALARM.getAuthority());
@@ -234,8 +233,7 @@ public class UserService {
     }
 
     @Transactional
-    public void changeToInactive(UserLoginDto requestDto, UserDetails userDetails) {
-        User user = userFromUserDetails(userDetails);
+    public void changeToInactive(UserLoginDto requestDto, User user) {
         boolean bcheck = user.checkForMain();
         if(!passwordEncoder.matches(requestDto.getPw(), user.getPw()))
             throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);

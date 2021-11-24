@@ -67,11 +67,11 @@ public class MainController {
     public void phoneTutorial(
             @Parameter(name = "tutorialNum", in = ParameterIn.QUERY, description = "튜터리얼 번호(0:핸드폰,1:프로필)") @RequestParam int tutorialNum
             , @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        mainService.tutorial(tutorialNum, userDetails);
+        mainService.tutorial(tutorialNum, userDetails.getUser());
     }
 
     @GetMapping("/main/info")
     public int getUserAuth(@Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return mainService.getUserAuthStatus(userDetails);
+        return mainService.getUserAuthStatus(userDetails.getUser());
     }
 }

@@ -90,9 +90,7 @@ public class MainService {
         return new DefaultRsp(DefaultRspEnum.OK);
     }
 
-    public void tutorial(int tutorialNum, UserDetails requestUser) {
-        User user = userService.userFromUserDetails(requestUser);
-
+    public void tutorial(int tutorialNum, User user) {
         int authStatus = user.getAuthStatus();
         if(tutorialNum == 0) { //phone
             authStatus = authStatus| AuthorityEnum.PHONE_TUTORIAL.getAuthority();
@@ -104,8 +102,7 @@ public class MainService {
         userRepository.save(user);
     }
 
-    public int getUserAuthStatus(UserDetails userDetails) {
-        User user = userService.userFromUserDetails(userDetails);
+    public int getUserAuthStatus(User user) {
         return user.getAuthStatus();
     }
 }
