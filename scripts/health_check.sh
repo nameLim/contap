@@ -24,6 +24,7 @@ do
   echo "> target_port : ${TARGET_PORT}"
   RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:${TARGET_PORT}/health)
   MY_RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://13.125.38.216/:${TARGET_PORT}/health)
+  echo "> RESPONSE_CODE : ${RESPONSE_CODE}"
   echo "> MY_RESPONSE_CODE : ${MY_RESPONSE_CODE}"
 
    if [ ${RESPONSE_CODE} -eq 200 ]; then
