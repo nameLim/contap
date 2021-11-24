@@ -125,7 +125,9 @@ public class UserRepositoryImpl implements CostomUserRepository{
                                 hu.field
                         )).distinct()
                 .from(hu)
-                .where(builder)
+                .where(builder
+                        .and(hu.tags.isNotEmpty())
+                        .and(hu.cards.isNotEmpty()))
                 .offset(page).limit(9)
                 .fetch();
     }

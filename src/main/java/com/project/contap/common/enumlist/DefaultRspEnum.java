@@ -11,6 +11,7 @@ public enum DefaultRspEnum {
     ACCEPT_TAP("상대방의 요청을 수락 하였습니다."),
     ALREADY_SEND("이미 상대에게 요청을 보낸 상태입니다."),
     OK("정상적으로 처리 되었습니다."),
-    NOT_FOUND_TAP("해당 tab이 존재하지 않습니다 TabID를 다시확인해주세요..");
+    NOT_FOUND_TAP("해당 tab이 존재하지 않습니다 TabID를 다시확인해주세요.."),
+    WRONG("잘못된 요청입니다.");
     private final String value;
 }
