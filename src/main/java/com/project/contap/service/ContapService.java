@@ -154,4 +154,15 @@ public class ContapService {
         if(taps.size()>0)
             tapRepository.saveAll(taps);
     }
+
+    @Transactional
+    public DefaultRsp deleteTap(Long tagId, User user) {
+        Tap tap = tapRepository.findById(tagId).orElse(null);
+        if(tap == null)
+            return new DefaultRsp(DefaultRspEnum.NOT_FOUND_TAP);
+        if(!tap.getSendUser().getId().equals(user.getId()))
+            return new DefaultRsp(DefaultRspEnum.WRONG);
+        tapRepository.delete(tap);
+        return new DefaultRsp(DefaultRspEnum.OK);
+    }
 }
