@@ -6,7 +6,6 @@ import com.project.contap.model.card.dto.BackRequestCardDto;
 import com.project.contap.model.user.User;
 import com.project.contap.model.user.UserRepository;
 import com.project.contap.model.user.dto.FrontRequestCardDto;
-import com.project.contap.mvc.MockSpringSecurityFilter;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.security.WebSecurityConfig;
 import com.project.contap.service.MypageService;
@@ -32,7 +31,9 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.refEq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -98,8 +99,7 @@ class MypageControllerTest {
                         .andExpect(status().isOk())
                         .andDo(print());
 
-//                verify(mypageService).modifyFrontCard(any(),eq(testUserDetails));
-                when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
+                verify(mypageService).modifyFrontCard(any(FrontRequestCardDto.class),refEq(testUserDetails.getUser()));
             }
 
             @Test
@@ -119,15 +119,7 @@ class MypageControllerTest {
                                 .principal(mockPrincipal))
                             .andExpect(status().isOk())
                             .andDo(print());
-
-//                verify(mypageService).createBackCard(any(),refEq(testUserDetails));
-
-                when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
-                assertEquals(999L,testUser.getId());
-                assertEquals("카드뒷면 제목1",backCardDto.getTitle());
-                assertEquals("카드뒷면 내용1",backCardDto.getContent());
-                assertEquals("",backCardDto.getLink());
-                assertEquals(0,testUser.getField());
+                verify(mypageService).createBackCard(any(BackRequestCardDto.class),refEq(testUserDetails.getUser()));
             }
 
             @Test
@@ -147,7 +139,7 @@ class MypageControllerTest {
                                 .content(backCardInfo))
                             .andExpect(status().isOk())
                             .andDo(print());
-//                verify(mypageService).modifyBackCard(eq(1L),any(),refEq(testUserDetails));
+                verify(mypageService).modifyBackCard(eq(1L),any(BackRequestCardDto.class),refEq(testUserDetails.getUser()));
             }
         }
 
@@ -165,7 +157,6 @@ class MypageControllerTest {
                                 .principal(mockPrincipal))
                         .andExpect(status().isOk())
                         .andDo(print());
-                assertNull(frontDto.getUserName());
             }
         }
     }
@@ -182,12 +173,7 @@ class MypageControllerTest {
                 mvc.perform(get("/mypage/myinfo").principal(mockPrincipal))
                         .andExpect(status().isOk())
                         .andDo(print());
-//                verify(mypageService).getMyInfo(testUserDetails);
-
-                assertEquals(999L,testUser.getId());
-                assertEquals("1234qwer",testUser.getPw());
-                assertEquals("testUser",testUser.getUserName());
-                assertEquals(0,testUser.getField());
+                verify(mypageService).getMyInfo(testUserDetails.getUser());
             }
         }
     }
@@ -207,12 +193,7 @@ class MypageControllerTest {
                         .andDo(print())
                         .andExpect(status().isOk());
 
-//                verify(mypageService).deleteBackCard(1L,testUserDetails);
-
-                assertEquals(999L,testUser.getId());
-                assertEquals("1234qwer",testUser.getPw());
-                assertEquals("testUser",testUser.getUserName());
-                assertEquals(0,testUser.getField());
+                verify(mypageService).deleteBackCard(1L,testUserDetails.getUser());
             }
         }
     }
