@@ -46,6 +46,7 @@ public class ChatService {
                 }});
 
             int inRoomUserCnt = chatroomRepository.getChatUserCnt(message.getRoomId());
+            message.setType(MsgTypeEnum.CHAT_BOTH.getValue());
             if (inRoomUserCnt == 1) {
                 String recieverId = chatroomRepository.getSessionId(message.getReciever());
                 if (recieverId == null) {
