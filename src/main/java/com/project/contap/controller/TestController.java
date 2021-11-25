@@ -23,10 +23,7 @@ import com.project.contap.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -355,7 +352,7 @@ public class TestController {
         return "healthy자동배포 확인222222";
     }
 
-    @GetMapping("/autoPushImageTest")
+    @PostMapping("/autoPushImageTest")
     public void autoPushImageTest(@ModelAttribute FrontRequestCardDto frontRequestCardDto) throws Exception
     {
         System.out.println("Hi");
