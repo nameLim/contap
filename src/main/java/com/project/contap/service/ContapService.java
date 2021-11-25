@@ -140,7 +140,6 @@ public class ContapService {
         return new DefaultRsp(DefaultRspEnum.OK);
     }
 
-
     private void setNewFriendFalse(List<UserTapDto> myReceiveTapUserDto) {
         List<Tap> taps = new ArrayList<>();
         for(UserTapDto userTapDto : myReceiveTapUserDto) {
@@ -154,7 +153,6 @@ public class ContapService {
         if(taps.size()>0)
             tapRepository.saveAll(taps);
     }
-
     @Transactional
     public DefaultRsp deleteTap(Long tagId, User user) {
         Tap tap = tapRepository.findById(tagId).orElse(null);

@@ -88,13 +88,6 @@ public class ChatService {
         chatroomRepository.userDisConnect(userName,sessionId);
     }
 
-    public List<ChatMessage> getchatmsg(String roomId) {
-        List<ChatMessage> chatList = chatMessageRepository.findAllByRoomId(roomId);
-        if(updateRoomList2.containsKey(roomId))
-            chatList.addAll(updateRoomList2.get(roomId));
-        return chatList;
-    }
-
     public List<ChatMessage> findMessage(String roomId, Long longId) {
         List<ChatMessage> chatList = chatMessageRepository.findMessage(roomId,longId);
         if(longId <= 0) {
