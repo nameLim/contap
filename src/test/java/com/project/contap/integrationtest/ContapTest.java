@@ -1,6 +1,6 @@
 package com.project.contap.integrationtest;
 
-import com.project.contap.chat.ChatRoomRepository;
+import com.project.contap.model.chat.ChatRoomRepository;
 import com.project.contap.common.DefaultRsp;
 import com.project.contap.model.friend.Friend;
 import com.project.contap.model.friend.FriendRepository;

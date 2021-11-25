@@ -1,9 +1,9 @@
 package com.project.contap.service;
 
-import com.project.contap.chat.ChatMessage;
-import com.project.contap.chat.ChatMessageDTO;
-import com.project.contap.chat.ChatMessageRepository;
-import com.project.contap.chat.ChatRoomRepository;
+import com.project.contap.model.chat.ChatMessage;
+import com.project.contap.model.chat.ChatMessageDTO;
+import com.project.contap.model.chat.ChatMessageRepository;
+import com.project.contap.model.chat.ChatRoomRepository;
 import com.project.contap.common.enumlist.AlarmEnum;
 import com.project.contap.common.enumlist.MsgTypeEnum;
 import io.sentry.Sentry;

@@ -1,5 +1,6 @@
-package com.project.contap.chat;
+package com.project.contap.model.chat;
 
+import com.project.contap.model.chat.ChatMessageDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

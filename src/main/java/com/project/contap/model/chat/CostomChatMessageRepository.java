@@ -1,8 +1,8 @@
-package com.project.contap.chat;
+package com.project.contap.model.chat;
 
 import java.util.List;
 
 public interface CostomChatMessageRepository {
-    List<ChatMessage> findMessage(String roomId,Long startId);
+    List<ChatMessage> findMessage(String roomId, Long startId);
     ChatMessage findLastMessage(String roomId);
 }

@@ -1,7 +1,7 @@
 package com.project.contap.chat;
 
-import com.project.contap.chat.ChatMessage;
-import com.project.contap.chat.ChatMessageDTO;
+import com.project.contap.model.chat.ChatMessage;
+import com.project.contap.model.chat.ChatMessageDTO;
 import com.project.contap.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;

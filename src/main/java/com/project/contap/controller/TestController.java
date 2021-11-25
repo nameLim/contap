@@ -1,8 +1,8 @@
 package com.project.contap.controller;
 
-import com.project.contap.chat.ChatMessage;
-import com.project.contap.chat.ChatMessageRepository;
-import com.project.contap.chat.ChatRoomRepository;
+import com.project.contap.model.chat.ChatMessage;
+import com.project.contap.model.chat.ChatMessageRepository;
+import com.project.contap.model.chat.ChatRoomRepository;
 import com.project.contap.common.enumlist.UserStatusEnum;
 import com.project.contap.common.util.ImageService;
 import com.project.contap.common.util.RandomNumberGeneration;

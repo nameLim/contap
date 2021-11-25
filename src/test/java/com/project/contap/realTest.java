@@ -46,7 +46,7 @@ public class realTest {
     @Test
     void test3()
     {
-        double date = Double.parseDouble(LocalDateTime.now().minusMonths(1).format(DateTimeFormatter.ofPattern("yyMMddHHmmss")));
+        double date = Double.parseDouble(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss")));
         System.out.println(date);
     }
 }

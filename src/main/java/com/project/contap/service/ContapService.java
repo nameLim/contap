@@ -1,6 +1,6 @@
 package com.project.contap.service;
 
-import com.project.contap.chat.ChatRoomRepository;
+import com.project.contap.model.chat.ChatRoomRepository;
 import com.project.contap.common.Common;
 import com.project.contap.common.DefaultRsp;
 import com.project.contap.common.enumlist.DefaultRspEnum;
