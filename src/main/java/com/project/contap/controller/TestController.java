@@ -352,7 +352,7 @@ public class TestController {
 
     @GetMapping("/health")
     public String checkHealth() {
-        return "healthy";
+        return "healthy자동배포 확인222222";
     }
 
     @GetMapping("/autoPushImageTest")
