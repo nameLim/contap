@@ -54,6 +54,7 @@ public class UserController {
         result.put("email", user.getEmail());
         result.put("userName", user.getUserName());
         result.put("profile", user.getProfile());
+        result.put("userId", user.getId().toString());
         result.put("result", "success");
         String[] alarm = userService.getAlarm(user.getEmail());
         result.put("TAP_RECEIVE", alarm[AlarmEnum.TAP_RECEIVE.getValue()]);
