@@ -18,14 +18,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.mail.javamail.JavaMailSender;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
 import static com.project.contap.common.util.RandomNumberGeneration.makeRandomNumber;
 
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -41,9 +45,22 @@ public class EmailServiceTest {
     @Nested
     @DisplayName("이메일 전송")
     class GetMsg {
+//        @Test
+//        @DisplayName("정상")
+//        void sendEmail_OK() throws MessagingException, UnsupportedEncodingException {
+//            String email = "lsj@gmail.com";
+//            EmailService emailService = new EmailService(emailRepository, emailSender, userRepository);
+//            when(userRepository.existUserByEmailAndUserStatus(email))
+//                    .thenReturn(false);
+//            NullPointerException exception = assertThrows(NullPointerException.class, () -> {
+//                emailService.sendEmail(email);
+//            });
+//            assertTrue(exception instanceof  Null);
+//        }
+
         @Test
         @DisplayName("중복된 유저 존재")
-        void sendEmail_dup() {
+        void sendEmail_dup(){
             String email = "lsj@gmail.com";
             EmailService emailService = new EmailService(emailRepository, emailSender, userRepository);
             when(userRepository.existUserByEmailAndUserStatus(email))
