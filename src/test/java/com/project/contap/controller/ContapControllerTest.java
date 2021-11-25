@@ -1,15 +1,11 @@
-package com.project.contap.mvc;
+package com.project.contap.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.contap.controller.ContapController;
-import com.project.contap.controller.MainController;
 import com.project.contap.model.hashtag.TagDto;
-import com.project.contap.model.tap.DoTapDto;
 import com.project.contap.model.user.User;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.security.WebSecurityConfig;
 import com.project.contap.service.ContapService;
-import com.project.contap.service.MainService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,8 +34,6 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @WebMvcTest(
         controllers = {ContapController.class},

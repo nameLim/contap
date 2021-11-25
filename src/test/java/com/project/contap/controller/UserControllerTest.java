@@ -6,7 +6,6 @@ import com.project.contap.model.user.UserRepository;
 import com.project.contap.model.user.dto.PwUpdateRequestDto;
 import com.project.contap.model.user.dto.SignUpRequestDto;
 import com.project.contap.model.user.dto.UserLoginDto;
-import com.project.contap.mvc.MockSpringSecurityFilter;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.security.WebSecurityConfig;
 import com.project.contap.security.jwt.JwtTokenProvider;
@@ -132,7 +131,7 @@ class UserControllerTest {
                         .andExpect(status().isOk())
                         .andDo(print());
 
-        verify(userService,atLeastOnce() ).changeToInactive(refEq(dto),refEq(testUserDetails));
+        verify(userService,atLeastOnce() ).changeToInactive(refEq(dto),refEq(testUserDetails.getUser()));
     }
 
     @Test

@@ -7,12 +7,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 
-@RequiredArgsConstructor
-@SpringBootTest
+//@RequiredArgsConstructor
+//@SpringBootTest
 public class realTest {
     //여기다테스트 해보고싶은코드 작성하면 편할것같아서 추가해봤어요
 //    @Autowired
@@ -44,6 +46,7 @@ public class realTest {
     @Test
     void test3()
     {
-        System.out.println(friendRepository.getallFriend());
+        double date = Double.parseDouble(LocalDateTime.now().minusMonths(1).format(DateTimeFormatter.ofPattern("yyMMddHHmmss")));
+        System.out.println(date);
     }
 }
