@@ -1,4 +1,4 @@
-package com.project.contap.chat;
+package com.project.contap.model.chat;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,9 +1,9 @@
 package com.project.contap.service;
 
-import com.project.contap.chat.ChatMessage;
-import com.project.contap.chat.ChatMessageDTO;
-import com.project.contap.chat.ChatMessageRepository;
-import com.project.contap.chat.ChatRoomRepository;
+import com.project.contap.model.chat.ChatMessage;
+import com.project.contap.model.chat.ChatMessageDTO;
+import com.project.contap.model.chat.ChatMessageRepository;
+import com.project.contap.model.chat.ChatRoomRepository;
 import com.project.contap.common.enumlist.AlarmEnum;
 import com.project.contap.common.enumlist.MsgTypeEnum;
 import io.sentry.Sentry;
@@ -86,13 +86,6 @@ public class ChatService {
     }
     public void userDisConnect(String userName,String sessionId) {
         chatroomRepository.userDisConnect(userName,sessionId);
-    }
-
-    public List<ChatMessage> getchatmsg(String roomId) {
-        List<ChatMessage> chatList = chatMessageRepository.findAllByRoomId(roomId);
-        if(updateRoomList2.containsKey(roomId))
-            chatList.addAll(updateRoomList2.get(roomId));
-        return chatList;
     }
 
     public List<ChatMessage> findMessage(String roomId, Long longId) {

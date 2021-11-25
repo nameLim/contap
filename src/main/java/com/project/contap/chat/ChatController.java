@@ -1,7 +1,7 @@
 package com.project.contap.chat;
 
-import com.project.contap.chat.ChatMessage;
-import com.project.contap.chat.ChatMessageDTO;
+import com.project.contap.model.chat.ChatMessage;
+import com.project.contap.model.chat.ChatMessageDTO;
 import com.project.contap.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -20,12 +20,6 @@ public class ChatController {
     @MessageMapping("/chat/message")
     public void message(SimpMessageHeaderAccessor headerAccessor,ChatMessageDTO message) {
         chatService.publish(message,headerAccessor.getUser().getName());
-    }
-
-    @ResponseBody
-    @GetMapping("/chat/getmsg/{roomId}")
-    public List<ChatMessage> getmessage(@PathVariable String roomId) {
-        return chatService.getchatmsg(roomId);// 권한체크 필수
     }
 
     @ResponseBody

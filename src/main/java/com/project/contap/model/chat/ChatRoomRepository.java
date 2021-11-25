@@ -1,4 +1,4 @@
-package com.project.contap.chat;
+package com.project.contap.model.chat;
 
 import com.project.contap.common.enumlist.AlarmEnum;
 import com.project.contap.model.friend.Friend;
@@ -243,7 +243,7 @@ public class ChatRoomRepository {
         //알람은 아쉽지만 지워질수밖에..
     }
 
-    public void setDBinfoToRedis(Friend friend,ChatMessage chatMsg) // flush 는 일단 수동으로 하자
+    public void setDBinfoToRedis(Friend friend, ChatMessage chatMsg) // flush 는 일단 수동으로 하자
     {
         double date;
         // = Double.parseDouble(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss")));

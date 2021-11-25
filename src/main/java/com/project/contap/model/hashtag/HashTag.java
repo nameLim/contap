@@ -32,5 +32,11 @@ public class HashTag {
         this.name = name;
         this.type = type;
     }
+    public HashTag(Long id, String name, int type) // test용
+    {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+    }
 
 }
