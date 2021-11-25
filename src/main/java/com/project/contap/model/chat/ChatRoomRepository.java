@@ -211,16 +211,6 @@ public class ChatRoomRepository {
                     dates.add(typedTuple.getScore().toString());
                 }
             }
-
-//            else
-//            {
-//                if(listOpsforRoomstatus.index(typedTuple.getValue(), -1).endsWith("/_test용_"))
-//                {
-//                    rooms.add(typedTuple.getValue());
-//                    newMsg.add(roomStatus);
-//                    dates.add(typedTuple.getScore().toString());
-//                }
-//            }
         }
         values.add(rooms);
         values.add(newMsg);
