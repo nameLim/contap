@@ -1,4 +1,4 @@
-package com.project.contap.mvc;
+package com.project.contap.controller;
 
 
 import org.springframework.mock.web.MockHttpServletRequest;
