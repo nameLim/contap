@@ -23,10 +23,7 @@ import com.project.contap.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -113,28 +110,28 @@ public class TestController {
         List<HashTag> hashs = new ArrayList<>();
         hashs.add(new HashTag("Spring",0));
         hashs.add(new HashTag("Spring Boot",0));
-        hashs.add(new HashTag("Java",0));
+        hashs.add(new HashTag("GO",0));
         hashs.add(new HashTag("React",0));
         hashs.add(new HashTag("React Native",0));
         hashs.add(new HashTag("Flutter",0));
         hashs.add(new HashTag("Node.js",0));
         hashs.add(new HashTag("Python",0));
+        hashs.add(new HashTag("C++",0));
+        hashs.add(new HashTag("C",0));
+        hashs.add(new HashTag("C#",0));
         hashs.add(new HashTag("Angular",0));
         hashs.add(new HashTag("Vue.js",0));
-        hashs.add(new HashTag("Unreal Engine",0));
         hashs.add(new HashTag("Express",0));
-        hashs.add(new HashTag("C",0));
         hashs.add(new HashTag("Django",0));
         hashs.add(new HashTag("Next.js",0));
+        hashs.add(new HashTag("SQL",0));
+        hashs.add(new HashTag("Nest.js",0));
+        hashs.add(new HashTag("Java",0));
+        hashs.add(new HashTag("HTML CSS",0));
+        hashs.add(new HashTag("TypeScript",0));
+        hashs.add(new HashTag("Android Studio",0));
         hashs.add(new HashTag("Ruby",0));
         hashs.add(new HashTag("JavaScript",0));
-        hashs.add(new HashTag("Nest.js",0));
-        hashs.add(new HashTag("GO",0));
-        hashs.add(new HashTag("Android Studio",0));
-        hashs.add(new HashTag("HTML CSS",0));
-        hashs.add(new HashTag("Elastic Search",0));
-        hashs.add(new HashTag("SQL",0));
-        hashs.add(new HashTag("TypeScript",0));
         hashs.add(new HashTag("Swift",0));
         hashs.add(new HashTag("Assembly",0));
         hashs.add(new HashTag("PHP",0));
@@ -355,7 +352,7 @@ public class TestController {
         return "healthy자동배포 확인222222";
     }
 
-    @GetMapping("/autoPushImageTest")
+    @PostMapping("/autoPushImageTest")
     public void autoPushImageTest(@ModelAttribute FrontRequestCardDto frontRequestCardDto) throws Exception
     {
         System.out.println("Hi");

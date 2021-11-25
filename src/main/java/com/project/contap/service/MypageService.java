@@ -1,6 +1,5 @@
 package com.project.contap.service;
 
-import com.project.contap.common.enumlist.AuthorityEnum;
 import com.project.contap.common.util.ImageService;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
@@ -16,7 +15,6 @@ import com.project.contap.model.user.dto.FrontRequestCardDto;
 import com.project.contap.model.user.dto.FrontResponseCardDto;
 import com.project.contap.model.user.dto.UserInfoDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -127,8 +125,6 @@ public class MypageService {
                 .link(backRequestCardDto.getLink())
                 .build();
         card = cardRepository.save(card);
-        int authStatus = user.getAuthStatus()|AuthorityEnum.CAN_OTHER_READ.getAuthority();
-        user.setAuthStatus(authStatus);
         user = userRepository.save(user);
         if(user.checkForMain() != bcheck)
             User.setUserCount(bcheck);
@@ -163,11 +159,6 @@ public class MypageService {
             throw new ContapException(ErrorCode.ACCESS_DENIED); //권한이 없습니다.
 
         cardRepository.delete(card);
-        if(user.getCards().size()==1) {
-            int authStatus = user.getAuthStatus() & (AuthorityEnum.ALL_AUTHORITY.getAuthority() - AuthorityEnum.CAN_OTHER_READ.getAuthority());
-            user.setAuthStatus(authStatus);
-            userRepository.save(user);
-        }
         if(user.checkForMain() != bcheck)
             User.setUserCount(bcheck);
         return makeBackResponseCardDto(card,user);
