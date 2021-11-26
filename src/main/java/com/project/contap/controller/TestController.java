@@ -290,7 +290,7 @@ public class TestController {
                     roomIds.add(friend.getRoomId());
                     List<ChatMessage> msg = chatMessageRepository.findAllByRoomId(friend.getRoomId());
                     chatMessageRepository.deleteAll(msg);
-                    chatRoomRepository.deleteRoomInfo(friend.getYou().getEmail(),friend.getMe().getEmail(),friend.getRoomId());
+                    chatRoomRepository.whendeleteFriend(friend.getRoomId(),friend.getYou().getEmail(),friend.getMe().getEmail());
                 }
             }
             friendRepository.deleteAll(friends);
