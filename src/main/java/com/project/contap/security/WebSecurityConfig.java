@@ -57,6 +57,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/**").permitAll()
                 .antMatchers("/user/github/callback").permitAll()
                 .antMatchers("/callback").permitAll()
+                .antMatchers("/ws-stomp").permitAll()
 
                 // 그 외 어떤 요청이든 '인증'
                 .anyRequest().authenticated()
