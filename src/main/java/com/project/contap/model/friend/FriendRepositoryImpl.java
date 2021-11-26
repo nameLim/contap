@@ -32,12 +32,7 @@ public class FriendRepositoryImpl implements CustomFriendRepository {
                 .fetchOne();
     }
 
-    @Override
-    public List<Friend> getallFriend()
-    {
-        QFriend qFriend = QFriend.friend;
-        return  queryFactory.select(qFriend).from(qFriend).fetch();
-    }
+
     @Override
     public List<Friend> getallmyFriend(User user)
     {

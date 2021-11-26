@@ -7,6 +7,5 @@ import java.util.List;
 public interface CustomFriendRepository {
     Boolean checkFriend(User me, User you);
     Friend getFriend(User me, User you);
-    List<Friend> getallFriend();
     List<Friend> getallmyFriend(User user);
 }

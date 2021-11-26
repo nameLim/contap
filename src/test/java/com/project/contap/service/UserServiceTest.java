@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 
@@ -57,7 +58,7 @@ class UserServiceTest {
 
             when(passwordEncoder.encode(requestDto.getPw()))
                     .thenReturn("mytest");
-            when(userRepository.save(user2))
+            when(userRepository.save(any()))
                     .thenReturn(user2);
 
             User user = userService.registerUser(requestDto);

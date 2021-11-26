@@ -67,7 +67,7 @@ public class ChatRoomRepository {
         String userEmail =hashOpsReverseLoginInfo.get(REVERSE_LOGIN_INFO,userName);
         if (userEmail != null) {
             System.out.println(userEmail);
-            hashOpsReverseLoginInfo.delete(REVERSE_LOGIN_INFO, sessionId);
+            hashOpsReverseLoginInfo.delete(REVERSE_LOGIN_INFO, userName);
             hashOpsLoginInfo.delete(LOGIN_INFO, userEmail);
         }
 
@@ -82,15 +82,11 @@ public class ChatRoomRepository {
     public String getSessionId(String userEmail) {
         return hashOpsLoginInfo.get(LOGIN_INFO,userEmail);
     }
-    //
-
-    public int getChatUserCnt(String roomId) // null일 일은 없어야하지만 .. null이면 처리해주자 나중에
-    {
+    public int getChatUserCnt(String roomId){
         int userCnt = Integer.parseInt(listOpsforRoomstatus.index(roomId,-1).split("/")[1]);
         return userCnt;
     }
-    public void enterRoom(String roomId,String enterUser,String sessionId) // 최근에 보낸사람이 누군지 내가아니면 @@로 만들어주자
-    {
+    public void enterRoom(String roomId,String enterUser,String sessionId){
         String roomStatus = listOpsforRoomstatus.rightPop(roomId);
         String[] splitStatus = roomStatus.split("/");
         StringBuilder newStatus = new StringBuilder();
@@ -104,9 +100,10 @@ public class ChatRoomRepository {
         listOpsforRoomstatus.rightPush(roomId,newStatus.toString());
         hashOpsRoomInfo.put(ROOM_INFO,sessionId,roomId); // 사실 이건 아래의 leaveRoom에서 delete하는게 맞는것같은데 일단은 disconnect에다가 넣어두자.
     }
-    public void leaveRoom(String roomId) // null이면 처리해주자
-    {
+    public void leaveRoom(String roomId) {
         String roomStatus = listOpsforRoomstatus.rightPop(roomId);
+        if(roomStatus == null)
+            return;
         String[] splitStatus = roomStatus.split("/");
         StringBuilder newStatus = new StringBuilder();
         newStatus.append(splitStatus[0]);
@@ -117,8 +114,7 @@ public class ChatRoomRepository {
         newStatus.append(splitStatus[2]);
         listOpsforRoomstatus.rightPush(roomId,newStatus.toString());
     }
-    public void newMsg(String roomId,String Sender,String reciever, int type,String msg)
-    {
+    public void newMsg(String roomId,String Sender,String reciever, int type,String msg) {
     // type 관련 상태값. 차후에 시간나면 바꿀거임
     // 0 둘다 채팅방
     // 1 한명만 채팅방 나머지 한명은 로그인
@@ -137,9 +133,7 @@ public class ChatRoomRepository {
         zSetforchatdate.add(Sender,roomId,date);
         zSetforchatdate.add(reciever,roomId,date);
     }
-
-    public void whenMakeFriend(String roomId,String me,String you)
-    {
+    public void whenMakeFriend(String roomId,String me,String you) {
         if(me.startsWith("testUser")) // 지금 어쩔수없이 추가함 차후에 공부하고 수정하자..
             return;
         double date = Double.parseDouble(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss")));
@@ -148,12 +142,7 @@ public class ChatRoomRepository {
         zSetforchatdate.add(you,roomId,date);
 
     }
-
-    // 유저가 로그아웃 상태동안에 메시지를 받을경우
-    // 해당 유저가 다음 로그인시 알람을 받을수있도록
-    // 하는 그런 함수..
-    public void setAlarm(String userEmail, AlarmEnum type)
-    {
+    public void setAlarm(String userEmail, AlarmEnum type){
         String forCheck = hashOpsAlarmInfo.get(ALARM_INFO,userEmail);
         int ntype = type.getValue()*2;
         if(forCheck == null) {
@@ -169,8 +158,7 @@ public class ChatRoomRepository {
         }
 
     }
-    public String[] readAlarm(String userEmail)
-    {
+    public String[] readAlarm(String userEmail){
         String forCheck = hashOpsAlarmInfo.get(ALARM_INFO,userEmail);
         String[] ret ={"0","0","0","0"};
         if (forCheck == null)
@@ -179,9 +167,7 @@ public class ChatRoomRepository {
         hashOpsAlarmInfo.delete(ALARM_INFO,userEmail,forCheck);
         return ret;
     }
-
-    public List<List<String>> getMyFriendsOrderByDate(int page,String userName,int type)
-    {
+    public List<List<String>> getMyFriendsOrderByDate(int page,String userName,int type){
         int start = 12*page;
         java.util.Set<ZSetOperations.TypedTuple<String>> ret = new HashSet<>();
 
@@ -211,40 +197,23 @@ public class ChatRoomRepository {
                     dates.add(typedTuple.getScore().toString());
                 }
             }
-
-//            else
-//            {
-//                if(listOpsforRoomstatus.index(typedTuple.getValue(), -1).endsWith("/_test용_"))
-//                {
-//                    rooms.add(typedTuple.getValue());
-//                    newMsg.add(roomStatus);
-//                    dates.add(typedTuple.getScore().toString());
-//                }
-//            }
         }
         values.add(rooms);
         values.add(newMsg);
         values.add(dates);
         return values;
     }
-
-    public void whendeleteFriend(String roomId,String firEmail,String secEmail)
-    {
+    public void whendeleteFriend(String roomId,String firEmail,String secEmail){
         listOpsforRoomstatus.rightPop(roomId);
         zSetforchatdate.remove(firEmail,roomId);
         zSetforchatdate.remove(secEmail,roomId);
 
     }
-
-
-    public void serverRestart()
-    {
+    public void serverRestart(){
         redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
         //알람은 아쉽지만 지워질수밖에..
     }
-
-    public void setDBinfoToRedis(Friend friend, ChatMessage chatMsg) // flush 는 일단 수동으로 하자
-    {
+    public void setDBinfoToRedis(Friend friend, ChatMessage chatMsg){
         double date;
         // = Double.parseDouble(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss")));
         String str = "@@/0/_test용_";
@@ -259,9 +228,7 @@ public class ChatRoomRepository {
         zSetforchatdate.add(friend.getMe().getEmail(),friend.getRoomId(),date);
         zSetforchatdate.add(friend.getYou().getEmail(),friend.getRoomId(),date);
     }
-
-    public void deleteUser(String userEmail)
-    {
+    public void deleteUser(String userEmail){
         String alarmInfo = hashOpsAlarmInfo.get(ALARM_INFO,userEmail);
         String LoginInfo = hashOpsLoginInfo.get(LOGIN_INFO,userEmail);
         if(alarmInfo != null)
@@ -273,13 +240,6 @@ public class ChatRoomRepository {
                 hashOpsReverseLoginInfo.delete(REVERSE_LOGIN_INFO, LoginInfo, ReverseInfo);
         }
     }
-
-    public void deleteRoomInfo(String email_me, String email1_you, String roomId) {
-        listOpsforRoomstatus.rightPop(roomId);
-        zSetforchatdate.remove(email_me,roomId);
-        zSetforchatdate.remove(email1_you,roomId);
-    }
-
     public String getRoomStatus(String roomId)
     {
         return listOpsforRoomstatus.index(roomId, -1);
