@@ -26,7 +26,8 @@ public class CardRepositoryImpl implements CostomCardRepository{
                                 hu.content,
                                 hu.tagsString,
                                 hu.user.id,
-                                hu.user.field
+                                hu.user.field,
+                                hu.link
                         )
                 )
                 .from(hu)
