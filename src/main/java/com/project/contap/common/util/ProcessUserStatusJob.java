@@ -72,7 +72,7 @@ public class ProcessUserStatusJob {
                 roomIds.add(friend.getRoomId());
                 List<ChatMessage> msg = chatMessageRepository.findAllByRoomId(friend.getRoomId());
                 chatMessageRepository.deleteAll(msg);
-                chatRoomRepository.deleteRoomInfo(friend.getYou().getEmail(),friend.getMe().getEmail(),friend.getRoomId());
+                chatRoomRepository.whenMakeFriend(friend.getRoomId(), friend.getYou().getEmail(),friend.getMe().getEmail());
             }
         }
         friendRepository.deleteAll(friends);
