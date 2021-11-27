@@ -7,7 +7,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import javax.persistence.EntityManager;
 import java.util.List;
 
-public class CardRepositoryImpl implements CostomCardRepository{
+public class CardRepositoryImpl implements CustomCardRepository {
     private final JPAQueryFactory queryFactory;
 
     public CardRepositoryImpl(EntityManager entityManager) {

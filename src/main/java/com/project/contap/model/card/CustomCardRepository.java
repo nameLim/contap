@@ -4,6 +4,6 @@ import com.project.contap.model.card.dto.QCardDto;
 
 import java.util.List;
 
-public interface CostomCardRepository {
+public interface CustomCardRepository {
     List<QCardDto> findAllByUserId(Long userId);
 }

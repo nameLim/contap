@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<User, Long>,CostomUserRepository {
+public interface UserRepository extends JpaRepository<User, Long>, CustomUserRepository {
 
     Optional<User> findByEmail(String email);
 
