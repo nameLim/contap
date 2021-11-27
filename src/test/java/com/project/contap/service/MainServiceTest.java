@@ -2,6 +2,7 @@ package com.project.contap.service;
 
 import com.project.contap.common.Common;
 import com.project.contap.common.DefaultRsp;
+import com.project.contap.common.SearchRequestDto;
 import com.project.contap.common.enumlist.AuthorityEnum;
 import com.project.contap.model.card.CardRepository;
 import com.project.contap.model.friend.FriendRepository;
@@ -10,6 +11,7 @@ import com.project.contap.model.tap.Tap;
 import com.project.contap.model.tap.TapRepository;
 import com.project.contap.model.user.User;
 import com.project.contap.model.user.UserRepository;
+import com.project.contap.security.UserDetailsImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,7 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class MainServiceTest {
@@ -153,5 +155,46 @@ class MainServiceTest {
             mainService.tutorial(1,user);
             assertEquals(user.getAuthStatus()&AuthorityEnum.PROFILE_TUTORIAL.getAuthority(),AuthorityEnum.PROFILE_TUTORIAL.getAuthority());
         }
+    }
+    @Test
+    @DisplayName("get HashTag")
+    void HashTag() {
+        MainService mainService = new MainService(hashTagRepositoty, userRepository, tapRepository, friendRepository, cardRepository, userService, common);
+        mainService.getHashTag();
+        verify(hashTagRepositoty,times(1)).findAll();
+    }
+    @Test
+    @DisplayName("Search")
+    void Search() {
+        SearchRequestDto dto = new SearchRequestDto();
+        MainService mainService = new MainService(hashTagRepositoty, userRepository, tapRepository, friendRepository, cardRepository, userService, common);
+        mainService.searchuser(dto);
+        verify(userRepository,times(1)).findAllByTag(dto);
+    }
+    @Test
+    @DisplayName("get Cards")
+    void Cards() {
+        Long userId = 1L;
+        MainService mainService = new MainService(hashTagRepositoty, userRepository, tapRepository, friendRepository, cardRepository, userService, common);
+        mainService.getCards(userId);
+        verify(cardRepository,times(1)).findAllByUserId(userId);
+    }
+    @Test
+    @DisplayName("get Main")
+    void Main() {
+        UserDetailsImpl testUserDetails;
+        User testUser = User.builder().id(9999L).email("testuser@gmail.com").userName("testuser").pw("ab").field(0).build();
+        testUserDetails = new UserDetailsImpl(testUser);
+        MainService mainService = new MainService(hashTagRepositoty, userRepository, tapRepository, friendRepository, cardRepository, userService, common);
+        mainService.getUserDtoList(testUserDetails);
+        verify(userRepository,times(1)).getRandomUser(any(Long.class),eq(testUser.getId()));
+
+    }
+    @Test
+    @DisplayName("get Userauth status")
+    void Userauth() {
+        User testUser = User.builder().id(9999L).email("testuser@gmail.com").userName("testuser").pw("ab").field(0).build();
+        MainService mainService = new MainService(hashTagRepositoty, userRepository, tapRepository, friendRepository, cardRepository, userService, common);
+        mainService.getUserAuthStatus(testUser);
     }
 }

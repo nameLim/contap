@@ -22,7 +22,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -175,6 +176,7 @@ class UserServiceTest {
             assertEquals(exception.getErrorCode(), ErrorCode.EMAIL_DUPLICATE);
         }
 
+
         @Test
         @DisplayName("회원가입 - 실패케이스 - username이 중복되었을 경우")
         public void register_userNameDuplicate() {
@@ -195,10 +197,30 @@ class UserServiceTest {
             });
 
             assertEquals(exception.getErrorCode(), ErrorCode.NICKNAME_DUPLICATE);
-
         }
+        @Test
+        @DisplayName("회원가입 - Inactive 의 경우")
+        public void register_isInactiveUser()
+        {
+            SignUpRequestDto requestDto = new SignUpRequestDto("test@naver.com", "1234qwer", "1234qwer", "test");
+            UserService userService = new UserService(passwordEncoder, userRepository, chatRoomRepository);
 
+            User user = User.builder()
+                    .email("test1@naver.com")
+                    .pw("1234qwer")
+                    .userName("test")
+                    .userStatus(UserStatusEnum.INACTIVE)
+                    .build();
 
+            when(userRepository.findByEmailAndUserStatusEquals(eq(requestDto.getEmail()),eq(UserStatusEnum.INACTIVE)))
+                    .thenReturn(user);
+            when(passwordEncoder.encode(eq(requestDto.getPw())))
+                    .thenReturn(user.getPw());
+            when(userRepository.save(any(User.class)))
+                    .thenReturn(user);
+            User retUser = userService.registerUser(requestDto);
+            assertEquals(user.getUserStatus(),UserStatusEnum.ACTIVE);
+        }
     }
 
     @Nested
@@ -283,6 +305,40 @@ class UserServiceTest {
 
             assertEquals(exception.getErrorCode(), ErrorCode.NOT_EQUAL_PASSWORD);
 
+        }
+
+        @Test
+        @DisplayName("로그인 - Inactive 유저")
+        public void login_Inactive() {
+            UserLoginDto loginDto = new UserLoginDto("test@naver.com", "123456");
+            UserService userService = new UserService(passwordEncoder, userRepository, chatRoomRepository);
+            User user = User.builder()
+                    .email("test@naver.com")
+                    .pw("1234qwer")
+                    .userName("test")
+                    .userStatus(UserStatusEnum.INACTIVE)
+                    .build();
+            when(passwordEncoder.matches(loginDto.getPw(), user.getPw()))
+                    .thenReturn(true);
+            when(userRepository.findByEmail(user.getEmail()))
+                    .thenReturn(Optional.of(user));
+            userService.login(loginDto);
+            verify(userRepository,times(1)).save(user);//any(User.class)
+//            ContapException exception = assertThrows(ContapException.class, () -> {
+//                userService.login(loginDto);
+//            });
+//
+//            assertEquals(exception.getErrorCode(), ErrorCode.NOT_EQUAL_PASSWORD);
+        }
+        @Test
+        @DisplayName("로그인 - 실패 이메일 못찾음")
+        public void login_NotFound() {
+            UserLoginDto loginDto = new UserLoginDto("test@naver.com", "123456");
+            UserService userService = new UserService(passwordEncoder, userRepository, chatRoomRepository);
+            ContapException exception = assertThrows(ContapException.class, () -> {
+                userService.login(loginDto);
+            });
+            assertEquals(exception.getErrorCode(), ErrorCode.USER_NOT_FOUND);
         }
     }
 
@@ -405,8 +461,160 @@ class UserServiceTest {
             assertEquals(exception.getErrorCode(),ErrorCode.NOT_EQUAL_PASSWORD);
 
         }
-
+        @Test
+        @DisplayName("비밀번호 변경 - 정상 ")
+        public void pw_OK() {
+            PwUpdateRequestDto requestDto = new PwUpdateRequestDto("1234qwer","qwer1234","qwer1234");
+            User user = User.builder()
+                    .email("test@naver.com")
+                    .pw("zxcvasdf")
+                    .userName("test")
+                    .build();
+            UserService userService = new UserService(passwordEncoder,userRepository,chatRoomRepository);
+            when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+            when(passwordEncoder.matches(requestDto.getCurrentPw(), user.getPw()))
+                    .thenReturn(true);
+            when(passwordEncoder.encode(requestDto.getNewPw()))
+                    .thenReturn(user.getPw());
+            userService.updatePassword(requestDto,user.getEmail());
+        }
     }
+    @Test
+    @DisplayName("알람 가져오기")
+    public void Alarm() {
+        String email = "lsj@gmail.com";
+        UserService userService = new UserService(passwordEncoder,userRepository,chatRoomRepository);
+        userService.getAlarm(email);
+        verify(chatRoomRepository,times(1)).readAlarm(eq(email));
+    }
+    @Nested
+    @DisplayName("PhoneNumber 변경 테스트")
+    class changePhone {
+
+        @Test
+        @DisplayName("비밀번호 변경 - 정상")
+        public void OK() {
+            String phoneNumber = "010-6645-4534";
+            User user = User.builder().build();
+            UserService userService = new UserService(passwordEncoder,userRepository,chatRoomRepository);
+            when(userRepository.existUserByPhoneNumber(eq(phoneNumber)))
+                    .thenReturn(false);
+            userService.modifyPhoneNumber(phoneNumber,user);
+            verify(userRepository,times(1)).save(user);
+        }
+
+        @Test
+        @DisplayName("유효성검사 실패")
+        public void INVALID() {
+            String phoneNumber = "01066454534";
+            User user = User.builder().build();
+            UserService userService = new UserService(passwordEncoder,userRepository,chatRoomRepository);
+            ContapException exception = assertThrows(ContapException.class, () -> {
+                userService.modifyPhoneNumber(phoneNumber,user);
+            });
+
+            assertEquals(exception.getErrorCode(),ErrorCode.PHONE_FORM_INVALID);
+        }
+
+        @Test
+        @DisplayName("중복")
+        public void DUPLICATE() {
+            String phoneNumber = "010-6645-4534";
+            User user = User.builder().build();
+            UserService userService = new UserService(passwordEncoder,userRepository,chatRoomRepository);
+            when(userRepository.existUserByPhoneNumber(eq(phoneNumber)))
+                    .thenReturn(true);
+            ContapException exception = assertThrows(ContapException.class, () -> {
+                userService.modifyPhoneNumber(phoneNumber,user);
+            });
+
+            assertEquals(exception.getErrorCode(),ErrorCode.PHONE_DUPLICATE);
+
+        }
+    }
+    @Nested
+    @DisplayName("authStatus 변경 테스트")
+    class authStatus {
+
+        @Test
+        @DisplayName("정상 - 0")
+        public void OK_0() {
+            User user = User.builder().authStatus(0b1000).build();
+            UserService userService = new UserService(passwordEncoder,userRepository,chatRoomRepository);
+            userService.changeAlarmState(0,user);
+            verify(userRepository,times(1)).save(eq(user));
+        }
+
+        @Test
+        @DisplayName("정상 - 1")
+        public void OK_1() {
+            User user = User.builder().authStatus(0).build();
+            UserService userService = new UserService(passwordEncoder,userRepository,chatRoomRepository);
+            userService.changeAlarmState(1,user);
+            verify(userRepository,times(1)).save(eq(user));
+        }
+    }
+
+    @Nested
+    @DisplayName("UserStatus 변경 테스트")
+    class UserStatus {
+
+        @Test
+        @DisplayName("정상")
+        public void OK() {
+            User user = User.builder().pw("abc").authStatus(0b1000).build();
+            UserLoginDto loginDto = new UserLoginDto("test@naver.com", "1234qwer");
+
+            UserService userService = new UserService(passwordEncoder,userRepository,chatRoomRepository);
+
+            when(passwordEncoder.matches(loginDto.getPw(), user.getPw()))
+                    .thenReturn(true);
+
+            userService.changeToInactive(loginDto,user);
+
+            verify(userRepository,times(1)).save(eq(user));
+        }
+
+        @Test
+        @DisplayName("실패 비밀번호 불일치")
+        public void fail() {
+            User user = User.builder().pw("abc").authStatus(0b1000).build();
+            UserLoginDto loginDto = new UserLoginDto("test@naver.com", "1234qwer");
+
+            UserService userService = new UserService(passwordEncoder,userRepository,chatRoomRepository);
+
+            when(passwordEncoder.matches(loginDto.getPw(), user.getPw()))
+                    .thenReturn(false);
+            ContapException exception = assertThrows(ContapException.class, () -> {
+                userService.changeToInactive(loginDto,user);
+            });
+
+            assertEquals(exception.getErrorCode(),ErrorCode.NOT_EQUAL_PASSWORD);
+        }
+    }
+    @Nested
+    @DisplayName("get PhoneNumber")
+    class getPhoneNumber {
+
+        @Test
+        @DisplayName("정상 - 1")
+        public void OK1() {
+            User user = User.builder().pw("abc").authStatus(0b1000).build();
+            UserService userService = new UserService(passwordEncoder,userRepository,chatRoomRepository);
+            String ret = userService.getPhoneNumber(user);
+            assertEquals(ret,"");
+        }
+
+        @Test
+        @DisplayName("정상 - 2")
+        public void OK2() {
+            User user = User.builder().phoneNumber("01066454534").pw("abc").authStatus(0b1000).build();
+            UserService userService = new UserService(passwordEncoder,userRepository,chatRoomRepository);
+            String ret = userService.getPhoneNumber(user);
+            assertEquals(ret,"010-6645-4534");
+        }
+    }
+
 
 }
 
