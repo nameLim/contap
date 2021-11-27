@@ -2,6 +2,7 @@ package com.project.contap.service;
 
 import com.project.contap.common.Common;
 import com.project.contap.common.DefaultRsp;
+import com.project.contap.common.enumlist.AlarmEnum;
 import com.project.contap.model.chat.ChatMessage;
 import com.project.contap.model.chat.ChatMessageDTO;
 import com.project.contap.model.chat.ChatMessageRepository;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
@@ -27,7 +29,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ChatServiceTest {
@@ -131,4 +134,116 @@ public class ChatServiceTest {
             }
         }
     }
+    @Nested
+    @DisplayName("채팅 내용 불러오기")
+    class pub {
+        @Test
+        @DisplayName("채팅방에 1명있고 나머지 로그인중일때")
+        void pub1() {
+            String roomId = "abc";
+            ChatMessageDTO message1 = new ChatMessageDTO();
+            message1.setMessage("msg1");
+            message1.setRoomId(roomId);
+            message1.setWriter("a");
+            message1.setReciever("reciever");
+            ChatService chatService = new ChatService(redisTemplate,chatMessageRepository,chatRoomRepository,channelTopic);
+            when(chatRoomRepository.getChatUserCnt(eq(roomId)))
+                    .thenReturn(1);
+            when(chatRoomRepository.getSessionId(eq(message1.getReciever())))
+                    .thenReturn("asdsagfasf");
+            when(channelTopic.getTopic())
+                    .thenReturn("asdsagfasf2");
+            chatService.publish(message1,"sender");
+
+            verify(chatRoomRepository,times(1)).newMsg(message1.getRoomId(),message1.getWriter(),message1.getReciever(),message1.getType(),message1.getMessage());//any(User.class)
+            verify(redisTemplate,times(1)).convertAndSend(eq("asdsagfasf2"),eq(message1));//any(User.class)
+
+        }
+        @Test
+        @DisplayName("채팅방에 1명있고 나머지 로그인중아닐때")
+        void pub2() {
+            String roomId = "abc";
+            ChatMessageDTO message1 = new ChatMessageDTO();
+            message1.setMessage("msg1");
+            message1.setRoomId(roomId);
+            message1.setWriter("a");
+            message1.setReciever("reciever");
+            ChatService chatService = new ChatService(redisTemplate,chatMessageRepository,chatRoomRepository,channelTopic);
+            when(chatRoomRepository.getChatUserCnt(eq(roomId)))
+                    .thenReturn(1);
+            when(channelTopic.getTopic())
+                    .thenReturn("asdsagfasf");
+            chatService.publish(message1,"sender");
+
+            verify(chatRoomRepository,times(1)).setAlarm(message1.getReciever(), AlarmEnum.CHAT);//any(User.class)
+            verify(chatRoomRepository,times(1)).newMsg(message1.getRoomId(),message1.getWriter(),message1.getReciever(),message1.getType(),message1.getMessage());//any(User.class)
+            verify(redisTemplate,times(1)).convertAndSend(eq("asdsagfasf"),eq(message1));//any(User.class)
+
+        }
+        @Test
+        @DisplayName("채팅방에 2명있을때")
+        void pub3() {
+            String roomId = "abc";
+            ChatMessageDTO message1 = new ChatMessageDTO();
+            message1.setMessage("msg1");
+            message1.setRoomId(roomId);
+            message1.setWriter("a");
+            message1.setReciever("reciever");
+            ChatService chatService = new ChatService(redisTemplate,chatMessageRepository,chatRoomRepository,channelTopic);
+            when(chatRoomRepository.getChatUserCnt(eq(roomId)))
+                    .thenReturn(2);
+            when(channelTopic.getTopic())
+                    .thenReturn("asdsagfasf2");
+            chatService.publish(message1,"sender");
+
+            verify(chatRoomRepository,times(1)).newMsg(message1.getRoomId(),message1.getWriter(),message1.getReciever(),message1.getType(),message1.getMessage());//any(User.class)
+            verify(redisTemplate,times(1)).convertAndSend(eq("asdsagfasf2"),eq(message1));//any(User.class)
+        }
+    }
+    @Test
+    @DisplayName("배치 배치 배치")
+    void saveBuulk() {
+        ChatService chatService = new ChatService(redisTemplate,chatMessageRepository,chatRoomRepository,channelTopic);
+        chatService.saveBulk();
+        verify(chatMessageRepository,times(1)).saveAll(anyList());//any(User.class)
+    }
+
+    @Test
+    @DisplayName("userdisConnection")
+    void userDisConnect() {
+        String userName = "userName";
+        String sessionId = "sessionId";
+        ChatService chatService = new ChatService(redisTemplate,chatMessageRepository,chatRoomRepository,channelTopic);
+        chatService.userDisConnect(userName,sessionId);
+        verify(chatRoomRepository,times(1)).userDisConnect(userName,sessionId);
+    }
+    @Nested
+    @DisplayName("User Connect")
+    class Connect {
+        @Test
+        @DisplayName("로그인 연결")
+        void login_Connect() {
+            String dest = "/user";
+            String sessionId= "sessionId";
+            String userEmail= "userEmail";
+            String sessionId2= "sessionId2";
+            ChatService chatService = new ChatService(redisTemplate,chatMessageRepository,chatRoomRepository,channelTopic);
+            chatService.userConnect(dest,sessionId,userEmail,sessionId2);
+            verify(chatRoomRepository,times(1)).userConnect(userEmail,sessionId);
+        }
+        @Test
+        @DisplayName("채팅방 입장")
+        void chat_Connect() {
+            String dest = "/sub/aaaaaaaaa/asdgggsad";
+            String sessionId= "sessionId";
+            String userEmail= "userEmail";
+            String sessionId2= "sessionId2";
+            ChatService chatService = new ChatService(redisTemplate,chatMessageRepository,chatRoomRepository,channelTopic);
+            chatService.userConnect(dest,sessionId,userEmail,sessionId2);
+            verify(chatRoomRepository,times(1)).enterRoom("asdgggsad",userEmail,sessionId2);
+
+        }
+    }
+
+
 }

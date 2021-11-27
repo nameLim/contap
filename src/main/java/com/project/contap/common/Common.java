@@ -53,7 +53,7 @@ public class Common {
     }
 
     //진짜 잡다한 기능들만 들어갈 예정인 클래스..
-    private ChatMessageDTO setChatMessageDTO(MsgTypeEnum type,String receiver, String sender,String receiverSession)
+    public ChatMessageDTO setChatMessageDTO(MsgTypeEnum type,String receiver, String sender,String receiverSession)
     {
         ChatMessageDTO msg = new ChatMessageDTO();
         msg.setType(type.getValue());
@@ -97,16 +97,12 @@ public class Common {
     }
 
     private void sendSMS(User user) {
-
         if(user.getPhoneNumber()==null || user.getPhoneNumber().equals(""))
             return;
-
         if((user.getAuthStatus()&AuthorityEnum.ALARM.getAuthority())!=AuthorityEnum.ALARM.getAuthority())
             return;
-
         Message coolsms = new Message(api_key, api_secret);
         HashMap<String, String> params = new HashMap<String, String>();
-
         params.put("to", user.getPhoneNumber());   // 탭요청 알람을 받기위해서 정확하게 기재해주세요
         params.put("from", siteNumber); //사전에 사이트에서 번호를 인증하고 등록하여야 함 // 070 번호하나사고
         params.put("type", "SMS");
@@ -136,23 +132,6 @@ public class Common {
                 msg = chatMessageRepository.findLastMessage(friend.getRoomId());
                 chatRoomRepository.setDBinfoToRedis(friend,msg);
             }
-        }
-    }
-
-    public void sendToDeveloper(String msg) {
-        Message coolsms = new Message(api_key, api_secret);
-        HashMap<String, String> params = new HashMap<String, String>();
-        params.put("to", "01066454534");   // 탭요청 알람을 받기위해서 정확하게 기재해주세요
-        params.put("from", siteNumber); //사전에 사이트에서 번호를 인증하고 등록하여야 함 // 070 번호하나사고
-        params.put("type", "SMS");
-        params.put("text", msg); //메시지 내용
-        params.put("app_version", "test app 1.2");
-        try {
-            JSONObject obj = (JSONObject) coolsms.send(params);
-            System.out.println(obj.toString()); //전송 결과 출력
-        } catch (CoolsmsException e) {
-            System.out.println(e.getMessage());
-            System.out.println(e.getCode());
         }
     }
 }

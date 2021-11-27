@@ -36,9 +36,13 @@ public class MainController {
 
     @PostMapping("/main/search") //@RequestBody List<HashTag> hashTags
     public List<UserMainDto> search(
-            @RequestBody SearchRequestDto tagsandtype
+            @RequestBody SearchRequestDto tagsandtype,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
             ) throws ContapException {
-        return mainService.searchuser(tagsandtype);
+        Long userId = 0L;
+        if(userDetails != null)
+            userId = userDetails.getUser().getId();
+        return mainService.searchuser(tagsandtype,userId);
     }
 
     @Operation(summary = "뒷면카드 조회")
