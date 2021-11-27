@@ -168,8 +168,8 @@ class MainServiceTest {
     void Search() {
         SearchRequestDto dto = new SearchRequestDto();
         MainService mainService = new MainService(hashTagRepositoty, userRepository, tapRepository, friendRepository, cardRepository, userService, common);
-        mainService.searchuser(dto);
-        verify(userRepository,times(1)).findAllByTag(dto);
+        mainService.searchuser(dto,0L);
+        verify(userRepository,times(1)).findAllByTag(dto,0L);
     }
     @Test
     @DisplayName("get Cards")
