@@ -53,7 +53,7 @@ public class Common {
     }
 
     //진짜 잡다한 기능들만 들어갈 예정인 클래스..
-    private ChatMessageDTO setChatMessageDTO(MsgTypeEnum type,String receiver, String sender,String receiverSession)
+    public ChatMessageDTO setChatMessageDTO(MsgTypeEnum type,String receiver, String sender,String receiverSession)
     {
         ChatMessageDTO msg = new ChatMessageDTO();
         msg.setType(type.getValue());

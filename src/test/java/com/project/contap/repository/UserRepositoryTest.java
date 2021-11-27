@@ -28,7 +28,6 @@ import java.util.*;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 class UserRepositoryTest {
@@ -260,12 +259,13 @@ class UserRepositoryTest {
                 dto.setPage(0);
                 dto.setField(0);
                 dto.setSearchTags(tagNames);
-                List<UserMainDto> userMainDtos = userRepository.findAllByTag(dto);
+                List<UserMainDto> userMainDtos = userRepository.findAllByTag(dto,5L);
                 for(UserMainDto mainDto : userMainDtos)
                 {
                     boolean check1 = mainDto.getHashTags().contains(hashtag1.getName());
                     boolean check2 = mainDto.getHashTags().contains(hashtag2.getName());
                     assertTrue(check1 | check2);
+                    assertFalse(mainDto.getUserId() == 5L);
                 }
 
             }
@@ -292,7 +292,7 @@ class UserRepositoryTest {
                 dto.setPage(0);
                 dto.setField(0);
                 dto.setSearchTags(tagNames);
-                List<UserMainDto> userMainDtos = userRepository.findAllByTag(dto);
+                List<UserMainDto> userMainDtos = userRepository.findAllByTag(dto,0L);
                 for(UserMainDto mainDto : userMainDtos)
                 {
                     boolean check1 = mainDto.getHashTags().contains(hashtag1.getName());

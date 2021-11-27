@@ -39,8 +39,8 @@ public class MainService {
         return hashTagRepositoty.findAll();
     }
 
-    public List<UserMainDto> searchuser(SearchRequestDto tagsandtype) {
-        List<UserMainDto> ret = userRepository.findAllByTag(tagsandtype);
+    public List<UserMainDto> searchuser(SearchRequestDto tagsandtype,Long userId) {
+        List<UserMainDto> ret = userRepository.findAllByTag(tagsandtype,userId);
         return ret;
     }
 

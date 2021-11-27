@@ -95,7 +95,7 @@ public class UserRepositoryImpl implements CostomUserRepository{
                 .fetch();
     }
     @Override
-    public List<UserMainDto> findAllByTag(SearchRequestDto tagsandtype)
+    public List<UserMainDto> findAllByTag(SearchRequestDto tagsandtype, Long userId)
     {
         BooleanBuilder builder = new BooleanBuilder();
         int page = 9*tagsandtype.getPage();
@@ -127,7 +127,8 @@ public class UserRepositoryImpl implements CostomUserRepository{
                 .from(hu)
                 .where(builder
                         .and(hu.tags.isNotEmpty())
-                        .and(hu.cards.isNotEmpty()))
+                        .and(hu.cards.isNotEmpty())
+                        .and(hu.id.ne(userId)))
                 .offset(page).limit(9)
                 .fetch();
     }
