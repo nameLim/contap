@@ -1,17 +1,15 @@
 package com.project.contap.model.hashtag;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.contap.model.user.User;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.List;
 
 @NoArgsConstructor
 @Entity
 @Setter
 @Getter
-@AllArgsConstructor
 public class HashTag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -22,10 +20,6 @@ public class HashTag {
 
     @Column
     private int type; //0:stack, 1:interest
-
-    @ManyToMany(mappedBy = "tags")
-    @JsonIgnore
-    private List<User> users;
 
     public HashTag(String name, int type)
     {

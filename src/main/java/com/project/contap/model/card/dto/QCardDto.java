@@ -4,8 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 
 @Getter
 @Setter
@@ -14,8 +12,6 @@ public class QCardDto {
     private Long cardId;
     private String title;
     private String content;
-    private List<String> stackHashTags;
-    private List<String> interestHashTags;
     private String hashTags;
     private Long userId;
     private int field;

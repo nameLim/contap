@@ -95,7 +95,6 @@ public class MypageService {
         //user
         user.setProfile(uploadImageUrl);
         user.setUserName(frontRequestCardDto.getUserName());
-        user.setTags(hashTagList);
         user.setHashTagsString(retTagStrBuilder.toString());
         user.setField(frontRequestCardDto.getField());
         user = userRepository.save(user);

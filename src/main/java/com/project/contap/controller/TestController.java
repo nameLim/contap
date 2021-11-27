@@ -1,14 +1,13 @@
 package com.project.contap.controller;
 
-import com.project.contap.model.chat.ChatMessage;
-import com.project.contap.model.chat.ChatMessageRepository;
-import com.project.contap.model.chat.ChatRoomRepository;
 import com.project.contap.common.enumlist.UserStatusEnum;
 import com.project.contap.common.util.ImageService;
-import com.project.contap.common.util.RandomNumberGeneration;
 import com.project.contap.exception.ContapException;
 import com.project.contap.model.card.Card;
 import com.project.contap.model.card.CardRepository;
+import com.project.contap.model.chat.ChatMessage;
+import com.project.contap.model.chat.ChatMessageRepository;
+import com.project.contap.model.chat.ChatRoomRepository;
 import com.project.contap.model.friend.Friend;
 import com.project.contap.model.friend.FriendRepository;
 import com.project.contap.model.hashtag.HashTag;
@@ -17,13 +16,14 @@ import com.project.contap.model.tap.Tap;
 import com.project.contap.model.tap.TapRepository;
 import com.project.contap.model.user.User;
 import com.project.contap.model.user.UserRepository;
-import com.project.contap.model.user.dto.FrontRequestCardDto;
 import com.project.contap.service.ContapService;
 import com.project.contap.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -210,22 +210,6 @@ public class TestController {
         }
     }
 
-    @GetMapping("/UserHashSet")
-    void userHashSet() throws ContapException
-    {
-        for(Long i = 1L ; i <= 50L ; i++)
-        {
-            User user=userRepository.findById(i).orElse(null);
-            HashTag ht1 = hashTagRepositoty.getById(new Long(RandomNumberGeneration.randomRange(1,40)));//
-            HashTag ht2 = hashTagRepositoty.getById(new Long(RandomNumberGeneration.randomRange(41,48)));//
-            user.getTags().clear();
-            user.getTags().add(ht1);
-            user.getTags().add(ht2);
-            user.setHashTagsString("@"+ht1.getName() + "@_@"+ht2.getName()+"@");
-            userRepository.save(user);
-        }
-    }
-
     @GetMapping("/testdeleteuser/{userId}")
     void auserHashSet( @PathVariable Long userId ) throws ContapException
     {
@@ -339,25 +323,5 @@ public class TestController {
         }
 
     }
-
-    @GetMapping("/autoPushTest")
-    public String autoPushTest() throws Exception
-    {
-        return String.format("Project Version : %s", version);
-
-    }
-
-    @GetMapping("/health")
-    public String checkHealth() {
-        return "healthy자동배포 확인222222";
-    }
-
-    @PostMapping("/autoPushImageTest")
-    public void autoPushImageTest(@ModelAttribute FrontRequestCardDto frontRequestCardDto) throws Exception
-    {
-        System.out.println("Hi");
-        imageService.upload(frontRequestCardDto.getProfile(),"static", "");
-    }
-
 }
 
