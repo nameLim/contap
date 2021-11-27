@@ -4,7 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import javax.persistence.EntityManager;
 import java.util.List;
 
-public class ChatMessageRepositoryImpl implements CostomChatMessageRepository {
+public class ChatMessageRepositoryImpl implements CustomChatMessageRepository {
     private final JPAQueryFactory queryFactory;
 
     public ChatMessageRepositoryImpl(EntityManager entityManager) {

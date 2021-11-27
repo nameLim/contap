@@ -14,7 +14,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import javax.persistence.EntityManager;
 import java.util.List;
 
-public class UserRepositoryImpl implements CostomUserRepository{
+public class UserRepositoryImpl implements CustomUserRepository {
     private final JPAQueryFactory queryFactory;
 
     public UserRepositoryImpl(EntityManager entityManager) {
