@@ -5,7 +5,6 @@ import com.project.contap.common.enumlist.UserStatusEnum;
 import com.project.contap.common.util.TimeStamped;
 import com.project.contap.model.card.Card;
 import com.project.contap.model.friend.Friend;
-import com.project.contap.model.hashtag.HashTag;
 import com.project.contap.model.user.dto.PwUpdateRequestDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -76,9 +75,6 @@ public class User extends TimeStamped {
     @Schema(description = "뒷면카드")
     private List<Card> cards;
 
-    @ManyToMany
-    @Schema(description = "해쉬태그 HashTag형")
-    private List<HashTag> tags;
 
     @OneToMany(mappedBy = "me", fetch = FetchType.LAZY)
     @Schema(description = "그랩관계")

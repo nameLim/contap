@@ -1,14 +1,12 @@
 package com.project.contap.model.card;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.contap.model.card.dto.BackRequestCardDto;
-import com.project.contap.model.hashtag.HashTag;
 import com.project.contap.common.util.TimeStamped;
+import com.project.contap.model.card.dto.BackRequestCardDto;
 import com.project.contap.model.user.User;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -38,14 +36,8 @@ public class Card extends TimeStamped {
     private String link;
 
     @Column
-    private String filePath;
-
-    @Column
     private String tagsString;
 
-    @ManyToMany
-    private List<HashTag> tags;
-//
 //    public Card(User user, Long cardOrder, String title, String content){
 //        this.user = user;
 //        this.cardOrder = cardOrder;
@@ -68,7 +60,6 @@ public class Card extends TimeStamped {
     public void update(BackRequestCardDto backRequestCardDto) {
         this.title = backRequestCardDto.getTitle();
         this.content = backRequestCardDto.getContent();
-        this.tags = null;
         this.tagsString = backRequestCardDto.getTagsStr();
         this.link = backRequestCardDto.getLink();
     }

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.contap.common.enumlist.UserStatusEnum;
 import com.project.contap.model.card.dto.BackRequestCardDto;
 import com.project.contap.model.user.User;
-import com.project.contap.model.user.UserRepository;
 import com.project.contap.model.user.dto.FrontRequestCardDto;
 import com.project.contap.security.UserDetailsImpl;
 import com.project.contap.security.WebSecurityConfig;
@@ -27,15 +26,9 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.security.Principal;
 import java.util.Collections;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.refEq;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -56,9 +49,6 @@ class MypageControllerTest {
 
     @MockBean
     private MypageService mypageService;
-    @MockBean
-    private UserRepository userRepository;
-
 
     private Principal mockPrincipal;
 

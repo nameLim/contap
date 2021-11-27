@@ -126,7 +126,6 @@ public class UserRepositoryImpl implements CustomUserRepository {
                         )).distinct()
                 .from(hu)
                 .where(builder
-                        .and(hu.tags.isNotEmpty())
                         .and(hu.cards.isNotEmpty())
                         .and(hu.id.ne(userId)))
                 .offset(page).limit(9)
@@ -159,7 +158,6 @@ public class UserRepositoryImpl implements CustomUserRepository {
                         )).distinct()
                 .from(hu)
                 .where(hu.userStatus.eq(UserStatusEnum.ACTIVE)
-                        .and(hu.tags.isNotEmpty())
                         .and(hu.cards.isNotEmpty())
                         .and(hu.id.ne(myId)))
                 .offset(page*9).limit(9)
@@ -190,7 +188,6 @@ public class UserRepositoryImpl implements CustomUserRepository {
         QUser qUser = QUser.user;
         return  queryFactory.select(qUser.id).from(qUser)
                 .where(qUser.userStatus.eq(UserStatusEnum.ACTIVE)
-                        .and(qUser.tags.isNotEmpty())
                         .and(qUser.cards.isNotEmpty()))
                 .fetchCount();
     }
