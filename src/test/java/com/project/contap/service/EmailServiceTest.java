@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import javax.mail.MessagingException;
@@ -31,7 +32,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class EmailServiceTest {
@@ -42,21 +43,25 @@ public class EmailServiceTest {
     @Mock
     UserRepository userRepository;
 
+    @Mock
+    MimeMessage mimeMessage;
+
     @Nested
     @DisplayName("이메일 전송")
     class GetMsg {
-//        @Test
-//        @DisplayName("정상")
-//        void sendEmail_OK() throws MessagingException, UnsupportedEncodingException {
-//            String email = "lsj@gmail.com";
-//            EmailService emailService = new EmailService(emailRepository, emailSender, userRepository);
-//            when(userRepository.existUserByEmailAndUserStatus(email))
-//                    .thenReturn(false);
-//            NullPointerException exception = assertThrows(NullPointerException.class, () -> {
-//                emailService.sendEmail(email);
-//            });
-//            assertTrue(exception instanceof  Null);
-//        }
+        @Test
+        @DisplayName("정상")
+        void sendEmail_OK() throws MessagingException, UnsupportedEncodingException {
+            String email = "lsj@gmail.com";
+            EmailService emailService = new EmailService(emailRepository, emailSender, userRepository);
+            when(userRepository.existUserByEmailAndUserStatus(email))
+                    .thenReturn(false);
+            when(emailSender.createMimeMessage())
+                    .thenReturn(mimeMessage);
+            emailService.sendEmail(email);
+            verify(emailSender,times(1)).send(any(MimeMessage.class));
+            verify(emailRepository,times(1)).createEmailCertification(eq(email),any(String.class));
+        }
 
         @Test
         @DisplayName("중복된 유저 존재")
@@ -74,7 +79,7 @@ public class EmailServiceTest {
 
     @Nested
     @DisplayName("인증번호 확인")
-    class verify {
+    class verify_test {
 
         @Test
         @DisplayName("성공")

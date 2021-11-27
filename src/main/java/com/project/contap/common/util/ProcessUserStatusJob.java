@@ -55,7 +55,6 @@ public class ProcessUserStatusJob {
         }
         catch (Exception ex)
         {
-            common.sendToDeveloper("배치작업중 에러 발생");
             Sentry.captureException(ex);
         }
     }

@@ -1,8 +1,12 @@
 package com.project.contap.service;
 
+import com.project.contap.common.enumlist.DefaultRspEnum;
+import com.project.contap.exception.ContapException;
+import com.project.contap.exception.ErrorCode;
 import com.project.contap.model.chat.ChatRoomRepository;
 import com.project.contap.common.Common;
 import com.project.contap.common.DefaultRsp;
+import com.project.contap.model.friend.Friend;
 import com.project.contap.model.friend.FriendRepository;
 import com.project.contap.model.friend.SortedFriendsDto;
 import com.project.contap.model.tap.Tap;
@@ -22,7 +26,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ContapServiceTest {
@@ -162,4 +167,106 @@ class ContapServiceTest {
 
         }
     }
+
+    @Test
+    @DisplayName("내가 보낸 탭 조회")
+    void getMyDoTap() {
+        User user = User.builder().id(1L).build();
+        int page = 0;
+        ContapService cantapService = new ContapService(tapRepository, chatRoomRepository, userRepository, friendRepository, common);
+        List<UserTapDto> ret = cantapService.getMydoTap(user,page);
+        verify(userRepository,times(1)).findMysendORreceiveTapUserInfo(eq(user.getId()),eq(0),eq(page));
+    }
+
+    @Test
+    @DisplayName("내가 받은 탭 조회")
+    void getMyTap() {
+        UserTapDto tapDto1 = new UserTapDto(1L,"email","profile","username","hash",1L,"gd",1,1);
+        UserTapDto tapDto2 = new UserTapDto(2L,"email","profile","username","hash",2L,"gd",1,0);
+        List<UserTapDto> dtos = new ArrayList<>();
+        Tap tap = Tap.builder().build();
+        dtos.add(tapDto1);
+        dtos.add(tapDto2);
+        User user = User.builder().id(1L).build();
+        int page = 0;
+        when(userRepository.findMysendORreceiveTapUserInfo(eq(user.getId()),eq(1),eq(page)))
+                .thenReturn(dtos);
+        when(tapRepository.findById(any(Long.class))).thenReturn(Optional.of(tap));
+        ContapService cantapService = new ContapService(tapRepository, chatRoomRepository, userRepository, friendRepository, common);
+        cantapService.getMyTap(user,page);
+        verify(tapRepository,times(1)).saveAll(anyList());
+    }
+
+    @Nested
+    @DisplayName("친구관계 삭제")
+    class deleteFriend
+    {
+        @Test
+        @DisplayName("정상")
+        void OK() {
+            User user1 = User.builder().email("email1").id(1L).build();
+            User user2 = User.builder().email("email2").id(2L).build();
+            Friend friend1 = Friend.builder().roomId("roomId").build();
+            Friend friend2 = Friend.builder().roomId("roomId").build();
+            Long userId = 2L;
+            when(userRepository.findById(eq(userId))).thenReturn(Optional.of(user2));
+            when(friendRepository.getFriend(eq(user1),eq(user2))).thenReturn(friend1);
+            when(friendRepository.getFriend(eq(user2),eq(user1))).thenReturn(friend2);
+            ContapService cantapService = new ContapService(tapRepository, chatRoomRepository, userRepository, friendRepository, common);
+            cantapService.delFriend(user1,userId);
+            verify(chatRoomRepository,times(1)).whendeleteFriend(friend1.getRoomId(),user1.getEmail(),user2.getEmail());
+            verify(friendRepository,times(1)).delete(friend1);
+            verify(friendRepository,times(1)).delete(friend2);
+        }
+        @Test
+        @DisplayName("비정상")
+        void Error() {
+            User user1 = User.builder().email("email1").id(1L).build();
+            Long userId = 2L;
+            ContapService cantapService = new ContapService(tapRepository, chatRoomRepository, userRepository, friendRepository, common);
+            ContapException exception = assertThrows(ContapException.class, () -> {
+                cantapService.delFriend(user1,userId);
+            });
+            assertEquals(exception.getErrorCode(), ErrorCode.USER_NOT_FOUND);
+        }
+    }
+    @Nested
+    @DisplayName("보낸 탭 취소")
+    class cancleTap
+    {
+        @Test
+        @DisplayName("정상")
+        void OK() {
+            User user = User.builder().email("email1").id(1L).build();
+            Long tagId = 2L;
+            ContapService cantapService = new ContapService(tapRepository, chatRoomRepository, userRepository, friendRepository, common);
+            Tap tap = Tap.builder().sendUser(user).build();
+            when(tapRepository.findById(eq(tagId))).thenReturn(Optional.of(tap));
+            DefaultRsp ret = cantapService.deleteTap(tagId,user);
+            assertEquals(ret.getMsg() , DefaultRspEnum.OK.getValue());
+        }
+        @Test
+        @DisplayName("비정상 - NotFound")
+        void Error_NotFound() {
+            User user = User.builder().email("email1").id(1L).build();
+            Long tagId = 2L;
+            ContapService cantapService = new ContapService(tapRepository, chatRoomRepository, userRepository, friendRepository, common);
+            DefaultRsp ret = cantapService.deleteTap(tagId,user);
+            assertEquals(ret.getMsg() , DefaultRspEnum.NOT_FOUND_TAP.getValue());
+        }
+        @Test
+        @DisplayName("비정상 - Wrong")
+        void Error_Wrong() {
+            User user1 = User.builder().email("email1").id(1L).build();
+            User user2 = User.builder().email("email2").id(2L).build();
+            Long tagId = 2L;
+            ContapService cantapService = new ContapService(tapRepository, chatRoomRepository, userRepository, friendRepository, common);
+            Tap tap = Tap.builder().sendUser(user2).build();
+            when(tapRepository.findById(eq(tagId))).thenReturn(Optional.of(tap));
+            DefaultRsp ret = cantapService.deleteTap(tagId,user1);
+            assertEquals(ret.getMsg() , DefaultRspEnum.WRONG.getValue());
+        }
+
+    }
+
 }
