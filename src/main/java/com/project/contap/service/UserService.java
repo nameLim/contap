@@ -1,10 +1,10 @@
 package com.project.contap.service;
 
-import com.project.contap.model.chat.ChatRoomRepository;
 import com.project.contap.common.enumlist.AuthorityEnum;
 import com.project.contap.common.enumlist.UserStatusEnum;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
+import com.project.contap.model.chat.ChatRoomRepository;
 import com.project.contap.model.user.User;
 import com.project.contap.model.user.UserRepository;
 import com.project.contap.model.user.dto.PwUpdateRequestDto;
@@ -51,7 +51,7 @@ public class UserService {
                 .pw(pw)
                 .userName(requestDto.getUserName())
                 .userStatus(UserStatusEnum.ACTIVE)
-                .authStatus(AuthorityEnum.CAN_OTHER_READ.getAuthority()) //default : 다른 사람 카드 읽기 가능
+//                .authStatus(AuthorityEnum.CAN_OTHER_READ.getAuthority()) //default : 다른 사람 카드 읽기 가능
                 .build();
         user = userRepository.save(user);
         return user;

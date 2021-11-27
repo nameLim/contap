@@ -1,5 +1,6 @@
 package com.project.contap.service;
 
+import com.project.contap.common.enumlist.AuthorityEnum;
 import com.project.contap.common.util.ImageService;
 import com.project.contap.exception.ContapException;
 import com.project.contap.exception.ErrorCode;
@@ -125,6 +126,9 @@ public class MypageService {
                 .link(backRequestCardDto.getLink())
                 .build();
         card = cardRepository.save(card);
+
+        int authStatus = user.getAuthStatus()| AuthorityEnum.CAN_OTHER_READ.getAuthority();
+        user.setAuthStatus(authStatus);
         user = userRepository.save(user);
         if(user.checkForMain() != bcheck)
             User.setUserCount(bcheck);
@@ -159,6 +163,12 @@ public class MypageService {
             throw new ContapException(ErrorCode.ACCESS_DENIED); //권한이 없습니다.
 
         cardRepository.delete(card);
+
+        if(user.getCards().size()==1) {
+            int authStatus = user.getAuthStatus() & (AuthorityEnum.ALL_AUTHORITY.getAuthority() - AuthorityEnum.CAN_OTHER_READ.getAuthority());
+            user.setAuthStatus(authStatus);
+            userRepository.save(user);
+        }
         if(user.checkForMain() != bcheck)
             User.setUserCount(bcheck);
         return makeBackResponseCardDto(card,user);
