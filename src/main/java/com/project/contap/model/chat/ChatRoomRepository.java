@@ -120,7 +120,7 @@ public class ChatRoomRepository {
     // 1 한명만 채팅방 나머지 한명은 로그인
     // 2 한명만 채팅방 나머지 한명은 로그아웃
 
-        if(type != 0) { // room에 한명있고 메시지 보낼때 들어와야한다
+        if(type != 1) { // room에 한명있고 메시지 보낼때 들어와야한다
             listOpsforRoomstatus.rightPop(roomId);
             String roomStatus = Sender+"/1/"+msg;
             listOpsforRoomstatus.rightPush(roomId, roomStatus);
