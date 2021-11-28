@@ -154,7 +154,7 @@ public class MypageService {
     @Transactional
     public BackResponseCardDto deleteBackCard(Long cardId, User user) {
         boolean bcheck = user.checkForMain();
-//        user.setCards(cardRepository.findAllByUser(user)); 우선 지워도 상관없을듯해서 지워봤음 문제발생시 풀어줘요 LSJ size 10 제한 사라지면서 필요없어짐요ㅛ
+        user.setCards(cardRepository.findAllByUser(user)); //우선 지워도 상관없을듯해서 지워봤음 문제발생시 풀어줘요 LSJ size 10 제한 사라지면서 필요없어짐요ㅛ
         Card card = cardRepository.findById(cardId).orElse(null);
         if(card == null)
             throw new ContapException(ErrorCode.NOT_FOUND_CARD); //해당 카드를 찾을 수 없습니다.
