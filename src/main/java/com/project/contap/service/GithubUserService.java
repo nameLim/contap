@@ -106,11 +106,13 @@ public class GithubUserService {
         Long id = jsonNode.get("id").asLong();
         String email = jsonNode.get("login").asText();
         String name = jsonNode.get("name").asText();
-        String profile = jsonNode.get("avatar_url").asText();
+        JsonNode profile = jsonNode.get("properties")
+                .get("profile_image");
+        String profileStr = "";
+        if(profile != null)
+            profileStr = profile.asText();
 
-
-
-        return new SnsUserInfoDto(id, email,name,profile);
+        return new SnsUserInfoDto(id, name, email,profileStr);
     }
 
     private User registerGithubOrUpdateGithub(SnsUserInfoDto snsUserInfoDto) {
