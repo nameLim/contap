@@ -146,6 +146,7 @@ public class KakaoUserService {
                     .pw(encodedPassword)
                     .userName(nickname)
                     .profile(profile)
+                    .hashTagsString("@_@")
                     .userStatus(UserStatusEnum.ACTIVE)
                     .build();
             userRepository.save(kakaoUser);

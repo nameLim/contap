@@ -144,6 +144,7 @@ public class GithubUserService {
                     .githubId(githubId)
                     .pw(encodedPassword)
                     .userName(name)
+                    .hashTagsString("@_@")
                     .profile(profile)
                     .userStatus(UserStatusEnum.ACTIVE)
                     .build();

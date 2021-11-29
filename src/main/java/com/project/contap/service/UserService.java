@@ -49,6 +49,7 @@ public class UserService {
         user = User.builder()
                 .email(requestDto.getEmail())
                 .pw(pw)
+                .hashTagsString("@_@")
                 .userName(requestDto.getUserName())
                 .userStatus(UserStatusEnum.ACTIVE)
 //                .authStatus(AuthorityEnum.CAN_OTHER_READ.getAuthority()) //default : 다른 사람 카드 읽기 가능
