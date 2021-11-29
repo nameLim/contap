@@ -107,10 +107,13 @@ public class KakaoUserService {
                 .get("nickname").asText();
         String email = jsonNode.get("kakao_account")
                 .get("email").asText();
-        String profile = jsonNode.get("properties")
-                .get("profile_image").asText();
+        JsonNode profile = jsonNode.get("properties")
+                .get("profile_image");
+        String profileStr = "";
+        if(profile != null)
+            profileStr = profile.asText();
 
-        return new SnsUserInfoDto(id, nickname, email,profile);
+        return new SnsUserInfoDto(id, nickname, email,profileStr);
     }
 
     private User registerKakaoOrUpdateKakao(SnsUserInfoDto snsUserInfoDto) {
