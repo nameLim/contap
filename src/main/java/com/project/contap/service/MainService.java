@@ -18,10 +18,10 @@ import com.project.contap.model.user.UserRepository;
 import com.project.contap.model.user.dto.UserMainDto;
 import com.project.contap.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -46,6 +46,7 @@ public class MainService {
 
     public List<QCardDto> getCards(Long userId) {
         List<QCardDto> ret =  cardRepository.findAllByUserId(userId);
+        Collections.reverse(ret);
         return ret;
     }
 
