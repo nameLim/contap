@@ -40,8 +40,9 @@ public class MypageService {
     // 가져오는 값 : 기본 회원정보(앞면카드), 모든 뒷면카드
     @Transactional(readOnly = true)
     public UserInfoDto getMyInfo(User user) {
-        List<Card> userCards = cardRepository.findAllByUser(user);
         List<BackResponseCardDto> cardDtoList = new ArrayList<>();
+        List<Card> userCards = cardRepository.findAllByUser(user);
+        Collections.reverse(userCards);
         for(Card card: userCards) {
             BackResponseCardDto cardDto = makeBackResponseCardDto(card, user);
             cardDtoList.add(cardDto);
