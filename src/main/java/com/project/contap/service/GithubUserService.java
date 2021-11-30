@@ -61,8 +61,8 @@ public class GithubUserService {
 
 // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("client_secret", "4f0e51148be204784876a50f544598c325a503b9");
-        body.add("client_id", "ec87ecda94ea612cbe6c");
+        body.add("client_secret", "638ac36d36739c6e03bc7ca381262e5989ed4379");
+        body.add("client_id", "cd8954aa33808615839a");
         body.add("redirect_uri", "https://contap.co.kr/login?github");  //http://localhost:3000/login?github
         body.add("code", code);
 
@@ -106,13 +106,9 @@ public class GithubUserService {
         Long id = jsonNode.get("id").asLong();
         String email = jsonNode.get("login").asText();
         String name = jsonNode.get("name").asText();
-        JsonNode profile = jsonNode.get("properties")
-                .get("profile_image");
-        String profileStr = "";
-        if(profile != null)
-            profileStr = profile.asText();
+        String profile = jsonNode.get("avatar_url").asText();
 
-        return new SnsUserInfoDto(id, name, email,profileStr);
+        return new SnsUserInfoDto(id, name, email,profile);
     }
 
     private User registerGithubOrUpdateGithub(SnsUserInfoDto snsUserInfoDto) {
