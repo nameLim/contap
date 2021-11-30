@@ -47,7 +47,7 @@ public class User extends TimeStamped {
     private Long githubId;
 
 
-    @Column(nullable = false) // profile img path
+    @Column(unique = false) // profile img path
     @Schema(description = "프로필 사진")
     private String profile;
 
