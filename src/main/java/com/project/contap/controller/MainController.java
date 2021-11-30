@@ -38,11 +38,11 @@ public class MainController {
     public List<UserMainDto> search(
             @RequestBody SearchRequestDto tagsandtype,
             @AuthenticationPrincipal UserDetailsImpl userDetails
-            ) throws ContapException {
+    ) throws ContapException {
         Long userId = 0L;
-        if(userDetails != null)
+        if (userDetails != null)
             userId = userDetails.getUser().getId();
-        return mainService.searchuser(tagsandtype,userId);
+        return mainService.searchuser(tagsandtype, userId);
     }
 
     @Operation(summary = "뒷면카드 조회")
@@ -59,23 +59,28 @@ public class MainController {
         result.put("users", users);
         return result;
     }
+
     @PostMapping("/main/posttap")
     public DefaultRsp tap(
             @RequestBody(required = false) DoTapDto tapDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return mainService.dotap(userDetails.getUser(),tapDto.getUserId(),tapDto.getMsg());
+        return mainService.dotap(userDetails.getUser(), tapDto.getUserId(), tapDto.getMsg());
     }
 
     @PostMapping("/main/tutorial")
     public void phoneTutorial(
             @Parameter(name = "tutorialNum", in = ParameterIn.QUERY, description = "튜터리얼 번호(0:핸드폰,1:프로필)") @RequestParam int tutorialNum
             , @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        mainService.tutorial(tutorialNum, userDetails.getUser());
+        if (userDetails != null)
+            mainService.tutorial(tutorialNum, userDetails.getUser());
     }
 
     @GetMapping("/main/info")
     public int getUserAuth(@Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return mainService.getUserAuthStatus(userDetails.getUser());
-    }
+        if (userDetails != null)
+            return mainService.getUserAuthStatus(userDetails.getUser());
+
+            return -1;
+        }
 }

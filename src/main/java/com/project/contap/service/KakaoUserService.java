@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.contap.common.enumlist.UserStatusEnum;
+import com.project.contap.exception.ContapException;
+import com.project.contap.exception.ErrorCode;
 import com.project.contap.model.user.User;
 import com.project.contap.model.user.UserRepository;
 import com.project.contap.model.user.dto.SnsUserInfoDto;
@@ -105,8 +107,12 @@ public class KakaoUserService {
         Long id = jsonNode.get("id").asLong();
         String nickname = jsonNode.get("properties")
                 .get("nickname").asText();
-        String email = jsonNode.get("kakao_account")
-                .get("email").asText();
+        String email;
+        if(jsonNode.get("kakao_account").get("email") == null)
+            email = UUID.randomUUID().toString() + "@contap.com";
+        else
+            email = jsonNode.get("kakao_account")
+                    .get("email").asText();
         JsonNode profile = jsonNode.get("properties")
                 .get("profile_image");
         String profileStr = "";
