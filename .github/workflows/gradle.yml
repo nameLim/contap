@@ -51,4 +51,4 @@ jobs:
         run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://contapp/$PROJECT_NAME/$GITHUB_SHA.zip
 
       - name: Code Deploy
-        run: aws deploy create-deployment --application-name contapApplication --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name master_release --s3-location bucket=contapp,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
+        run: aws deploy create-deployment --application-name contapApplication --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name master_release --s3-location bucket=contap-contap-bucket,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
