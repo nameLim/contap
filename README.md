@@ -84,6 +84,20 @@
 </details>
 
 <details>
+<summary>Cascade</summary>
+<div markdown="1">
+
++ 회원탈퇴 진행시 뒷면카드(상세내용)이 존재하면 탈퇴가 되지 않는 문제가 생겼습니다.
++ 아무래도 유저와 연관관계가 너무 많이 걸려있어서 일거라 생각이 들었습니다.
++ 처음엔 User Entity에 있는 @OneToMany List<Card> 에 CascadeType.All을 적용하였지만, 뒷면카드(상세내용)이 존재하더라도
+  탈퇴는 원활하게 되었는데,뒷면카드(상세내용)만 삭제하려고 했을때 삭제가 되지않는 오류가 발생했습니다.
++ 다음 방법으론 CascadeType.REMOVE를 적용하였는데 두 문제다 해결이 되었지만,ALL이 REMOVE보다 더 상위 개념으로 인지하고 있었는데
+  왜 ALL은 되지 않았을까? 그래서 당장의 해결에 집중하는것보다는 위의 궁금증을 해결하기위해서 구글링한 결과 CascadeType.ALL을 orphanRemoval = true 와 함께쓰면 된다는 블로그를 보게되어 적용하였는데 역시나 되지않았다. 하지만 또 이상하게도 CascadeType을 생략하고 orpahRemoval = true만 적용했을때는 탈퇴,뒷면카드개별삭제 둘다 가능했다. 이 부분 현재 기능자체는 해결이 되었지만 우리가 Cascade를 아직 정확하게 알지 못하여서 궁금증에 대한 해결은 현재 미해결 상태이므로 추후에 더 공부를 한 뒤에 해결방법을 찾을 예정입니다.
+
+</div>
+</details>
+
+<details>
 <summary>회원탈퇴 방식 변경</summary>
 <div markdown="1">
 
@@ -439,6 +453,7 @@ client_max_body_size 용량M;
 
 </div>
 </details>
+
 
 <details>
 <summary>사용자 권한 비트 연산</summary>
