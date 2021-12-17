@@ -136,4 +136,13 @@ public class UserController {
     public void ActiveUsercntSet() throws ContapException {
         userService.ActiveUsercntSet();
     }
+
+    @PostMapping("/find/password")
+    public Map<String,String> setPassword(@RequestBody PwUpdateRequestDto requestDto) throws ContapException {
+        userService.setPassword(requestDto);
+        Map<String,String> result = new HashMap<>();
+        result.put("result","success");
+
+        return  result;
+    }
 }
