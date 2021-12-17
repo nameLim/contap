@@ -13,6 +13,8 @@ import lombok.Setter;
 @Schema(name = "PasswordChange RequestDto",description = "현재 비밀번호,새로운 비밀번호,새로운 비밀번호 확인")
 public class PwUpdateRequestDto {
 
+    private String email;
+
     @Schema(description = "현재 비밀번호")
     private String currentPw;
     @Schema(description = "새로운 비밀번호")

@@ -48,4 +48,12 @@ public class EmailController {
         return result;
     }
 
+    @PostMapping("/email/send/password")
+    public Map<String,String> sendEmailToChangePw(@RequestBody EmailRequestDto requestDto) throws UnsupportedEncodingException, MessagingException {
+        emailService.sendEmailToChangePw(requestDto.getEmail());
+        Map<String, String> result = new HashMap<>();
+        result.put("result","success");
+        return result;
+    }
+
 }

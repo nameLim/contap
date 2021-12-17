@@ -263,5 +263,30 @@ public class UserService {
         User.userCount = userRepository.getActiveUsercnt();
         System.out.println("userCnt : " + User.userCount.toString());
     }
+
+    @Transactional
+    public void setPassword(PwUpdateRequestDto requestDto) throws ContapException {
+        if (!requestDto.getNewPw().equals(requestDto.getNewPwCheck())) {
+            throw new ContapException(ErrorCode.NOT_EQUAL_PASSWORD);
+        }
+        if (requestDto.getNewPw().length() < 6 || requestDto.getNewPw().length() > 20) {
+            throw new ContapException(ErrorCode.PASSWORD_PATTERN_LENGTH);
+        }
+
+        if (!requestDto.getNewPw().equals(requestDto.getNewPwCheck())) {
+            throw new ContapException(ErrorCode.NEW_PASSWORD_NOT_EQUAL);
+        }
+
+        User user = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(
+                () -> new ContapException(ErrorCode.USER_NOT_FOUND)
+        );
+
+        String pw = passwordEncoder.encode(requestDto.getNewPw());
+        requestDto.setNewPw(pw);
+        user.updatePw(requestDto);
+
+    }
+
 }
+
 
